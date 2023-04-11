@@ -27,3 +27,5 @@ hs_err_pid*
 *.xml
 
 *.idea
+
+/Thesis/.idea/Thesis.iml
