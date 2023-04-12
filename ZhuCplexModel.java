@@ -23,23 +23,23 @@ public class ZhuCplexModel {
     private final IloNumVar[][][][] v_rwit;
     private final IloNumVar[][][][] u_rwit;
     private final IloNumVar[][][] Y_rwi;
-
     private final int[][][] T_wir;
     private final int[] xi_i;
 
 
-    public ZhuCplexModel() throws IloException {
+    public ZhuCplexModel(ZhuInstance i, int[][][] T_wir) throws IloException {
 
         cplex = new IloCplex();
-        T = 10;
-        n = 4;
-        q = 1;
-        lengthOmega = 4;
-        cPR_i = new int[]{ 0, 1,2,3,4};
-        cCR_i = new int[]{ 0, 1,2,3,4};
-        d = 3;
+        T = i.T;
+        n = i.n;
+        q = i.q;
+        lengthOmega = T_wir.length;
+        cPR_i = i.cPR_i ;
+        cCR_i = i.cCR_i;
+        d = i.d;
 
-        T_wir = setScenarios();
+//        T_wir = setScenarios();
+        this.T_wir = T_wir;
         T_prime = T + getMaxTwir();
         xi_i = setXi();
 
@@ -63,19 +63,24 @@ public class ZhuCplexModel {
         checkResult();
     }
 
+    /**
+     * In this method, we put some notes that we could forget later in. To make sure that we do not forget.
+     * @throws IloException
+     */
     private void checkResult() throws IloException {
         for(int i = 1; i<= n ; i++){
             for (int w = 1; w <= lengthOmega ; w++) {
                 if(cplex.getValue(x_rwit[q][w][i][T])==1){
                     System.out.println("This model is not correct. The value for q is chosen too small, causing less replacement too occur than neccessary");
                 }
-                else if(cplex.getValue(x_rwit[q][w][i][T])==0){
-                    System.out.println("okay here");
-                }
             }
         }
     }
 
+    /**
+     * Sets the objective for our CPLEX model.
+     * @throws IloException
+     */
     private void setObjective() throws IloException {
 
         //for this example, we set p(w) to 1.
@@ -113,6 +118,10 @@ public class ZhuCplexModel {
         cplex.addMinimize(sum_w);
     }
 
+    /**
+     * Sets all the constratins found in the article in our CPLEX model.
+     * @throws IloException
+     */
     private void setConstraints() throws IloException {
         // Constraint 1b is the definition for x_rwit and ensures that the item is replaced at or before t+1 when it is replaced at or before t. In other words, I makes sure that I_ir can not come to live suddenly and remains replaced.
         for(int i = 1; i<= n ; i++){
@@ -302,7 +311,7 @@ public class ZhuCplexModel {
 
 
     /**
-     * This method sets all components on working modus
+     * This method sets all components on working modus.
      * @return boolean saying that all components start in working modus
      */
     private int[] setXi() {
@@ -315,16 +324,13 @@ public class ZhuCplexModel {
 
 
     /**
-     * This method manually sets one scenario
+     * This method sets the scenarios. The life times are uniformly distributed over [0, (2T)/q ]. The fraction is then rounded
+     * to its nearest higher integer. This is just for keeping the algorithm running. Life times are actually exponential distributed.
      * @return one set of scenarios
      */
     private int[][][] setScenarios() {
         int[][][] scenarios = new int[lengthOmega+1][n+1][q+1];
         Random rand = new Random(1234);
-        double hello = rand.nextDouble();
-        System.out.println(hello);
-        hello = rand.nextDouble();
-        System.out.println(hello);
 
         for (int w = 1; w <= lengthOmega ; w++) {
             for (int i = 1; i <= n ; i++) {
@@ -332,26 +338,25 @@ public class ZhuCplexModel {
                 int sumTime = 0;
                 for (int r = 1; r < q ; r++) {
                     double factor = (1.0/q)*2.0;
-//                    int Time = (int) Math.round(factor*T*rand.nextDouble())+1;
-                    Random rand2 = new Random();
-                    hello = rand2.nextDouble();
-                    System.out.println(hello);
-                    int Time = (int) Math.round(T*hello)+1;
+                    int Time = (int) Math.ceil(factor*T*rand.nextDouble());
                     sumTime = sumTime + Time;
                     scenarios[w][i][r] = Time;
                 }
 
                 if(sumTime<=T) {
                     scenarios[w][i][q] = T - sumTime + 1;
-                } else if (sumTime > T) {
-                    scenarios[w][i][q] = (int) Math.round(T*rand.nextDouble())+1;
+                } else {
+                    scenarios[w][i][q] = (int) Math.ceil(T*rand.nextDouble());
                 }
-                System.out.println(scenarios[w][i][q]);
             }
         }
         return scenarios;
     }
 
+    /**
+     * The value for Tprime needs the higstest possible lifetime T^w_ir. This value is determined here by searching though the Twir values
+     * @return max Twir
+     */
     private int getMaxTwir() {
         int max = 0;
         for (int w = 1; w <= lengthOmega ; w++) {
