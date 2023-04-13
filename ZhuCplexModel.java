@@ -35,8 +35,7 @@ public class ZhuCplexModel {
         T = i.T;
         n = i.n;
         q = i.q;
-//        lengthOmega = T_wir.length;
-        lengthOmega = i.lengthOmega;
+        this.lengthOmega = T_wir.length;
         cPR_i = i.cPR_i ;
         cCR_i = i.cCR_i;
         d = i.d;
@@ -59,10 +58,11 @@ public class ZhuCplexModel {
         setConstraints();
         setObjective();
         cplex.exportModel("model.lp");
-//        cplex.setOut(null);
+        cplex.setOut(null);
         cplex.solve();
         System.out.println(cplex.getCplexStatus());
         checkResult();
+        cleanup();
     }
 
     /**
@@ -118,7 +118,7 @@ public class ZhuCplexModel {
             sum_w = cplex.sum(sum_w, cplex.prod(1, cplex.sum(sum_n, sum_t)));
         }
 
-        cplex.addMinimize(sum_w);
+        cplex.addMinimize(sum_w, "obj");
     }
 
     /**
@@ -127,26 +127,29 @@ public class ZhuCplexModel {
      */
     private void setConstraints() throws IloException {
         // Constraint 1b is the definition for x_rwit and ensures that the item is replaced at or before t+1 when it is replaced at or before t. In other words, I makes sure that I_ir can not come to live suddenly and remains replaced.
+//        System.out.print("adding constraints 1b");
         for(int i = 0; i< n ; i++){
             for (int t = 0; t < T ; t++) {
                 for (int r = 0; r < q ; r++) {
                     for (int w = 0; w < lengthOmega ; w++) {
-                        cplex.addLe(x_rwit[r][w][i][t], x_rwit[r][w][i][t+1]);
+                        cplex.addLe(x_rwit[r][w][i][t], x_rwit[r][w][i][t+1],"b_"+r+w+i+t);
                     }
                 }
             }
         }
         // Constraint 1c implies that individual I_i,r+1 can only be replaced after I_ir is replaced.
+//        System.out.print("adding constraints 1c");
         for(int i = 0; i< n ; i++){
             for (int t = 0; t < T ; t++) {
                 for (int r = 0; r < q-1 ; r++) {
                     for (int w = 0; w < lengthOmega ; w++) {
-                        cplex.addLe(x_rwit[r+1][w][i][t+1],x_rwit[r][w][i][t]);
+                        cplex.addLe(x_rwit[r+1][w][i][t+1],x_rwit[r][w][i][t],"c_"+r+w+i+t);
                     }
                 }
             }
         }
         // Constraint 1d ensures that maintenance costs d incurs when any component is replaced at time t. Apparently two maintenance periods behind each other has costs d once.
+//        System.out.print("adding constraints 1d");
         for(int i = 0; i< n ; i++){
             for (int t = 1; t <= T ; t++) {
                 for (int w = 0; w < lengthOmega ; w++) {
@@ -155,70 +158,78 @@ public class ZhuCplexModel {
                     for (int r = 0; r < q ; r++) {
                         sum = cplex.sum(sum, cplex.diff(x_rwit[r][w][i][t], x_rwit[r][w][i][t-1]));
                     }
-                    cplex.addLe(sum, z_wt[w][t]);
+                    cplex.addLe(sum, z_wt[w][t],"d_"+w+t);
 
                 }
             }
         }
+//        System.out.print("adding constraints 1e");
         // Constraint 1e is missing, however we found one from the other article that could be 1e. This is equation (12).
         for(int i = 0; i< n ; i++){
             for (int w = 0; w < lengthOmega; w++) {
-                cplex.addLe(x_rwit[0][w][i][0],z_wt[w][0]);
+                cplex.addLe(x_rwit[0][w][i][0],z_wt[w][0],"a_e_0"+w+i+"0");
             }
         }
+//        System.out.print("adding constraints 1f");
         // Constraint 1f is adjusted so that it takes the same form as the previous article. It ensuress that individual I_ir is replaced before or at the endof its lifetime.
         for(int i = 0; i< n ; i++){
             for (int r = 0; r < q-1 ; r++) {
                 for (int w = 0; w < lengthOmega ; w++) {
                     for (int t = 0; t <= T-T_wir[w][i][r+1] ; t++) {
 
-                        cplex.addLe(x_rwit[r][w][i][t], x_rwit[r+1][w][i][t+T_wir[w][i][r+1]]);
+                        cplex.addLe(x_rwit[r][w][i][t], x_rwit[r+1][w][i][t+T_wir[w][i][r+1]],"f_"+r+w+i+t);
 
                     }
                 }
             }
         }
+//        System.out.print("adding constraints 1g");
         //constraint 1g ensures that the first individual is replaced before its lifetime.
         for (int w = 0; w < lengthOmega ; w++) {
             for (int j = 0; j < n ; j++) {
                 if(T_wir[w][j][0] <= T){
 
-                    cplex.addEq(x_rwit[0][w][j][T_wir[w][j][0]], 1) ;
+                    cplex.addEq(x_rwit[0][w][j][T_wir[w][j][0]], 1,"g_0"+w+j) ;
 
                 }
             }
         }
+//        System.out.print("adding constraints 1h");
         //constraint 1h implies that only the first individual can be replaced at t=0
         for (int i = 0; i < n ; i++) {
             for (int r = 1; r < q ; r++) {
                 for (int w = 0; w < lengthOmega; w++) {
 
-                    cplex.addEq(x_rwit[r][w][i][0], 0);
+                    cplex.addEq(x_rwit[r][w][i][0], 0,"h_"+r+w+i+"0");
 
                 }
             }
         }
+//        System.out.print("adding constraints 1i");
         //constraint 1i
         for (int i = 0; i < n ; i++) {
             for (int w = 0; w < lengthOmega; w++) {
 
-                cplex.addEq(x_i[i], x_rwit[0][w][i][0]);
+                cplex.addEq(x_i[i], x_rwit[0][w][i][0],"i_"+w+i);
 
             }
         }
+//        System.out.print("adding constraints 1j");
         //constraint 1j
         for (int i = 0; i < n ; i++) {
-            cplex.addGe(x_i[i],xi_i[i]);
+            cplex.addGe(x_i[i],xi_i[i],"j_"+i);
         }
+//        System.out.print("adding constraints 1k");
         //constraint 1k
         for (int i = 0; i < n ; i++) {
             for (int w = 0; w < lengthOmega; w++) {
 
                 IloNumExpr diff = cplex.diff(1,w_rwit[0][w][i][T_wir[w][i][0]]);
-                cplex.addEq(Y_rwi[0][w][i], diff);
+                cplex.addEq(Y_rwi[0][w][i], diff,"k_0"+w+i);
 
             }
         }
+//        System.out.print("adding constraints 1l");
         //constraint 1l
         for (int i = 0; i < n ; i++) {
             for (int r = 1; r <q ; r++) {
@@ -234,56 +245,61 @@ public class ZhuCplexModel {
                         sum2 = cplex.sum(sum2, w_rwit[r][w][i][t]);
                     }
 
-                    cplex.addEq(Y_rwi[r][w][i], cplex.prod(0.5,cplex.sum(sum1,sum2)));
+                    cplex.addEq(Y_rwi[r][w][i], cplex.prod(0.5,cplex.sum(sum1,sum2)),"l_"+r+w+i);
                 }
             }
         }
+//        System.out.print("adding constraints 1m");
         //constraint 1m
-        for (int i = 0; i <= n ; i++) {
+        for (int i = 0; i < n ; i++) {
             for (int r = 1; r < q ; r++) {
                 for (int w = 0; w < lengthOmega ; w++) {
                     List<Integer> tList = new ArrayList<>();tList.add(T_wir[w][i][r]);tList.add(T_prime);
                     for(int t : tList){
-                        cplex.addEq(y_rwit[r][w][i][t], cplex.diff(w_rwit[r][w][i][t],w_rwit[r-1][w][i][t-T_wir[w][i][r]]));
+                        cplex.addEq(y_rwit[r][w][i][t], cplex.diff(w_rwit[r][w][i][t],w_rwit[r-1][w][i][t-T_wir[w][i][r]]),"m_"+r+w+i+t);
                     }
                 }
             }
         }
+//        System.out.print("adding constraints 1n");
         //constraint 1n
         for(int i = 0; i< n ; i++) {
             for (int t = 1; t <= T; t++) {
                 for (int w = 0; w < lengthOmega; w++) {
                     for (int r = 0; r < q; r++) {
-                        cplex.addEq(w_rwit[r][w][i][t], cplex.diff(x_rwit[r][w][i][t], x_rwit[r][w][i][t-1]));
+                        cplex.addEq(w_rwit[r][w][i][t], cplex.diff(x_rwit[r][w][i][t], x_rwit[r][w][i][t-1]),"n_"+r+w+i+t);
                     }
                 }
             }
         }
+//        System.out.print("adding constraints 1o");
         //constraint 1o
         for(int i = 0; i< n ; i++) {
             for (int w = 0; w < lengthOmega; w++) {
                 for (int r = 0; r < q; r++) {
-                  cplex.addEq(w_rwit[r][w][i][0], x_rwit[r][w][i][0]);
+                  cplex.addEq(w_rwit[r][w][i][0], x_rwit[r][w][i][0],"o_"+r+w+i+"0");
                 }
             }
         }
+//        System.out.print("adding constraints 1p");
         //constraint 1p
         for(int i = 0; i< n ; i++) {
             for (int w = 0; w < lengthOmega; w++) {
                 for (int r = 0; r < q; r++) {
                     for (int t = T+1 ; t <= T_prime ; t++) {
-                        cplex.addEq(w_rwit[r][w][i][t], 0);
+                        cplex.addEq(w_rwit[r][w][i][t], 0,"p_"+r+w+i+t);
                     }
                 }
             }
         }
+//        System.out.print("adding constraints 1r 1s");
         //constraint 1r & 1s
         for(int i = 0; i< n ; i++){
             for (int t = 0; t <= T_prime ; t++) {
                 for (int r = 0; r < q ; r++) {
                     for (int w = 0; w < lengthOmega ; w++) {
-                        cplex.addEq(y_rwit[r][w][i][t], cplex.diff(u_rwit[r][w][i][t], v_rwit[r][w][i][t]));
-                        cplex.addLe(cplex.sum(u_rwit[r][w][i][t], v_rwit[r][w][i][t]), 1);
+                        cplex.addEq(y_rwit[r][w][i][t], cplex.diff(u_rwit[r][w][i][t], v_rwit[r][w][i][t]),"r_"+r+w+i+t);
+                        cplex.addLe(cplex.sum(u_rwit[r][w][i][t], v_rwit[r][w][i][t]), 1,"s_"+r+w+i+t);
                     }
                 }
             }
@@ -292,28 +308,26 @@ public class ZhuCplexModel {
 
     private void setVariables() throws IloException {
         for(int i = 1; i<= n; i++){
-            System.out.println("i = "+i);
             x_i[i-1] = cplex.boolVar("x("+i+")");
             for(int r=1; r<= q; r++){
-                System.out.println("r = "+r);
                 for(int w=1; w<= lengthOmega ; w++){
 
-                    Y_rwi[r-1][w-1][i-1] = cplex.boolVar("Y("+r+","+w+","+i+")");
+                    Y_rwi[r-1][w-1][i-1] = cplex.boolVar("YY("+r+","+w+","+i+")");
 
                     for(int t=0; t<= T_prime; t++){
                         if(i==1 && r==1 && t<=T){
                             z_wt[w-1][t] = cplex.boolVar("z("+w+","+i+")");
                         }
-//                        if(t<=T){x_rwit[r-1][w-1][i-1][t] = cplex.boolVar("x("+r+","+w+","+i+","+t+")");}
-//                        w_rwit[r-1][w-1][i-1][t] = cplex.boolVar("w("+r+","+w+","+i+","+t+")");
-//                        y_rwit[r-1][w-1][i-1][t] = cplex.boolVar("y("+r+","+w+","+i+","+t+")");
-//                        u_rwit[r-1][w-1][i-1][t] = cplex.boolVar("u("+r+","+w+","+i+","+t+")");
-//                        v_rwit[r-1][w-1][i-1][t] = cplex.boolVar("v("+r+","+w+","+i+","+t+")");
-                        if(t<=T){x_rwit[r-1][w-1][i-1][t] = cplex.boolVar("x");}
-                        w_rwit[r-1][w-1][i-1][t] = cplex.boolVar("w");
-                        y_rwit[r-1][w-1][i-1][t] = cplex.boolVar("y");
-                        u_rwit[r-1][w-1][i-1][t] = cplex.boolVar("u");
-                        v_rwit[r-1][w-1][i-1][t] = cplex.boolVar("v");
+                        if(t<=T){x_rwit[r-1][w-1][i-1][t] = cplex.boolVar("x("+r+","+w+","+i+","+t+")");}
+                        w_rwit[r-1][w-1][i-1][t] = cplex.boolVar("w("+r+","+w+","+i+","+t+")");
+                        y_rwit[r-1][w-1][i-1][t] = cplex.boolVar("y("+r+","+w+","+i+","+t+")");
+                        u_rwit[r-1][w-1][i-1][t] = cplex.boolVar("u("+r+","+w+","+i+","+t+")");
+                        v_rwit[r-1][w-1][i-1][t] = cplex.boolVar("v("+r+","+w+","+i+","+t+")");
+//                        if(t<=T){x_rwit[r-1][w-1][i-1][t] = cplex.boolVar("x");}
+//                        w_rwit[r-1][w-1][i-1][t] = cplex.boolVar("w");
+//                        y_rwit[r-1][w-1][i-1][t] = cplex.boolVar("y");
+//                        u_rwit[r-1][w-1][i-1][t] = cplex.boolVar("u");
+//                        v_rwit[r-1][w-1][i-1][t] = cplex.boolVar("v");
                     }
                 }
             }
@@ -380,5 +394,17 @@ public class ZhuCplexModel {
             }
         }
         return max;
+    }
+
+    /**
+     * Cleans up the CPLEX model in order to free up some memory.
+     * This is important if you create many models, as memory used
+     * by CPLEX is not freed up automatically by the JVM.
+     * @throws IloException if something goes wrong with CPLEX
+     */
+    public void cleanup() throws IloException
+    {
+        cplex.clearModel();
+        cplex.end();
     }
 }
