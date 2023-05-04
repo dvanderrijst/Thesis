@@ -32,6 +32,9 @@ public class ZhuCplexModel {
     public ZhuCplexModel(ZhuInstance i, int[][][] T_wir) throws IloException {
 
         cplex = new IloCplex();
+        cplex.setOut(null);
+        cplex.setWarning(null);
+
         T = i.T;
         n = i.n;
         q = i.q;
@@ -58,9 +61,8 @@ public class ZhuCplexModel {
         setConstraints();
         setObjective();
         cplex.exportModel("model.lp");
-        cplex.setOut(null);
         cplex.solve();
-        System.out.println(cplex.getCplexStatus());
+//        System.out.println(cplex.getCplexStatus());
         checkResult();
         cleanup();
     }
