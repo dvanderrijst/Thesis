@@ -13,6 +13,7 @@ public class Omega {
     private int beta;
     public int lenghtOmega;
     private static double[] probs;
+    private static double[] p_w;
     public Omega(ZhuInstance instance) {
         this.T = instance.T;
         this.n = instance.n;
@@ -21,6 +22,8 @@ public class Omega {
         this.beta = instance.beta;
         this.lenghtOmega = instance.lengthOmega;
         this.Twir = new int[lenghtOmega][n][q];
+
+        createScenarios();
     }
 
     public void createScenarios(){
@@ -44,13 +47,6 @@ public class Omega {
                 }
             }
         }
-//        System.out.print("printing the results:");
-//        for (int i = 0; i < size; i++) {
-//            System.out.println();
-//            for (int j = 0; j < n; j++) {
-//                System.out.print(s[i][j]+"\t");
-//            }
-//        }
         System.out.println("Distributing them between components n");
 
         for (int w = 0; w < size ; w++) {
@@ -79,7 +75,7 @@ public class Omega {
 
 
         System.out.println("Now we are linking the probabilities to it....");
-        double[] p_w = new double[size];
+        p_w = new double[size];
 
         double sum = 0.0;
         for (int i = 0; i < size; i++) {
@@ -130,5 +126,9 @@ public class Omega {
             }
         }
         return Tir;
+    }
+
+    public double getpw(int w){
+        return p_w[w];
     }
 }

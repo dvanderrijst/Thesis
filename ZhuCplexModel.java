@@ -32,7 +32,7 @@ public class ZhuCplexModel {
     public ZhuCplexModel(ZhuInstance i, int[][][] T_wir) throws IloException {
 
         cplex = new IloCplex();
-        cplex.setOut(null);
+//        cplex.setOut(null);
         cplex.setWarning(null);
 
         T = i.T;
@@ -64,7 +64,6 @@ public class ZhuCplexModel {
         cplex.solve();
 //        System.out.println(cplex.getCplexStatus());
         checkResult();
-        cleanup();
     }
 
     /**
@@ -396,6 +395,17 @@ public class ZhuCplexModel {
             }
         }
         return max;
+    }
+    public int[][][] get_x_rit() throws IloException {
+        int[][][] x_rit = new int[q][n][T+1];
+        for (int r = 0; r < q; r++) {
+            for (int i = 0; i < n; i++) {
+                for (int t = 0; t <= T ; t++) {
+                    x_rit[r][i][t] = (int) cplex.getValue(x_rwit[r][0][i][t]);
+                }
+            }
+        }
+        return x_rit;
     }
 
     /**
