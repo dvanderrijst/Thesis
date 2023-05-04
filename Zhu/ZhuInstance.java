@@ -1,3 +1,5 @@
+package Zhu;
+
 public class ZhuInstance {
     public final int T       = 3 ;
     public final int n       = 1 ;

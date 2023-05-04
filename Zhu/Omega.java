@@ -1,3 +1,5 @@
+package Zhu;
+
 /**
  * As the article in Schouten also a discretised Weibull distribution is used, we will do the same.
  * Here, de CDF is F(x)=1-exp((x/alpha)^beta). Then P(X=x)=F(x)-F(x-1)
