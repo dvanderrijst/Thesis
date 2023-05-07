@@ -1,5 +1,7 @@
 package Zhu;
 
+import Main.Instance;
+
 import ilog.concert.IloException;
 import ilog.concert.IloNumExpr;
 import ilog.concert.IloNumVar;
@@ -15,8 +17,8 @@ public class ZhuCplexModel {
     private final int T_prime;
     private final int n;
     private final int q;
-    private final int[] cPR_i;
-    private final int[] cCR_i;
+    private final double[] cPR_i;
+    private final double[] cCR_i;
     private final int d;
     private final int lengthOmega;
     private final IloNumVar[] x_i;
@@ -31,7 +33,7 @@ public class ZhuCplexModel {
     private final int[] xi_i;
 
 
-    public ZhuCplexModel(ZhuInstance i, int[][][] T_wir) throws IloException {
+    public ZhuCplexModel(Instance i, int[][][] T_wir) throws IloException {
 
         cplex = new IloCplex();
 //        cplex.setOut(null);

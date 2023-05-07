@@ -1,5 +1,6 @@
 package Zhu;
 
+import Main.Instance;
 import ilog.concert.IloException;
 
 import java.util.HashMap;
@@ -9,7 +10,7 @@ public class PHA {
     private static int v = 0;
     private final double epsilon = 0.01;
     private Omega omega;
-    private ZhuInstance instance;
+    private Instance instance;
     private double penalty = 0.5;
     private int n;
     private int T;
@@ -18,7 +19,7 @@ public class PHA {
     private static Map<Integer, double[][][][]> map_v_Wrwit = new HashMap<>();
     private static Map<Integer, double[][][]> map_average_Xrit = new HashMap<>();
 
-    public PHA(Omega omega,ZhuInstance instance) throws IloException {
+    public PHA(Omega omega, Instance instance) throws IloException {
         this.omega = omega;
         this.instance = instance;
         n = instance.n;
