@@ -10,8 +10,8 @@ public class Instance {
     public final double PR_delta = 0.3;
     public final int d       = 3 ;
     public final int n       = 2 ;
-    public final int m = 5; //5 years
-    public final int N = 12; //12 months in one year
+    public final int m = 1; //5 years
+    public final int N = 4; //12 months in one year
     public final int T       = m*N ;
     public final int alpha = 1;
     public final int beta = 2;
@@ -26,7 +26,7 @@ public class Instance {
     public final int[] I0;
     public final int[] I1;
     public final int[] I2;
-    public final int M = 36; //we set the maximum age to 3 years.
+    public final int M = 4; //we set the maximum age to 3 years.
 
     public Instance() {
 

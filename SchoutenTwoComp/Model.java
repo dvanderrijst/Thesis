@@ -38,8 +38,55 @@ public class Model {
     }
 
     private void setConstraints() throws IloException {
-        //set constraints 9b
+        //set constraints 9d,9e,9f,9g
+        System.out.println("set constraints 9d,9e,9f,9g");
         for (int i0 : I0) {
+            for (int i1 :I1) {
+                for (int i2 : I2) {
+                    for (int k : K){
+
+                        //constraint 9d & 9e & 9f & 9g
+                        IloNumExpr sum9d = null;
+                        IloNumExpr dif9e = null;
+                        IloNumExpr sum9f = null;
+                        IloNumExpr dif9g = null;
+                        if(k==1){
+                            if(i1!=0 & i1!=M & i2!=0 & i2!=M){sum9d = cplex.sum( x[i0][i1][i2][0], z[k][i0][i1]);}
+                            if(i1!=0 & i1!=M){dif9e = cplex.diff(x[i0][i1][i2][k], z[k][i0][i1]);}
+                            if(i2!=0 & i2!=M){sum9f = cplex.sum( x[i0][i1][i2][k], z[3-k][i0][i2]);}
+                            dif9g = cplex.diff(x[i0][i1][i2][3], z[k][i0][i1]);
+                        } else if (k==2) {
+                            if(i1!=0 & i1!=M & i2!=0 & i2!=M){sum9d = cplex.sum( x[i0][i1][i2][0], z[k][i0][i2]);}
+                            if(i2!=0 & i2!=M){dif9e = cplex.diff(x[i0][i1][i2][k], z[k][i0][i2]);}
+                            if(i1!=0 & i1!=M){sum9f = cplex.sum( x[i0][i1][i2][k], z[3-k][i0][i1]);}
+                            dif9g = cplex.diff(x[i0][i1][i2][3], z[k][i0][i2]);
+                        }
+                        else{
+                            System.out.println("something wrong with the value of k");
+                            System.exit(1);
+                        }
+                        // add constraints 9d, 9e, 9f, 9g to the model
+                        if (sum9d != null) {
+                            cplex.addLe(sum9d, 1.0);
+                        }
+                        if (dif9e != null) {
+                            cplex.addLe(dif9e, 0.0);
+                        }
+                        if (sum9f != null) {
+                            cplex.addLe(sum9f, 1.0);
+                        }
+                        if (dif9g != null) {
+                            cplex.addLe(dif9g, 0.0);
+                        }
+                    }
+                }
+            }
+        }
+
+        //set constraints 9b
+        System.out.println("set constraints 9b");
+        for (int i0 : I0) {
+            System.out.println(i0);
             for (int i1 :I1) {
                 for (int i2 : I2) {
 
@@ -60,12 +107,13 @@ public class Model {
                             }
                         }
                     }
-                    cplex.addEq(cplex.prod(sum1,sum2),0.0);
+                    cplex.addEq(cplex.diff(sum1,sum2),0.0);
                 }
             }
         }
 
         //set constraint 9c
+        System.out.println("set constraint 9c");
         for (int i0 : I0){
             IloNumExpr sum = cplex.constant(0.0);
             for (int i1 :I1) {
@@ -80,38 +128,8 @@ public class Model {
             cplex.addEq(sum, fraction);
         }
 
-        //set constraints 9d,9e,9f,9g
-        for (int i0 : I0) {
-            for (int i1 :I1) {
-                for (int i2 : I2) {
-                    for (int k : K){
-
-                        //constraint 9d & 9e & 9f & 9g
-                        IloNumExpr sum9d = null;
-                        IloNumExpr dif9e = null;
-                        IloNumExpr sum9f = null;
-                        IloNumExpr dif9g = null;
-                        if(k==1){
-                            sum9d = cplex.sum( x[i0][i1][i2][0], z[k][i0][i1]);
-                            dif9e = cplex.diff(x[i0][i1][i2][k], z[k][i0][i1]);
-                            sum9f = cplex.sum( x[i0][i1][i2][k], z[3-k][i0][i2]);
-                            dif9g = cplex.diff(x[i0][i1][i2][3], z[k][i0][i1]);
-                        } else if (k==2) {
-                            sum9d = cplex.sum( x[i0][i1][i2][0], z[k][i0][i2]);
-                            dif9e = cplex.diff(x[i0][i1][i2][k], z[k][i0][i2]);
-                            sum9f = cplex.sum( x[i0][i1][i2][k], z[3-k][i0][i1]);
-                            dif9g = cplex.diff(x[i0][i1][i2][3], z[k][i0][i2]);
-                        }
-                        cplex.addLe(sum9d,1.0);
-                        cplex.addLe(dif9e,0.0);
-                        cplex.addLe(sum9f,1.0);
-                        cplex.addLe(dif9g,0.0);
-                    }
-                }
-            }
-        }
-
         //set constraints 9h, 9i
+        System.out.println("set constraints 9h, 9i");
         for (int i0 : I0){
             for (int j0: I0 ) {
                 for ( int k : K){
@@ -130,6 +148,7 @@ public class Model {
         }
 
         //set constraints 9j, 9k
+        System.out.println("set constraints 9j, 9k");
         for (int i0 : I0){
             for (int k : K){
 
@@ -173,6 +192,7 @@ public class Model {
     }
 
     private void setObjective() throws IloException {
+        System.out.println("setting objective");
 
         IloNumExpr sum = cplex.constant(0.0);
 
@@ -200,7 +220,9 @@ public class Model {
         for (int i0 : I0) {
             for (int i1 :I1) {
                 for (int i2 : I2) {
-                    for (int a : A) {
+//                    int[] actions = A(i0,i1,i2);
+//                    for (int a : actions) {
+                    for(int a : A){
                         IloNumVar var = cplex.numVar(0.0,1.0/(m*N), "x("+i0+","+i1+","+i2+","+a+")"); //set the limit of x to 1/mN. This is actually positive infinity but this might save storage?
                         x[i0][i1][i2][a] = var;
                     }
@@ -277,7 +299,7 @@ public class Model {
     private double pi(int i0, int i1, int i2, int j0, int j1, int j2, int a){
         double pi_value = 0.0;
         if( j0 != (i0+1)%i.N){
-            System.out.println("this values for j0 is not corresponding to j0 = i0 + 1 mod(N). We return pi=0.0.");
+            // System.out.println("this values for j0 is not corresponding to j0 = i0 + 1 mod(N). We return pi=0.0.");
         }
         else if(a==0){
             if((j1 == (i1 + 1)) & (j2 == (i2 + 1)) & (i1 != 0) & (i1 != M) & (i2 != 0) & (i2 != M)){
@@ -359,6 +381,7 @@ public class Model {
      */
     private double c(int i0, int i1, int i2, int a){
         double c = 0.0;
+        i0 = i0%i.N;
         if (a==0){
             c = 0.0;
         }
