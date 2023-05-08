@@ -13,8 +13,8 @@ public class Instance {
     public final int m = 1; //5 years
     public final int N = 4; //12 months in one year
     public final int T       = m*N ;
-    public final int alpha = 1;
-    public final int beta = 2;
+    public final int[] alpha = new int[]{1,2};
+    public final int[] beta = new int[]{2,2};
 
     //ZHU
     public final int q       = 4 ;
@@ -76,7 +76,7 @@ public class Instance {
             double sum = 0.0;
 
             for (int i = 1; i <= T ; i++) {
-                probs[i] = P_Xweibull(i);
+                probs[i] = P_Xweibull(i, 1);//this is wrong!
                 sum = sum + probs[i];
             }
             System.out.println(sum);
@@ -88,18 +88,20 @@ public class Instance {
     /**
      * Returning the descretised Weibull dist
      * Here, de CDF is F(x)=1-exp((x/alpha)^beta). Then P(X=x)=F(x)-F(x-1)
+     *
      * @param x in P(X=x)
-     * @return P(X=x)
+     * @param k
+     * @return P(X = x)
      */
-    public double P_Xweibull(int x){
+    public double P_Xweibull(int x, int k){
         double P_X;
-        double hi = Math.pow(x / (double) alpha, beta);
+        double hi = Math.pow(x / (double) alpha[k-1], beta[k-1]);
         double F_x = 1.0 - Math.exp(-1*hi);
         if(x==0){
             P_X = F_x;
         }
         else {
-            double hii = Math.pow((x - 1.0) / (double) alpha, beta);
+            double hii = Math.pow((x - 1.0) / (double) alpha[k-1], beta[k-1]);
             double F_x_1 = 1.0 - Math.exp(-1.0 * hii);
             P_X = F_x - F_x_1;
         }
@@ -108,16 +110,18 @@ public class Instance {
 
     /**
      * Gives small p, which is p{i_k}=P(X=i_k|X\geq i_k) = P(X=i_k)/(1-sum_{x=0}^i_k P(X=i)
+     *
      * @param i_k, age of component k
+     * @param k
      * @return p^k{i_k}
      */
-    public double p_i(int i_k){
+    public double p_i(int i_k, int k){
         double sum = 0.0;
         for (int i = 0; i < i_k; i++) {
-            sum = sum + P_Xweibull(i);
+            sum = sum + P_Xweibull(i, k);
         }
         double denominator = 1.0 - sum;
-        double numerator = P_Xweibull(i_k);
+        double numerator = P_Xweibull(i_k, k);
         return numerator/denominator;
     }
 }

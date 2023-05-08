@@ -13,10 +13,7 @@ public class Omega {
     private int[][][] Twir;
     private int n;
     private int q;
-    private int alpha;
-    private int beta;
     public int lenghtOmega;
-    private static double[] probs;
     private static double[] p_w;
     private final Instance i;
     public Omega(Instance instance) {
@@ -24,8 +21,6 @@ public class Omega {
         this.T = i.T;
         this.n = i.n;
         this.q = i.q;
-        this.alpha = i.alpha;
-        this.beta = i.beta;
         this.lenghtOmega = i.lengthOmega;
         this.Twir = new int[lenghtOmega][n][q];
 
