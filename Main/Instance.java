@@ -14,8 +14,8 @@ public class Instance {
     public final int m = 1; //5 years
     public final int N = 12; //12 months in one year
     public final int T       = m*N ;
-    public final int[] alpha = new int[]{12,100}; //alpha is 1 year
-    public final int[] beta = new int[]{2,100};
+    public final int[] alpha = new int[]{12,1}; //alpha is 1 year
+    public final int[] beta = new int[]{2,2};
 
     //ZHU
     public final int q       = 4 ;
@@ -29,7 +29,7 @@ public class Instance {
     public final int[] I1;
     public final int[] I2;
     public final int[] K = new int[]{1,2};
-    public final int M = 6; //we set the maximum age to 3 years
+    public final int M = 13; //we set the maximum age to 3 years
 
     public Instance() {
         cCR_i = setVariateCosts(CR_average);
@@ -42,19 +42,18 @@ public class Instance {
         I0 = setArray(m*N);
         I1 = setArray(M);
         I2 = setArray(M);
-
-        probX_x_k(0, 1);
     }
     /**
      * sets the variate costs of c_p(i0) and c_f(i0) from the equation on page 985 from Schouten article
      * the value delta is the variation in maintenance costs (e.g. high wind difference throughout the year)
+     * January has the highest costs, July the lowest.
      * @param average maintenance costs
      * @return the array with variate costs.
      */
     private double[] setVariateCosts(double average) {
         double[] array = new double[N];
         for (int i = 0; i < N; i++) {
-            array[i] = average + delta * average * Math.cos(2*Math.PI*i*(1.0/N)-(2*Math.PI/N));
+            array[i] = average + delta * average * Math.cos(2*Math.PI*i*(1.0/N));
             System.out.print(array[i]+"\t");
         }
         System.out.println();
