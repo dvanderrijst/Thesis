@@ -32,6 +32,7 @@ public class Omega {
         int size = (int) Math.pow(T+1, n*q);
         int[][] s = new int[size][n*q];
         int V = T+1;
+        int k = 1 ;//This is wrong!! Needs to be adjusted.
 
         for(int i = 0; i<n*q ; i++) {
             int R = (int) Math.pow(T+1, i);
@@ -83,7 +84,7 @@ public class Omega {
         for (int i = 0; i < size; i++) {
             double probability = 1.0;
             for (int j = 0; j < n*q; j++) {
-                probability = probability * this.i.P_Xarrray(s[i][j]);
+                probability = probability * this.i.probX_x_k(s[i][j], k);
             }
             p_w[i] = probability;
             sum = sum + probability;

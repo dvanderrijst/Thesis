@@ -14,7 +14,7 @@ public class Model {
     private final int[] I0;
     private final int[] I1;
     private final int[] I2;
-    private final int[] K = new int[]{1,2};
+    private final int[] K;
     private static IloCplex cplex;
     private final int[] A = new int[]{0,1,2,3};  //there are 4 actions: a={0,1,2,3}
     private static IloNumVar[][][][] x;
@@ -30,11 +30,59 @@ public class Model {
         I0 = i.I0;
         I1 = i.I1;
         I2 = i.I2;
+        K = i.K;
         
         setVariables();
         setObjective();
         setConstraints();
+        cplex.setParam(IloCplex.Param.DetTimeLimit, 600);
         cplex.solve();
+        printSolution();
+    }
+
+    private void printSolution() throws IloException {
+        System.out.println("OBJECTIVE IS " + cplex.getObjValue());
+
+        System.out.print("t\t");
+        for (int i0 : I0) {
+            System.out.print(i0 + "\t");
+        }
+        System.out.println();
+        for (int i0 : I0) {
+            System.out.print(cplex.getValue(y[1][i0]) + "\t");
+        }
+        System.out.println();
+        for (int i0 : I0) {
+            for (int i1 : I1) {
+                if (cplex.getValue(z[1][i0][i1]) == 1.0) {
+                    System.out.println("for i0=" + i0 + " and i1=" + i1 + " we have that z[1][i0][i1] is 1.");
+                }
+            }
+        }
+
+        System.out.println();
+        for (int a : A) {
+            System.out.println("a=" + a);
+            for (int i0 : I0) {
+                System.out.println("i0=" + i0);
+                for (int i1 : I1) {
+                    System.out.println("i1=" + i1);
+                    for (int i2 : I1) {
+                        if (x[i0][i1][i1][a] != null) {
+                            System.out.println(x[i0][i1][i1][a].getType());
+//                            boolean hi = cplex.value
+                            try{
+                                System.out.println(cplex.getValue(x[i0][i1][i2][a]) + "\t");
+                            }
+                            catch (IloCplex.UnknownObjectException e){
+                                System.out.println("not found object");
+                            }
+
+                        }
+                    }
+                }
+            }
+        }
     }
 
     private void setConstraints() throws IloException {
@@ -304,16 +352,16 @@ public class Model {
         }
         else if(a==0){
             if((j1 == (i1 + 1)) & (j2 == (i2 + 1)) & (i1 != 0) & (i1 != M) & (i2 != 0) & (i2 != M)){
-                pi_value = (1.0 - i.p_i(i1, 1))*(1.0-i.p_i(i2, 2));
+                pi_value = (1.0 - i.probCondX_x_k(i1, 1))*(1.0-i.probCondX_x_k(i2, 2));
             }
             else if((j1 == (i1 + 1)) & (j2 == 0) & (i1 != 0) & (i1 != M) & (i2 != 0) & (i2 != M)){
-                pi_value = (1.0 - i.p_i(i1, 1))*i.p_i(i2, 2);
+                pi_value = (1.0 - i.probCondX_x_k(i1, 1))*i.probCondX_x_k(i2, 2);
             }
             else if((j1 == 0) & (j2 == (i2 + 1)) & (i1 != 0) & (i1 != M) & (i2 != 0) & (i2 != M)){
-                pi_value = i.p_i(i1, 1)*(1.0-i.p_i(i2, 2));
+                pi_value = i.probCondX_x_k(i1, 1)*(1.0-i.probCondX_x_k(i2, 2));
             }
             else if((j1 == 0) & (j2 == 0) & (i1 != 0) & (i1 != M) & (i2 != 0) & (i2 != M)){
-                pi_value = i.p_i(i1, 1)*i.p_i(i2, 2);
+                pi_value = i.probCondX_x_k(i1, 1)*i.probCondX_x_k(i2, 2);
             }
             else{
                 pi_value = 0.0;
@@ -321,16 +369,16 @@ public class Model {
         }
         else if(a==1){
             if     ((j1 == 1) & (j2 == (i2 + 1)) & (i2 != 0) & (i2 != M)){
-                pi_value = (1.0 - i.p_i(0, 1))*(1.0-i.p_i(i2, 2));
+                pi_value = (1.0 - i.probCondX_x_k(0, 1))*(1.0-i.probCondX_x_k(i2, 2));
             }
             else if((j1 == 1) & (j2 == 0) & (i2 != 0) & (i2 != M)){
-                pi_value = (1.0 - i.p_i(0, 1))*i.p_i(i2, 2);
+                pi_value = (1.0 - i.probCondX_x_k(0, 1))*i.probCondX_x_k(i2, 2);
             }
             else if((j1 == 0) & (j2 == (i2 + 1)) & (i2 != 0) & (i2 != M)){
-                pi_value = i.p_i(0, 1)*(1.0-i.p_i(i2, 2));
+                pi_value = i.probCondX_x_k(0, 1)*(1.0-i.probCondX_x_k(i2, 2));
             }
             else if((j1 == 0) & (j2 == 0) & (i2 != 0) & (i2 != M)){
-                pi_value = i.p_i(0, 1)*i.p_i(i2, 2);
+                pi_value = i.probCondX_x_k(0, 1)*i.probCondX_x_k(i2, 2);
             }
             else{
                 pi_value = 0.0;
@@ -338,29 +386,29 @@ public class Model {
         }
         else if(a==2) {
             if ((j1 == (i1 + 1)) & (j2 == 1) & (i1 != 0) & (i1 != M)) {
-                pi_value = (1.0 - i.p_i(i1, 1)) * (1.0 - i.p_i(0, 2));
+                pi_value = (1.0 - i.probCondX_x_k(i1, 1)) * (1.0 - i.probCondX_x_k(0, 2));
             } else if ((j1 == (i1 + 1)) & (j2 == 0) & (i1 != 0) & (i1 != M)) {
-                pi_value = (1.0 - i.p_i(i1, 1)) * i.p_i(0, 2);
+                pi_value = (1.0 - i.probCondX_x_k(i1, 1)) * i.probCondX_x_k(0, 2);
             } else if ((j1 == 0) & (j2 == 1) & (i1 != 0) & (i1 != M)) {
-                pi_value = i.p_i(i1, 1) * (1.0 - i.p_i(0, 2));
+                pi_value = i.probCondX_x_k(i1, 1) * (1.0 - i.probCondX_x_k(0, 2));
             } else if ((j1 == 0) & (j2 == 0) & (i1 != 0) & (i1 != M)) {
-                pi_value = i.p_i(i1, 1) * i.p_i(0, 2);
+                pi_value = i.probCondX_x_k(i1, 1) * i.probCondX_x_k(0, 2);
             } else {
                 pi_value = 0.0;
             }
         }
         else if(a==3){
             if((j1 == 1) & (j2 == 1)){
-                pi_value = (1.0 - i.p_i(0, 1))*(1.0-i.p_i(0, 2));
+                pi_value = (1.0 - i.probCondX_x_k(0, 1))*(1.0-i.probCondX_x_k(0, 2));
             }
             else if((j1 == 1) & (j2 == 0) ){
-                pi_value = (1.0 - i.p_i(0, 1))*i.p_i(0, 2);
+                pi_value = (1.0 - i.probCondX_x_k(0, 1))*i.probCondX_x_k(0, 2);
             }
             else if((j1 == 0) & (j2 == 1)){
-                pi_value = i.p_i(0, 1)*(1.0-i.p_i(0, 2));
+                pi_value = i.probCondX_x_k(0, 1)*(1.0-i.probCondX_x_k(0, 2));
             }
             else if((j1 == 0) & (j2 == 0)){
-                pi_value = i.p_i(0, 1)*i.p_i(0, 2);
+                pi_value = i.probCondX_x_k(0, 1)*i.probCondX_x_k(0, 2);
             }
             else{
                 pi_value = 0.0;
