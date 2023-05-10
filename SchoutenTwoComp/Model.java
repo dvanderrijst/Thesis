@@ -62,9 +62,6 @@ public class Model {
             System.out.println(conflictStatus);}
             catch(CpxException e){}
         }
-
-
-
         printSolution();
     }
 
@@ -97,41 +94,64 @@ public class Model {
         }
         System.out.println();
 
-        for (int i0 : I0) {
-            double sumoverA = 0.0;
-            for (int a : A) {
+//        for (int i0 : I0) {
+//            double sumoverA = 0.0;
+//            for (int a : A) {
 //                System.out.println("i0=" + i0+", a=" + a);
-                double sum = 0.0;
-                for (int i1 : I1) {
-                    for (int i2 : I2) {
-                        if (x[i0][i1][i1][a] != null) {
-                            try{
+//                double sum = 0.0;
+//                for (int i1 : I1) {
+//                    for (int i2 : I2) {
+//                        if (x[i0][i1][i1][a] != null) {
+//                            try{
 //                                System.out.printf("%10.3f",cplex.getValue(x[i0][i1][i2][a]));
-                                sum = sum + cplex.getValue(x[i0][i1][i2][a]);
-                            }
-                            catch (IloCplex.UnknownObjectException e){
+//                                sum = sum + cplex.getValue(x[i0][i1][i2][a]);
+//                            }
+//                            catch (IloCplex.UnknownObjectException e){
 //                                System.out.printf("%10.3f", 0.0);
-                            }
-                        }
-                        if(i1 == I1.length - 1 & i2 == I2.length-1){
+//                            }
+//                        }
+//                        if(i1 == I1.length - 1 & i2 == I2.length-1){
 //                            System.out.printf(" sum = %10.3f", sum);
-                        }
-                    }
+//                        }
+//                    }
 //                    System.out.println();
-                }
-                sumoverA = sumoverA + sum;
-                if(a==3){
+//                }
+//                sumoverA = sumoverA + sum;
+//                if(a==3){
 //                    System.out.println("Total sum over a and over i1,i2 is "+sumoverA+"\n\n ");
+//                }
+//            }
+//        }
+
+
+        System.out.println(Arrays.toString(I1));
+        System.out.println(Arrays.toString(I2));
+        for(int a : A ){
+            System.out.println("a="+a);
+            for(int i1 : I1){
+                for(int i2 : I2){
+                    double xprint = 0.0;
+                    for(int i0 : I0){
+                        xprint = xprint + cplex.getValue(x[i0][i1][i2][a]);
+                    }
+                    if(Math.round(xprint*1000) > 0.0) {
+                        System.out.printf("%10.3f", xprint);
+                    }
+                    else{
+                        System.out.printf("%10.0f", xprint);
+                    }
                 }
+                System.out.println();
             }
         }
+
         double sum = 0.0;
         for(int i0 : I0){
             for(int i1 : I1){
                 for(int i2 : I2){
                     int[] actions = A(i0,i1,i2);
                     for(int a : actions){
-                        if(a==3 & Math.round(cplex.getValue(x[i0][i1][i2][a])*1000)/1000.0>0.00) {
+                        if(Math.round(cplex.getValue(x[i0][i1][i2][a])*1000)/1000.0>0.00) {
                             sum = sum + cplex.getValue(x[i0][i1][i2][a]);
                             System.out.print("i0=" + i0 + ", i1=" + i1 + ", i2=" + i2);
                             System.out.println(", a=" + a + " and x*c = " + Math.round(cplex.getValue(x[i0][i1][i2][a]) * 1000) / 1000.0 + " * " + c(i0, i1, i2, a));
@@ -141,6 +161,8 @@ public class Model {
             }
         }
         System.out.println("the sum is "+sum);
+
+
 
 
         System.out.println("OBJECTIVE IS " + cplex.getObjValue());
@@ -153,7 +175,8 @@ public class Model {
         System.out.println("set constraint 9c");
         setConstraint9c();
         System.out.println("set constraints 9d,9e,9f,9g");
-        setConstraint9defg();
+        setConstraint9defgNEW();
+//        setConstraint0defgSchouten();
         System.out.println("set constraints 9h, 9i");
         setConstraint9hi();
         System.out.println("set constraints 9j, 9k");
@@ -177,6 +200,7 @@ public class Model {
                         IloNumExpr prod = cplex.prod(x[i0][i1][i2][a],c(i0,i1,i2,a));
                         sum = cplex.sum(sum,prod);
                     }
+
                 }
             }
         }
@@ -382,6 +406,7 @@ public class Model {
      */
     private double c(int i0, int i1, int i2, int a){
         double c = 0.0;
+        i0 = i0%N;
         if (a==0){
             if(i2 == 0 || i1 == 0){
                 System.out.println("this can not be possible");
@@ -472,7 +497,7 @@ public class Model {
                 }
             }
             double fraction = 1.0/(m*N);
-            constraints.add(cplex.addEq(sum, fraction, "9c"));
+            constraints.add(cplex.addEq(sum, fraction, "9c,"+i0));
         }
     }
     private void setConstraint9defg() throws IloException{
@@ -489,12 +514,12 @@ public class Model {
                         if(k==1){
                             if(i1!=0 & i1!=M & i2!=0 & i2!=M){sum9d = cplex.sum( x[i0][i1][i2][0], z[k][i0][i1]);}
                             if(i1!=0 & i1!=M){dif9e = cplex.diff(x[i0][i1][i2][k], z[k][i0][i1]);}
-                            if(i2!=0 & i2!=M){sum9f = cplex.sum( x[i0][i1][i2][k], z[3-k][i0][i2]);}
+//                            if(i2!=0 & i2!=M){sum9f = cplex.sum( x[i0][i1][i2][k], z[3-k][i0][i2]);}
                             dif9g = cplex.diff(x[i0][i1][i2][3], z[k][i0][i1]);
                         } else if (k==2) {
                             if(i1!=0 & i1!=M & i2!=0 & i2!=M){sum9d = cplex.sum( x[i0][i1][i2][0], z[k][i0][i2]);}
                             if(i2!=0 & i2!=M){dif9e = cplex.diff(x[i0][i1][i2][k], z[k][i0][i2]);}
-                            if(i1!=0 & i1!=M){sum9f = cplex.sum( x[i0][i1][i2][k], z[3-k][i0][i1]);}
+//                            if(i1!=0 & i1!=M){sum9f = cplex.sum( x[i0][i1][i2][k], z[3-k][i0][i1]);}
                             dif9g = cplex.diff(x[i0][i1][i2][3], z[k][i0][i2]);
                         }
                         else{
@@ -519,6 +544,28 @@ public class Model {
             }
         }
     }
+    private void setConstraint9defgNEW() throws IloException{
+        for (int i0 : I0) {
+            for (int i1 : I1) {
+                for (int i2 : I2) {
+                    int k = 1;
+                    cplex.addLe(cplex.diff(x[i0][i1][i2][1],  z[k][i0][i1]), 0.0,"9d"+i0+","+i1+","+i2+","+k+"a=1");
+                    cplex.addLe(cplex.diff(x[i0][i1][i2][3],  z[k][i0][i1]), 0.0,"9d"+i0+","+i1+","+i2+","+k+"a=3");
+
+                    cplex.addLe(cplex.sum(x[i0][i1][i2][0],   z[k][i0][i1]), 1.0,"9e"+i0+","+i1+","+i2+","+k+"a=0");
+                    cplex.addLe(cplex.sum(x[i0][i1][i2][2],   z[k][i0][i1]), 1.0,"9e"+i0+","+i1+","+i2+","+k+"a=2");
+
+                    k = 2;
+                    cplex.addLe(cplex.diff(x[i0][i1][i2][2],  z[k][i0][i2]), 0.0,"9d"+i0+","+i1+","+i2+","+k+"a=2");
+                    cplex.addLe(cplex.diff(x[i0][i1][i2][3],  z[k][i0][i2]), 0.0,"9d"+i0+","+i1+","+i2+","+k+"a=3");
+
+                    cplex.addLe(cplex.sum(x[i0][i1][i2][0],   z[k][i0][i2]), 1.0,"9e"+i0+","+i1+","+i2+","+k+"a=0");
+                    cplex.addLe(cplex.sum(x[i0][i1][i2][1],   z[k][i0][i2]), 1.0,"9e"+i0+","+i1+","+i2+","+k+"a=1");
+                }
+            }
+        }
+    }
+
     private void setConstraint9hi() throws IloException{
         for (int i0 : I0){
             for (int j0: I0 ) {

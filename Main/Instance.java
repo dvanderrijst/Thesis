@@ -7,15 +7,15 @@ public class Instance {
     //ZHU and SCHOUTEN
     public final double[] cPR_i;
     public final double[] cCR_i;
-    public final double CR_average = 50;
+    public final double CR_average = 15;
     public final double PR_average = 10;
-    public final double delta = 0.5;
+    public final double delta = 0.0;
     public final int d       = 0 ;
     public final int m = 1; //5 years
     public final int N = 12; //12 months in one year
     public final int T       = m*N ;
-    public final int[] alpha = new int[]{12,1}; //alpha is 1 year
-    public final int[] beta = new int[]{2,2};
+    public final int[] alpha = new int[]{12,100}; //alpha is 1 year
+    public final int[] beta = new int[]{2,100};
 
     //ZHU
     public final int q       = 4 ;
@@ -29,8 +29,7 @@ public class Instance {
     public final int[] I1;
     public final int[] I2;
     public final int[] K = new int[]{1,2};
-    public final int M = 13; //we set the maximum age to 3 years
-
+    public final int M = 18;                //we set the maximum age to 3 years
     public Instance() {
         cCR_i = setVariateCosts(CR_average);
         cPR_i = setVariateCosts(PR_average);
@@ -89,8 +88,13 @@ public class Instance {
                 for (int i = 0; i < Math.max(T,M); i++) {
                     probs[kk][i] = pXweibull(i, kk);
                     sum = sum + probs[kk][i];
+                    if(kk==1){
+                        System.out.println("t="+i+"\t p2_i="+probs[kk][i]);
+                    }
+
                 }
                 probs[kk][Math.max(T,M)] = 1.0 - sum;
+
             }
         }
 
