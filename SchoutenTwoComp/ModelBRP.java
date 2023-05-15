@@ -6,7 +6,10 @@ import ilog.concert.IloNumExpr;
 import ilog.concert.IloNumVar;
 import ilog.cplex.IloCplex;
 
-public abstract class ModelBRP {
+import java.util.Arrays;
+import java.util.stream.IntStream;
+
+public class ModelBRP {
     public final Instance i;
     public final int M;
     public final int m;
@@ -34,8 +37,9 @@ public abstract class ModelBRP {
         printSolution();
     }
 
-    private void printSolution() throws IloException {
+    public void printSolution() throws IloException {
         cplex.exportModel("model1CompBRP.lp");
+        cplex.setOut(null);
         cplex.solve();
         double averageCosts = cplex.getObjValue();
         System.out.println("Yearly costs are " + averageCosts*N);
@@ -44,6 +48,54 @@ public abstract class ModelBRP {
             System.out.printf("%10.0f", cplex.getValue(y[i0]));
         }
 
+        printX();
+    }
+
+    public void printX() throws IloException {
+        System.out.println("\n for a=0: ");
+        for(int i1 : I1) {
+            for (int i0 : I0) {
+                double xval = 0.0;
+                int[] actions = A(i0,i1);
+                boolean found = IntStream.of(actions).anyMatch(n -> n == 0);
+                if(found){
+                    xval=cplex.getValue(x[i0][i1][0]);
+                }
+                System.out.printf("%10.5f", xval);
+            }
+            System.out.println();
+        }
+        System.out.println("\n for a=1: ");
+        for(int i1 : I1) {
+            for (int i0 : I0) {
+                double xval = 0.0;
+                int[] actions = A(i0,i1);
+                boolean found = IntStream.of(actions).anyMatch(n -> n == 1);
+                if(found){
+                    xval=cplex.getValue(x[i0][i1][1]);
+                }
+                System.out.printf("%10.5f", xval);
+            }
+            System.out.println();
+        }
+
+        System.out.println("\n actions grid - rows are age, columns time.");
+        for(int i1 : I1) {
+            for (int i0 : I0) {
+                int[] actions = A(i0,i1);
+                boolean notPrinted = true;
+                for(int a : actions){
+                    if(cplex.getValue(x[i0][i1][a])>0.0){
+                        System.out.printf("%10s", a);
+                        notPrinted = false;
+                    }
+                }
+                if(notPrinted){
+                    System.out.printf("%10s", "-");
+                }
+            }
+            System.out.println();
+        }
     }
 
     public void setConstraints() throws IloException {
@@ -93,7 +145,7 @@ public abstract class ModelBRP {
         }
     }
 
-    private int[] A(int i0, int i1){
+    public int[] A(int i0, int i1){
         int[] actions;
         if(i1 == 0 || i1 == M ){
             actions = new int[]{1};
@@ -209,4 +261,5 @@ public abstract class ModelBRP {
             }
         }
     }
+
 }
