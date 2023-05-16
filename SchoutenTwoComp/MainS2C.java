@@ -8,7 +8,8 @@ public class MainS2C {
 
         Instance instance = new Instance();
 //        ModelBRP model1 = new ModelBRP(instance);
-        ModelMBRP model2 = new ModelMBRP(instance);
+//        ModelMBRP model2 = new ModelMBRP(instance);
+        Model model = new Model(instance);
     }
 
 }

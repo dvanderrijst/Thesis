@@ -85,7 +85,7 @@ public class ModelBRP {
                 int[] actions = A(i0,i1);
                 boolean notPrinted = true;
                 for(int a : actions){
-                    if(cplex.getValue(x[i0][i1][a])>0.0){
+                    if(cplex.getValue(x[i0][i1][a])>0.00000000){
                         System.out.printf("%10s", a);
                         notPrinted = false;
                     }
