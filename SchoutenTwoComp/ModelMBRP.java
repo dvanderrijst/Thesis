@@ -34,13 +34,13 @@ public class ModelMBRP extends ModelBRP{
 
         //add manual constraint
 //        cplex.addEq(t[0],5);
-        cplex.addEq(t[1],5);
-        cplex.addEq(t[2],5);
-        cplex.addEq(t[3],5);
-        cplex.addEq(t[4],5);
-        cplex.addEq(t[5],5);
-        cplex.addEq(t[6],5);
-        cplex.addEq(t[7],5);
+//        cplex.addEq(t[1],5);
+//        cplex.addEq(t[2],5);
+//        cplex.addEq(t[3],5);
+//        cplex.addEq(t[4],5);
+//        cplex.addEq(t[5],5);
+//        cplex.addEq(t[6],5);
+//        cplex.addEq(t[7],5);
 
 
         constraintCremers();
