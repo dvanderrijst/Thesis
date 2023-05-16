@@ -9,12 +9,12 @@ public class Instance {
     public final double[] cCR_i;
     public final double CR_average = 50;
     public final double PR_average = 10;
-    public final double delta = 0.5;
+    public final double delta = 0.2;
     public final int d       = 0 ;
-    public final int m = 1; //5 years
+    public final int m = 3; //5 years
     public final int N = 12; //12 months in one year
     public final int T       = m*N ;
-    public final int[] alpha = new int[]{12,100}; //alpha is 1 year
+    public final int[] alpha = new int[]{36,100}; //alpha is 1 year
     public final int[] beta = new int[]{2,100};
 
     //ZHU

@@ -30,18 +30,7 @@ public class ModelMBRP extends ModelBRP{
 
         constraint12de();
         constraint12fg();
-        constraint12hi(); //without it also seems to be working properly?
-
-        //add manual constraint
-//        cplex.addEq(t[0],5);
-//        cplex.addEq(t[1],5);
-//        cplex.addEq(t[2],5);
-//        cplex.addEq(t[3],5);
-//        cplex.addEq(t[4],5);
-//        cplex.addEq(t[5],5);
-//        cplex.addEq(t[6],5);
-//        cplex.addEq(t[7],5);
-
+        constraint12hi();
 
         constraintCremers();
     }
@@ -49,12 +38,10 @@ public class ModelMBRP extends ModelBRP{
     private void constraintCremers() throws IloException {
         for(int i0 : I0){
             for(int i1 : I1){
-                if(i0 != 0 & i0 != M){
                 cplex.addLe(cplex.sum(x[i0][i1][0], z[i0][i1]), 1.0);
-
+                if(i1 != 0 & i1 != M){
                     cplex.addLe(cplex.diff(x[i0][i1][1], z[i0][i1]), 0.0);
                 }
-//                cplex.addLe(cplex.diff(x[i0][i1][1], z[i0][i1]), 0.0);
             }
         }
     }
@@ -99,8 +86,8 @@ public class ModelMBRP extends ModelBRP{
         for(int i0 : I0){
             for(int j0 : I0){
                 if(j0<i0){
-                    cplex.addLe(cplex.sum(t[i0],cplex.prod(j0,y[j0]),cplex.prod(m*N,y[i0])),m*N + i0);
-                };
+                    cplex.addLe(cplex.sum(t[i0],cplex.prod(j0,y[j0]),cplex.prod(m*N,y[j0])),m*N + i0);
+                }
             }
         }
         for(int i0 : I0){
@@ -118,7 +105,7 @@ public class ModelMBRP extends ModelBRP{
                 cplex.addLe(cplex.diff(z[i0][i1],y[i0]),0.0, "12d("+i0+","+i1+")");
 
                 for(int j1 : I1){
-                    if(i1 < j1 & i1!=0){
+                    if(i1 < j1){
                         cplex.addLe(cplex.diff(z[i0][i1], z[i0][j1]), 0.0, "12e("+i0+","+i1+","+j1+")");
                     }
                 }
