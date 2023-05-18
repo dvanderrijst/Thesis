@@ -1,7 +1,10 @@
 package SchoutenTwoComp;
 
 import Main.Instance;
+import ilog.concert.IloConstraint;
 import ilog.concert.IloException;
+
+import static SchoutenTwoComp.ModelMBRP_2comp.constraints;
 
 public class ModelARP extends ModelBRP {
     public ModelARP(Instance i) throws IloException {

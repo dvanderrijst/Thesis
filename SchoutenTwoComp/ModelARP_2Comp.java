@@ -1,7 +1,9 @@
 package SchoutenTwoComp;
 
 import Main.Instance;
+import ilog.concert.IloConstraint;
 import ilog.concert.IloException;
+import ilog.cplex.IloCplex;
 
 public class ModelARP_2Comp extends ModelMBRP_2comp{
     public ModelARP_2Comp(Instance i) throws IloException {
@@ -25,6 +27,13 @@ public class ModelARP_2Comp extends ModelMBRP_2comp{
             }
         }
         System.out.println("Yearly cost for only the first component are "+sum*N);
+
+        for (IloConstraint cons : constraints) {
+            IloCplex.BasisStatus status = cplex.getBasisStatus(cons);
+            if(status == IloCplex.BasisStatus.Basic) {
+                System.out.println("constraint " + cons.getName() + " has basic status of " + cplex.getBasisStatus(cons));
+            }
+        }
 
         printActionGridComp1();
     }

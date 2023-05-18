@@ -1,7 +1,9 @@
 package SchoutenTwoComp;
 
 import Main.Instance;
+import ilog.concert.IloConstraint;
 import ilog.concert.IloException;
+import ilog.cplex.IloCplex;
 
 public class ModelBRP_2Comp extends ModelMBRP_2comp{
     public ModelBRP_2Comp(Instance i) throws IloException {
@@ -26,6 +28,7 @@ public class ModelBRP_2Comp extends ModelMBRP_2comp{
         }
         System.out.println("Yearly cost for only the first component are "+sum*N);
 
+
         printActionGridComp1();
     }
 
@@ -42,18 +45,17 @@ public class ModelBRP_2Comp extends ModelMBRP_2comp{
                 for (int i1 : I1) {
                     for (int i2 : I2) {
                         if (i1 != 0 & i2 != 0 & i1!=M-1 & i2!=M-1) {
-                            cplex.addLe(cplex.diff(x[i0][i1][i2][1], y[1][i0]), 0.0, "10d," + i0 + "," + i1);
-                            cplex.addLe(cplex.diff(x[i0][i1][i2][2], y[2][i0]), 0.0, "10d," + i0 + "," + i1);
+                        constraints.add(cplex.addLe(cplex.diff(x[i0][i1][i2][1], y[1][i0]), 0.0, "10d," + i0 + "," + i1));
+                        constraints.add(cplex.addLe(cplex.diff(x[i0][i1][i2][2], y[2][i0]), 0.0, "10d," + i0 + "," + i1));
 
-                            cplex.addLe(cplex.diff(x[i0][i1][i2][3], y[1][i0]), 0.0, "10d," + i0 + "," + i1);
-                            cplex.addLe(cplex.diff(x[i0][i1][i2][3], y[2][i0]), 0.0, "10d," + i0 + "," + i1);
+                        constraints.add(cplex.addLe(cplex.diff(x[i0][i1][i2][3], y[1][i0]), 0.0, "10d," + i0 + "," + i1));
+                        constraints.add(cplex.addLe(cplex.diff(x[i0][i1][i2][3], y[2][i0]), 0.0, "10d," + i0 + "," + i1));
                         }
+                        constraints.add(cplex.addLe(cplex.sum(x[i0][i1][i2][0], y[1][i0]), 1.0, "10c1," + i0 + "," + i1));
+                        constraints.add(cplex.addLe(cplex.sum(x[i0][i1][i2][0], y[2][i0]), 1.0, "10c2," + i0 + "," + i1));
 
-                        cplex.addLe(cplex.sum(x[i0][i1][i2][0], y[1][i0]), 1.0, "10c1," + i0 + "," + i1);
-                        cplex.addLe(cplex.sum(x[i0][i1][i2][0], y[2][i0]), 1.0, "10c2," + i0 + "," + i1);
-
-                        cplex.addLe(cplex.sum(x[i0][i1][i2][1], y[2][i0]), 1.0, "9f" + i0 + "," + i1 + "," + i2 + ",k=" + 1 + "a=1");
-                        cplex.addLe(cplex.sum(x[i0][i1][i2][2], y[1][i0]), 1.0, "9f" + i0 + "," + i1 + "," + i2 + ",k=" + 2 + "a=1");
+                        constraints.add(cplex.addLe(cplex.sum(x[i0][i1][i2][1], y[2][i0]), 1.0, "9f" + i0 + "," + i1 + "," + i2 + ",k=" + 1 + "a=1"));
+                        constraints.add(cplex.addLe(cplex.sum(x[i0][i1][i2][2], y[1][i0]), 1.0, "9f" + i0 + "," + i1 + "," + i2 + ",k=" + 2 + "a=1"));
                     }
                 }
             }

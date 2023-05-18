@@ -1,15 +1,14 @@
 package SchoutenTwoComp;
 
 import Main.Instance;
-import ilog.concert.IloConstraint;
-import ilog.concert.IloException;
-import ilog.concert.IloNumExpr;
-import ilog.concert.IloNumVar;
+import ilog.concert.*;
 import ilog.cplex.CpxException;
 import ilog.cplex.IloCplex;
-
+import ilog.cplex.IloCplex.ConflictStatus;
 import java.util.ArrayList;
 import java.util.List;
+
+import static ilog.cplex.IloCplex.BasisStatus.Basic;
 
 public class ModelMBRP_2comp {
     public final Instance i;
@@ -21,7 +20,7 @@ public class ModelMBRP_2comp {
     public final int[] I2;
     public final int[] K;
     public static IloCplex cplex;
-    public static List<IloConstraint> constraints = new ArrayList<>();
+    public static List<IloRange> constraints = new ArrayList<>();
     public final int[] A = new int[]{0, 1, 2, 3};  //there are 4 actions: a={0,1,2,3}
     public static IloNumVar[][][][] x;
     public static IloNumVar[][] y;
@@ -46,25 +45,11 @@ public class ModelMBRP_2comp {
         cplex.exportModel("model.lp");
 //        cplex.setOut(null);
         cplex.solve();
-
-        IloConstraint[] constrs = new IloConstraint[constraints.size()];
-        double[] doubless = new double[constraints.size()];
-        int count = 0;
-        for (IloConstraint cons : constraints) {
-            constrs[count] = cons;
-            doubless[count] = count;
-        }
-        for (IloConstraint con : constrs) {
-            try {
-                IloCplex.ConflictStatus conflictStatus = cplex.getConflict(con);
-                System.out.println(conflictStatus);
-            } catch (CpxException e) {
-            }
-        }
         printSolution();
     }
 
     public void printSolution() throws IloException {
+
         double averageCosts = cplex.getObjValue();
         System.out.println("Yearly costs are " + averageCosts * N);
 
@@ -103,10 +88,10 @@ public class ModelMBRP_2comp {
                     }
                 }
                 if (!notPrinted) {
-                    System.out.printf("%10s", list.get(0));
+                    System.out.printf("%8s", list.get(0));
                 }
                 if (notPrinted) {
-                    System.out.printf("%10s", "-");
+                    System.out.printf("%8s", "-");
                 }
 
             }
@@ -277,11 +262,11 @@ public class ModelMBRP_2comp {
      */
     public int[] A(int i0, int i1, int i2) {
         int[] A;
-        if ((i1 == 0 || i1 == M-1) & (i2 == 0 || i2 == M-1)) {
+        if ((i1 == 0 || i1 == M-1) && (i2 == 0 || i2 == M-1)) {
             A = new int[]{3};
-        } else if ((i1 == 0 || i1 == M-1) & (i2 != 0 & i2 != M-1)) {
+        } else if ((i1 == 0 || i1 == M-1) && (i2 != 0 & i2 != M-1)) {
             A = new int[]{1, 3};
-        } else if ((i2 == 0 || i2 == M-1) & (i1 != 0 & i1 != M-1)) {
+        } else if ((i2 == 0 || i2 == M-1) && (i1 != 0 & i1 != M-1)) {
             A = new int[]{2, 3};
         } else {
             A = new int[]{0, 1, 2, 3};
@@ -495,7 +480,7 @@ public class ModelMBRP_2comp {
                             }
                         }
                     }
-                    constraints.add(cplex.addEq(cplex.diff(sum1, sum2), 0.0, "9b," + i0 + "," + i1 + "," + i2));
+                    cplex.addEq(cplex.diff(sum1, sum2), 0.0, "9b," + i0 + "," + i1 + "," + i2);
                 }
             }
         }
@@ -513,7 +498,7 @@ public class ModelMBRP_2comp {
                 }
             }
             double fraction = 1.0 / (m * N);
-            constraints.add(cplex.addEq(sum, fraction, "9c," + i0));
+            cplex.addEq(sum, fraction, "9c," + i0);
         }
     }
 
@@ -522,21 +507,19 @@ public class ModelMBRP_2comp {
             for (int i1 : I1) {
                 for (int i2 : I2) {
                     //constraint 9d
-                    if (i1 != 0 & i1 != M-1) {
-                        cplex.addLe(cplex.diff(x[i0][i1][i2][1], z[1][i0][i1]), 0.0, "9e" + i0 + "," + i1 + "," + i2 + ",k=" + 1 + "a=1");
-                        cplex.addLe(cplex.diff(x[i0][i1][i2][3], z[1][i0][i1]), 0.0, "9g" + i0 + "," + i1 + "," + i2 + ",k=" + 1 + "a=3");
-//                        cplex.addLe(cplex.sum(x[i0][i1][i2][1], z[2][i0][i2]), 1.0, "9f" + i0 + "," + i1 + "," + i2 + ",k=" + 1 + "a=1");
+                    if (i1 != 0 && i1 != M - 1) {
+                        constraints.add(cplex.addLe(cplex.diff(x[i0][i1][i2][1], z[1][i0][i1]), 0.0, "9e" + i0 + "," + i1 + "," + i2 + ",k=" + 1 + "a=1"));
+                        constraints.add(cplex.addLe(cplex.diff(x[i0][i1][i2][3], z[1][i0][i1]), 0.0, "9g" + i0 + "," + i1 + "," + i2 + ",k=" + 1 + "a=3"));
                     }
-                    if (i2 != 0 & i2 != M-1) {
-                        cplex.addLe(cplex.diff(x[i0][i1][i2][2], z[2][i0][i2]), 0.0, "9e" + i0 + "," + i1 + "," + i2 + ",k=" + 2 + "a=1");
-                        cplex.addLe(cplex.diff(x[i0][i1][i2][3], z[2][i0][i2]), 0.0, "9g" + i0 + "," + i1 + "," + i2 + ",k=" + 2 + "a=3");
-//                        cplex.addLe(cplex.sum(x[i0][i1][i2][2], z[1][i0][i1]), 1.0, "9f" + i0 + "," + i1 + "," + i2 + ",k=" + 2 + "a=1");
+                    if (i2 != 0 && i2 != M - 1) {
+                        constraints.add(cplex.addLe(cplex.diff(x[i0][i1][i2][2], z[2][i0][i2]), 0.0, "9e" + i0 + "," + i1 + "," + i2 + ",k=" + 2 + "a=1"));
+                        constraints.add(cplex.addLe(cplex.diff(x[i0][i1][i2][3], z[2][i0][i2]), 0.0, "9g" + i0 + "," + i1 + "," + i2 + ",k=" + 2 + "a=3"));
                     }
-                    cplex.addLe(cplex.sum(x[i0][i1][i2][0], z[1][i0][i1]), 1.0, "9d" + i0 + "," + i1 + "," + i2 + ",k=" + 1 + "a=0");
-                    cplex.addLe(cplex.sum(x[i0][i1][i2][0], z[2][i0][i1]), 1.0, "9d" + i0 + "," + i1 + "," + i2 + ",k=" + 2 + "a=0");
+                    constraints.add(cplex.addLe(cplex.sum(x[i0][i1][i2][0], z[1][i0][i1]), 1.0, "9d" + i0 + "," + i1 + "," + i2 + ",k=" + 1 + "a=0"));
+                    constraints.add(cplex.addLe(cplex.sum(x[i0][i1][i2][0], z[2][i0][i1]), 1.0, "9d" + i0 + "," + i1 + "," + i2 + ",k=" + 2 + "a=0"));
 
-                    cplex.addLe(cplex.sum(x[i0][i1][i2][1], z[2][i0][i2]), 1.0, "9f" + i0 + "," + i1 + "," + i2 + ",k=" + 1 + "a=1");
-                    cplex.addLe(cplex.sum(x[i0][i1][i2][2], z[1][i0][i1]), 1.0, "9f" + i0 + "," + i1 + "," + i2 + ",k=" + 2 + "a=1");
+                    constraints.add(cplex.addLe(cplex.sum(x[i0][i1][i2][1], z[2][i0][i2]), 1.0, "9f" + i0 + "," + i1 + "," + i2 + ",k=" + 1 + "a=1"));
+                    constraints.add(cplex.addLe(cplex.sum(x[i0][i1][i2][2], z[1][i0][i1]), 1.0, "9f" + i0 + "," + i1 + "," + i2 + ",k=" + 2 + "a=1"));
                 }
             }
         }
@@ -575,8 +558,8 @@ public class ModelMBRP_2comp {
         for(int k : K) {
             for (int i0 : I0) {
                 for (int ik : I1) {
-                    constraints.add(cplex.addLe(cplex.sum(cplex.prod(M, y[k][i0]), cplex.prod(-1.0 * M, z[k][i0][ik]), cplex.prod(-1.0, t[k][i0])), M - ik, "9l_1"));
-                    constraints.add(cplex.addLe(cplex.sum(cplex.prod(M,z[k][i0][ik]),t[k][i0]),M+ik));
+                    constraints.add(cplex.addLe(cplex.sum(cplex.prod(M, y[k][i0]), cplex.prod(-1.0 * M, z[k][i0][ik]), cplex.prod(-1.0, t[k][i0])), M - 1 - ik, "9l_1"));
+                    constraints.add(cplex.addLe(cplex.sum(cplex.prod(M, z[k][i0][ik]),t[k][i0]),M+ik));
                 }
             }
         }
