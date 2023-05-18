@@ -80,7 +80,7 @@ public class ModelMBRP_2comp {
             }
         }
         System.out.println("Yearly cost for only the first component are " + sum * N);
-        printX();
+//        printX();
         printYTZ();
         printActionGridComp1();
 
@@ -279,11 +279,11 @@ public class ModelMBRP_2comp {
      */
     public int[] A(int i0, int i1, int i2) {
         int[] A;
-        if ((i1 == 0 || i1 == M) & (i2 == 0 || i2 == M)) {
+        if ((i1 == 0 || i1 == M-1) & (i2 == 0 || i2 == M-1)) {
             A = new int[]{3};
-        } else if ((i1 == 0 || i1 == M) & (i2 != 0 & i2 != M)) {
+        } else if ((i1 == 0 || i1 == M-1) & (i2 != 0 & i2 != M-1)) {
             A = new int[]{1, 3};
-        } else if ((i2 == 0 || i2 == M) & (i1 != 0 & i1 != M)) {
+        } else if ((i2 == 0 || i2 == M-1) & (i1 != 0 & i1 != M-1)) {
             A = new int[]{2, 3};
         } else {
             A = new int[]{0, 1, 2, 3};
@@ -399,7 +399,7 @@ public class ModelMBRP_2comp {
         double c = 0.0;
         i0 = i0 % N;
         if (a == 0) {
-            if (i2 == 0 || i1 == 0) {
+            if (i2 == 0 || i1 == 0 || i1==M-1 || i2==M-1) {
                 System.out.println("this can not be possible");
                 System.exit(1);
             }
@@ -523,11 +523,11 @@ public class ModelMBRP_2comp {
             for (int i1 : I1) {
                 for (int i2 : I2) {
                     //constraint 9d
-                    if (i1 != 0) {
+                    if (i1 != 0 & i1 != M-1) {
                         cplex.addLe(cplex.diff(x[i0][i1][i2][1], z[1][i0][i1]), 0.0, "9e" + i0 + "," + i1 + "," + i2 + ",k=" + 1 + "a=1");
                         cplex.addLe(cplex.diff(x[i0][i1][i2][3], z[1][i0][i1]), 0.0, "9g" + i0 + "," + i1 + "," + i2 + ",k=" + 1 + "a=3");
                     }
-                    if (i2 != 0) {
+                    if (i2 != 0 & i2 != M-1) {
                         cplex.addLe(cplex.diff(x[i0][i1][i2][2], z[2][i0][i2]), 0.0, "9e" + i0 + "," + i1 + "," + i2 + ",k=" + 2 + "a=1");
                         cplex.addLe(cplex.diff(x[i0][i1][i2][3], z[2][i0][i2]), 0.0, "9g" + i0 + "," + i1 + "," + i2 + ",k=" + 2 + "a=3");
                     }

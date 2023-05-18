@@ -8,8 +8,8 @@ public class S2CInstance {
     public final int[] I2;
     public final double[] cPR_i;
     public final double[] cCR_i;
-    public final double CR_average = 6;
-    public final double PR_average = 2;
+    public final double CR_average = 50;
+    public final double PR_average = 10;
     public final double CR_delta = 0.3;
     public final double PR_delta = 0.3;
     public final int M = 36; //we set the maximum age to 3 years.

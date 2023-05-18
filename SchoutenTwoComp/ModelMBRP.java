@@ -39,7 +39,7 @@ public class ModelMBRP extends ModelBRP{
         for(int i0 : I0){
             for(int i1 : I1){
                 cplex.addLe(cplex.sum(x[i0][i1][0], z[i0][i1]), 1.0);
-                if(i1 != 0 & i1 !=M){
+                if(i1 != 0 & i1 !=M-1){
                     cplex.addLe(cplex.diff(x[i0][i1][1], z[i0][i1]), 0.0);
                 }
             }

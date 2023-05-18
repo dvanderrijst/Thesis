@@ -12,9 +12,9 @@ public class Instance {
     public final double delta = 0.0;
     public final int d       = 0 ;
     public final int m = 1; //5 years
-    public final int N = 1; //12 months in one year
+    public final int N = 6; //12 months in one year
     public final int T       = m*N ;
-    public final int[] alpha = new int[]{12,200}; //alpha is 1 year
+    public final int[] alpha = new int[]{8,200}; //alpha is 1 year
     public final int[] beta = new int[]{2,100};
 
     //ZHU
@@ -29,7 +29,7 @@ public class Instance {
     public final int[] I1;
     public final int[] I2;
     public final int[] K = new int[]{1,2};
-    public final int M = 4*m*N;                //we set the maximum age to 3 years
+    public final int M = m*N;                //we set the maximum age to 3 years
     public Instance() {
         cCR_i = setVariateCosts(CR_average);
         cPR_i = setVariateCosts(PR_average);

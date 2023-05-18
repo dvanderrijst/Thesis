@@ -34,7 +34,20 @@ public class ModelBRP {
         setVariables();
         setObjective();
         setConstraints();
+
+//        addedConstraint_setXtozero();
+
         printSolution();
+    }
+
+    private void addedConstraint_setXtozero() throws IloException {
+        for(int i0 : I0){
+            for(int i1 : I1){
+                if(i1 != 0 & i1!=M-1){
+                    cplex.addEq(x[i0][i1][1],0);
+                }
+            }
+        }
     }
 
     public void printSolution() throws IloException {
@@ -146,7 +159,7 @@ public class ModelBRP {
 
     public int[] A(int i0, int i1){
         int[] actions;
-        if(i1 == 0 || i1 == M ){
+        if(i1 == 0 || i1 == M-1 ){
             actions = new int[]{1};
         }
         else{
@@ -218,7 +231,7 @@ public class ModelBRP {
         //10c & 10d
         for(int i0 : I0){
             for(int i1 : I1){
-                if(i1!=0){
+                if(i1!=0 & i1!=M-1){
                     cplex.addLe(cplex.sum( x[i0][i1][0],y[i0]), 1.0,"10c,"+i0+","+i1);
 
                     cplex.addLe(cplex.diff(x[i0][i1][1],y[i0]), 0.0,"10d,"+i0+","+i1);
@@ -230,8 +243,6 @@ public class ModelBRP {
         //10b
         for (int i0 : I0) {
             for (int i1 : I1) {
-
-
 
                 IloNumExpr sum1 = cplex.constant(0.0);
                 int[] actions = A(i0, i1);
