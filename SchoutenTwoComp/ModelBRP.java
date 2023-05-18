@@ -39,7 +39,7 @@ public class ModelBRP {
 
     public void printSolution() throws IloException {
         cplex.exportModel("model1CompBRP.lp");
-        cplex.setOut(null);
+//        cplex.setOut(null);
         cplex.solve();
         double averageCosts = cplex.getObjValue();
         System.out.println("Yearly costs are " + averageCosts*N);
@@ -52,33 +52,32 @@ public class ModelBRP {
     }
 
     public void printX() throws IloException {
-        System.out.println("\n for a=0: ");
-        for(int i1 : I1) {
-            for (int i0 : I0) {
-                double xval = 0.0;
-                int[] actions = A(i0,i1);
-                boolean found = IntStream.of(actions).anyMatch(n -> n == 0);
-                if(found){
-                    xval=cplex.getValue(x[i0][i1][0]);
-                }
-                System.out.printf("%10.5f", xval);
-            }
-            System.out.println();
-        }
-        System.out.println("\n for a=1: ");
-        for(int i1 : I1) {
-            for (int i0 : I0) {
-                double xval = 0.0;
-                int[] actions = A(i0,i1);
-                boolean found = IntStream.of(actions).anyMatch(n -> n == 1);
-                if(found){
-                    xval=cplex.getValue(x[i0][i1][1]);
-                }
-                System.out.printf("%10.5f", xval);
-            }
-            System.out.println();
-        }
-
+//        System.out.println("\n for a=0: ");
+//        for(int i1 : I1) {
+//            for (int i0 : I0) {
+//                double xval = 0.0;
+//                int[] actions = A(i0,i1);
+//                boolean found = IntStream.of(actions).anyMatch(n -> n == 0);
+//                if(found){
+//                    xval=cplex.getValue(x[i0][i1][0]);
+//                }
+//                System.out.printf("%10.5f", xval);
+//            }
+//            System.out.println();
+//        }
+//        System.out.println("\n for a=1: ");
+//        for(int i1 : I1) {
+//            for (int i0 : I0) {
+//                double xval = 0.0;
+//                int[] actions = A(i0,i1);
+//                boolean found = IntStream.of(actions).anyMatch(n -> n == 1);
+//                if(found){
+//                    xval=cplex.getValue(x[i0][i1][1]);
+//                }
+//                System.out.printf("%10.5f", xval);
+//            }
+//            System.out.println();
+//        }
         System.out.println("\n actions grid - rows are age, columns time.");
         for(int i1 : I1) {
             for (int i0 : I0) {
@@ -128,7 +127,7 @@ public class ModelBRP {
     public void setVarY() throws IloException{
         y = new IloNumVar[I0.length];
         for (int i0 : I0) {
-            IloNumVar var = cplex.boolVar("y("+i0+")");
+            IloNumVar var = cplex.intVar(0,1,"y("+i0+")");
             y[i0] = var;
         }
     }
@@ -221,6 +220,7 @@ public class ModelBRP {
             for(int i1 : I1){
                 if(i1!=0){
                     cplex.addLe(cplex.sum( x[i0][i1][0],y[i0]), 1.0,"10c,"+i0+","+i1);
+
                     cplex.addLe(cplex.diff(x[i0][i1][1],y[i0]), 0.0,"10d,"+i0+","+i1);
                 }
             }
