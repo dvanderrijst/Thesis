@@ -76,7 +76,7 @@ public class ModelMBRP extends ModelBRP{
     private void constraint12hi() throws IloException {
         for(int i0 : I0){
             for(int i1 : I1){
-                cplex.addLe(cplex.sum(cplex.prod(M,y[i0]),cplex.prod(-1.0*M,z[i0][i1]), cplex.prod(-1.0,t[i0])), M-1-i1);
+                cplex.addLe(cplex.sum(cplex.prod(M,y[i0]),cplex.prod(-1.0*M,z[i0][i1]), cplex.prod(-1.0,t[i0])), M-i1);
                 cplex.addLe(cplex.sum(cplex.prod(M,z[i0][i1]),t[i0]),M+i1);
             }
         }

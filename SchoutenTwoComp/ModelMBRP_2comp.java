@@ -205,10 +205,8 @@ public class ModelMBRP_2comp {
                 for (int i2 : I2) {
                     int[] actions = A(i0, i1, i2);
                     for (int a : actions) {
-                        if(a==1 || a==3 || a==2) {
                             IloNumExpr prod = cplex.prod(x[i0][i1][i2][a], c(i0, i1, i2, a));
                             sum = cplex.sum(sum, prod);
-                        }
                     }
 
                 }
@@ -309,37 +307,37 @@ public class ModelMBRP_2comp {
 
         if (j0 != (i0 + 1) % (m * N)) {
         } else if (a == 0) {
-            if ((j1 == (i1 + 1)) & (j2 == (i2 + 1)) & (i1 != 0) & (i1 != M) & (i2 != 0) & (i2 != M)) {
+            if ((j1 == (i1 + 1)) & (j2 == (i2 + 1)) & (i1 != 0) & (i1 != M - 1) & (i2 != 0) & (i2 != M - 1)) {
                 pi_value = (1.0 - i.probCondX_x_k(i1, 1)) * (1.0 - i.probCondX_x_k(i2, 2));
-            } else if ((j1 == (i1 + 1)) & (j2 == 0) & (i1 != 0) & (i1 != M) & (i2 != 0) & (i2 != M)) {
+            } else if ((j1 == (i1 + 1)) & (j2 == 0) & (i1 != 0) & (i1 != M - 1) & (i2 != 0) & (i2 != M - 1)) {
                 pi_value = (1.0 - i.probCondX_x_k(i1, 1)) * i.probCondX_x_k(i2, 2);
-            } else if ((j1 == 0) & (j2 == (i2 + 1)) & (i1 != 0) & (i1 != M) & (i2 != 0) & (i2 != M)) {
+            } else if ((j1 == 0) & (j2 == (i2 + 1)) & (i1 != 0) & (i1 != M - 1) & (i2 != 0) & (i2 != M - 1)) {
                 pi_value = i.probCondX_x_k(i1, 1) * (1.0 - i.probCondX_x_k(i2, 2));
-            } else if ((j1 == 0) & (j2 == 0) & (i1 != 0) & (i1 != M) & (i2 != 0) & (i2 != M)) {
+            } else if ((j1 == 0) & (j2 == 0) & (i1 != 0) & (i1 != M - 1) & (i2 != 0) & (i2 != M - 1)) {
                 pi_value = i.probCondX_x_k(i1, 1) * i.probCondX_x_k(i2, 2);
             } else {
                 pi_value = 0.0;
             }
         } else if (a == 1) {
-            if ((j1 == 1) & (j2 == (i2 + 1)) & (i2 != 0) & (i2 != M)) {
+            if ((j1 == 1) & (j2 == (i2 + 1)) & (i2 != 0) & (i2 != M - 1)) {
                 pi_value = (1.0 - i.probCondX_x_k(0, 1)) * (1.0 - i.probCondX_x_k(i2, 2));
-            } else if ((j1 == 1) & (j2 == 0) & (i2 != 0) & (i2 != M)) {
+            } else if ((j1 == 1) & (j2 == 0) & (i2 != 0) & (i2 != M - 1)) {
                 pi_value = (1.0 - i.probCondX_x_k(0, 1)) * i.probCondX_x_k(i2, 2);
-            } else if ((j1 == 0) & (j2 == (i2 + 1)) & (i2 != 0) & (i2 != M)) {
+            } else if ((j1 == 0) & (j2 == (i2 + 1)) & (i2 != 0) & (i2 != M - 1)) {
                 pi_value = i.probCondX_x_k(0, 1) * (1.0 - i.probCondX_x_k(i2, 2));
-            } else if ((j1 == 0) & (j2 == 0) & (i2 != 0) & (i2 != M)) {
+            } else if ((j1 == 0) & (j2 == 0) & (i2 != 0) & (i2 != M - 1)) {
                 pi_value = i.probCondX_x_k(0, 1) * i.probCondX_x_k(i2, 2);
             } else {
                 pi_value = 0.0;
             }
         } else if (a == 2) {
-            if ((j1 == (i1 + 1)) & (j2 == 1) & (i1 != 0) & (i1 != M)) {
+            if ((j1 == (i1 + 1)) & (j2 == 1) & (i1 != 0) & (i1 != M - 1)) {
                 pi_value = (1.0 - i.probCondX_x_k(i1, 1)) * (1.0 - i.probCondX_x_k(0, 2));
-            } else if ((j1 == (i1 + 1)) & (j2 == 0) & (i1 != 0) & (i1 != M)) {
+            } else if ((j1 == (i1 + 1)) & (j2 == 0) & (i1 != 0) & (i1 != M - 1)) {
                 pi_value = (1.0 - i.probCondX_x_k(i1, 1)) * i.probCondX_x_k(0, 2);
-            } else if ((j1 == 0) & (j2 == 1) & (i1 != 0) & (i1 != M)) {
+            } else if ((j1 == 0) & (j2 == 1) & (i1 != 0) & (i1 != M - 1)) {
                 pi_value = i.probCondX_x_k(i1, 1) * (1.0 - i.probCondX_x_k(0, 2));
-            } else if ((j1 == 0) & (j2 == 0) & (i1 != 0) & (i1 != M)) {
+            } else if ((j1 == 0) & (j2 == 0) & (i1 != 0) & (i1 != M - 1)) {
                 pi_value = i.probCondX_x_k(i1, 1) * i.probCondX_x_k(0, 2);
             } else {
                 pi_value = 0.0;
@@ -435,6 +433,7 @@ public class ModelMBRP_2comp {
             }
         } else {
             System.out.println("This value for a does not exist");
+            System.exit(1);
         }
         return c;
     }
@@ -526,15 +525,16 @@ public class ModelMBRP_2comp {
                     if (i1 != 0 & i1 != M-1) {
                         cplex.addLe(cplex.diff(x[i0][i1][i2][1], z[1][i0][i1]), 0.0, "9e" + i0 + "," + i1 + "," + i2 + ",k=" + 1 + "a=1");
                         cplex.addLe(cplex.diff(x[i0][i1][i2][3], z[1][i0][i1]), 0.0, "9g" + i0 + "," + i1 + "," + i2 + ",k=" + 1 + "a=3");
+//                        cplex.addLe(cplex.sum(x[i0][i1][i2][1], z[2][i0][i2]), 1.0, "9f" + i0 + "," + i1 + "," + i2 + ",k=" + 1 + "a=1");
                     }
                     if (i2 != 0 & i2 != M-1) {
                         cplex.addLe(cplex.diff(x[i0][i1][i2][2], z[2][i0][i2]), 0.0, "9e" + i0 + "," + i1 + "," + i2 + ",k=" + 2 + "a=1");
                         cplex.addLe(cplex.diff(x[i0][i1][i2][3], z[2][i0][i2]), 0.0, "9g" + i0 + "," + i1 + "," + i2 + ",k=" + 2 + "a=3");
+//                        cplex.addLe(cplex.sum(x[i0][i1][i2][2], z[1][i0][i1]), 1.0, "9f" + i0 + "," + i1 + "," + i2 + ",k=" + 2 + "a=1");
                     }
                     cplex.addLe(cplex.sum(x[i0][i1][i2][0], z[1][i0][i1]), 1.0, "9d" + i0 + "," + i1 + "," + i2 + ",k=" + 1 + "a=0");
                     cplex.addLe(cplex.sum(x[i0][i1][i2][0], z[2][i0][i1]), 1.0, "9d" + i0 + "," + i1 + "," + i2 + ",k=" + 2 + "a=0");
-//
-//                        //constraint 9e en 9f
+
                     cplex.addLe(cplex.sum(x[i0][i1][i2][1], z[2][i0][i2]), 1.0, "9f" + i0 + "," + i1 + "," + i2 + ",k=" + 1 + "a=1");
                     cplex.addLe(cplex.sum(x[i0][i1][i2][2], z[1][i0][i1]), 1.0, "9f" + i0 + "," + i1 + "," + i2 + ",k=" + 2 + "a=1");
                 }
@@ -575,7 +575,7 @@ public class ModelMBRP_2comp {
         for(int k : K) {
             for (int i0 : I0) {
                 for (int ik : I1) {
-                    constraints.add(cplex.addLe(cplex.sum(cplex.prod(M, y[k][i0]), cplex.prod(-1.0 * M, z[k][i0][ik]), cplex.prod(-1.0, t[k][i0])), M - 1.0 - ik, "9l_1"));
+                    constraints.add(cplex.addLe(cplex.sum(cplex.prod(M, y[k][i0]), cplex.prod(-1.0 * M, z[k][i0][ik]), cplex.prod(-1.0, t[k][i0])), M - ik, "9l_1"));
                     constraints.add(cplex.addLe(cplex.sum(cplex.prod(M,z[k][i0][ik]),t[k][i0]),M+ik));
                 }
             }
