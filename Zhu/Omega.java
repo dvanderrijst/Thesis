@@ -1,5 +1,7 @@
 package Zhu;
 
+import Main.Instance;
+
 /**
  * As the article in Schouten also a discretised Weibull distribution is used, we will do the same.
  * Here, de CDF is F(x)=1-exp((x/alpha)^beta). Then P(X=x)=F(x)-F(x-1)
@@ -11,27 +13,26 @@ public class Omega {
     private int[][][] Twir;
     private int n;
     private int q;
-    private int alpha;
-    private int beta;
     public int lenghtOmega;
-    private static double[] probs;
     private static double[] p_w;
-    public Omega(ZhuInstance instance) {
-        this.T = instance.T;
-        this.n = instance.n;
-        this.q = instance.q;
-        this.alpha = instance.alpha;
-        this.beta = instance.beta;
-        this.lenghtOmega = instance.lengthOmega;
+    private final Instance i;
+    public Omega(Instance instance) {
+        this.i = instance;
+        this.T = i.T;
+        this.n = i.n;
+        this.q = i.q;
+        this.lenghtOmega = i.lengthOmega;
         this.Twir = new int[lenghtOmega][n][q];
 
         createScenarios();
     }
 
+
     public void createScenarios(){
         int size = (int) Math.pow(T+1, n*q);
         int[][] s = new int[size][n*q];
         int V = T+1;
+        int k = 1 ;//This is wrong!! Needs to be adjusted.
 
         for(int i = 0; i<n*q ; i++) {
             int R = (int) Math.pow(T+1, i);
@@ -83,7 +84,7 @@ public class Omega {
         for (int i = 0; i < size; i++) {
             double probability = 1.0;
             for (int j = 0; j < n*q; j++) {
-                probability = probability * P_X(s[i][j]);
+                probability = probability * this.i.probX_x_k(s[i][j], k);
             }
             p_w[i] = probability;
             sum = sum + probability;
@@ -91,30 +92,7 @@ public class Omega {
         System.out.println("The sum is "+sum+" if this is not equal to one, something goes wrong here.");
     }
 
-    /**
-     * Returning the descretised Weibull dist:
-     * Here, de CDF is F(x)=1-exp((x/alpha)^beta). Then P(X=x)=F(x)-F(x-1)
-     * @param x
-     * @return P(X=x)
-     */
-    private double P_X(int x){
-        if(probs == null){
-            probs = new double[T+2];
-            double sum = 0.0;
 
-            for (int i = 1; i <= T ; i++) {
-                double hi = Math.pow(i / (double) alpha, beta);
-                double F_x = 1.0 - Math.exp(-1*hi);
-                double hii = Math.pow((i - 1) / (double) alpha,beta);
-                double F_x_1 = 1.0 - Math.exp(-1*hii);
-                probs[i] = F_x - F_x_1;
-                sum = sum + probs[i];
-            }
-            System.out.println(sum);
-            probs[T+1] = 1.0 - sum;
-        }
-        return probs[x];
-    }
 
     public int[][][] getTwir(){
         return Twir;
