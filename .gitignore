@@ -31,4 +31,4 @@ hs_err_pid*
 /Thesis/.idea/Thesis.iml
 
 *.lp
-
+out/production/Thesis/model.lp
