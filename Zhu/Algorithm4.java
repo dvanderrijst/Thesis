@@ -22,8 +22,8 @@ public class Algorithm4 {
 
     public Algorithm4(int[][] lifetimes, Instance instance, int[][][] Xwit, int w) {
         List<Individual> scenario = new ArrayList<>();
-        for (int i = 0; i < 4; i++) {
-            for (int r = 0; r < 5; r++) {
+        for (int i = 0; i < instance.n ; i++) {
+            for (int r = 0; r < instance.q ; r++) {
                 Individual individual = new Individual(i, r, lifetimes[i][r], instance);
                 scenario.add(individual);
             }
@@ -69,28 +69,16 @@ public class Algorithm4 {
         //step 2.1
         List<Individual> K = createK(r);
 
-        while(!stop && r < instance.q ) {
+        while(r < instance.q && K.size() !=0) {
             //step 2.2
-            //just for printing
-            for(Individual individual : K){
-//                System.out.println("Individual i="+individual.i+", r="+individual.r+" and beta="+individual.getBeta());
-            }
             step2_2(K, iota, instance);
-            for(Individual individual : K){
-//                System.out.println("Individual i="+individual.i+", r="+individual.r+" and betaPrime="+individual.getBetaPrime());
-            }
+
             //step 2.3
             K.clear();
             r++;
             assignTentativeReplacementTimes(delta);
 
             K = createK(r);
-//            for(Individual individual : K){
-//                System.out.println("Individual i="+individual.i+", r="+individual.r+" and beta="+individual.getBeta());
-//            }
-            if (K.size() == 0) {
-                stop = true;
-            }
         }
 
         index++;
@@ -136,7 +124,7 @@ public class Algorithm4 {
             if (individual.getBetaPrime() < instance.T + 1) {
                 Xit[individual.i()][individual.getBetaPrime()]++;
                 if (Xit[individual.i()][individual.getBetaPrime()] > 1) {
-                    System.out.println("Xit takes the value of 2, meaning that once a replacement is done it is immediately replaced again, which ofcourse doesn't make sense.");
+//                    System.out.println("Xit takes the value of 2, meaning that once a replacement is done it is immediately replaced again, which ofcourse doesn't make sense.");
                 }
             }
         }

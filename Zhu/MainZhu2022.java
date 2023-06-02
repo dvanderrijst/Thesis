@@ -10,14 +10,14 @@ public class MainZhu2022 {
     public static void main(String[] args) throws IloException {
         System.out.println("Hello donnie");
         Instance instance = new Instance();
-//        Omega omega = new Omega(instance);
+        Omega omega = new Omega(instance);
 
         //zhuSmallInstance(instance, omega)
 //        PHA pha = new PHA(omega, instance);
+//        List<int[][]> list = generate5scenarios();
 
 
-        List<int[][]> list = generate5scenarios();
-        PHA_heuristic algorithm4 = new PHA_heuristic(list, instance);
+        PHA_heuristic algorithm4 = new PHA_heuristic(omega.getScenarios(), instance);
     }
 
     private static List<Individual> manuallyCreateIndividuals(Instance instance, int[][] lifetimes){

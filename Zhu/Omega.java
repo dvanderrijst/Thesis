@@ -2,6 +2,9 @@ package Zhu;
 
 import Main.Instance;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * As the article in Schouten also a discretised Weibull distribution is used, we will do the same.
  * Here, de CDF is F(x)=1-exp((x/alpha)^beta). Then P(X=x)=F(x)-F(x-1)
@@ -15,17 +18,15 @@ public class Omega {
     private int q;
     public int lengthOmega;
     public static double[] p_w;
-    private final Instance i;
+    private final Instance instance;
     public Omega(Instance instance) {
-        this.i = instance;
-        this.T = i.T;
-        this.n = i.n;
-        this.q = i.q;
-        this.lengthOmega = i.lengthOmega;
+        this.instance = instance;
+        this.T = instance.T;
+        this.n = instance.n;
+        this.q = instance.q;
+        this.lengthOmega = instance.lengthOmega;
         System.out.println("length omega is "+lengthOmega);
         this.Twir = new int[lengthOmega][n][q];
-
-        System.out.println(Twir[0][0][1]);
         createScenarios();
     }
 
@@ -40,6 +41,7 @@ public class Omega {
 
     public void createScenarios(){
         int size = (int) Math.pow(T+1, n*q);
+        System.out.println(size);
         int[][] s = new int[size][n*q];
         int V = T+1;
         int k = 1 ;//This is wrong!! Needs to be adjusted.
@@ -76,10 +78,10 @@ public class Omega {
 
         System.out.println(Twir.length);
         for (int w = 0; w < lengthOmega; w++) {
-//            System.out.println("For w = "+w+" we have matrix T[w][i][r]");
+//            System.out.println("For w = "+w+" we have matrix T[w][instance][r]");
             for (int i = 0; i < n; i++) {
                 for (int r = 0; r < q; r++) {
-//                    System.out.print(Twir[w][i][r]+"\t");
+//                    System.out.print(Twir[w][instance][r]+"\t");
                 }
 //                System.out.println();
             }
@@ -91,7 +93,7 @@ public class Omega {
         for (int i = 0; i < size; i++) {
             double probability = 1.0;
             for (int j = 0; j < n*q; j++) {
-                probability = probability * this.i.probX_x_k(s[i][j]-1, k);
+                probability = probability * this.instance.probX_x_k(s[i][j]-1, k);
             }
             p_w[i] = probability;
             sum = sum + probability;
@@ -119,5 +121,19 @@ public class Omega {
         return Twir[w][i][r];
     }
 
+    public List<Scenario> getScenarios(){
+        List<Scenario> scenarios = new ArrayList<>();
+        for (int w = 0; w < lengthOmega; w++) {
+            int[][] scenario = new int[n][q];
+            for (int i = 0; i < n; i++) {
+                for (int r = 0; r < q; r++) {
+                    scenario[i][r]=Twir[w][i][r];
+                }
+            }
+            Scenario scenarioObject = new Scenario(w, scenario, getProbabilityScenario(w)[0], instance);
+            scenarios.add(scenarioObject);
+        }
+        return scenarios;
+    }
 
 }

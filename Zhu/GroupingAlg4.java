@@ -63,7 +63,6 @@ public class GroupingAlg4 {
 
         //step 2
         while (m <= K.size()) {
-//            System.out.println("m="+m);
             //step 2.1
             v = m ;
 
@@ -76,7 +75,6 @@ public class GroupingAlg4 {
 
             //step 2.4
             resetFinalCosts();
-//            System.out.print("costs="+finalCosts+" for ");
 //            printGroups();
             groupCosts.put(m, finalCosts);
             groups.clear();
@@ -85,6 +83,7 @@ public class GroupingAlg4 {
 //        System.out.println("created all groups");
 
         //step 2
+
         Map.Entry<Integer, Double> minEntry = Collections.min(groupCosts.entrySet(), Map.Entry.comparingByValue());
         if (minEntry == null) {
             System.out.println("minEntry is null, so we cannot find the value for m.");
@@ -137,7 +136,7 @@ public class GroupingAlg4 {
             if (individual.getTau(m) < instance.T + 1) {
                 Xit[individual.i()][individual.getTau(m)]++;
                 if (Xit[individual.i()][individual.getTau(m)] > 1) {
-                    System.out.println("Xit takes the value of 2, meaning that once a replacement is done it is immediately replaced again, which ofcourse doesn't make sense.");
+//                    System.out.println("Xit takes the value of 2, meaning that once a replacement is done it is immediately replaced again, which ofcourse doesn't make sense.");
                 }
             }
         }

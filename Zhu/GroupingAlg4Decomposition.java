@@ -40,7 +40,7 @@ public class GroupingAlg4Decomposition extends GroupingAlg4{
             if (individual.getTau(m) < instance.T + 1) {
                 Xit[individual.i()][individual.getTau(m)]++;
                 if (Xit[individual.i()][individual.getTau(m)] > 1) {
-                    System.out.println("Xit takes the value of 2, meaning that once a replacement is done it is immediately replaced again, which ofcourse doesn't make sense.");
+//                    System.out.println("Xit takes the value of 2, meaning that once a replacement is done it is immediately replaced again, which ofcourse doesn't make sense.");
                 }
             }
             else{
