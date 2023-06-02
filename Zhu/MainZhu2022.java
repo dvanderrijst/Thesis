@@ -13,9 +13,14 @@ public class MainZhu2022 {
         Omega omega = new Omega(instance);
 
         //zhuSmallInstance(instance, omega)
-//        PHA pha = new PHA(omega, instance);
+        PHA pha = new PHA(omega, instance);
 //        List<int[][]> list = generate5scenarios();
-
+        double[] hello = new double[]{0.0	,0.006920387509683934,	0.020523027137251914	,0.033474806045074725,	0.04545237206562901,	0.0561917060722181,	0.06550032276851925	,0.07326289826737059,	0.07944020638276157	,0.08406202315667718,	0.08721530016576963,	0.08902932948876624,	0.0};
+        double sum = 0.0;
+        for(double hi : hello){
+            sum = sum + hi;
+        }
+        System.out.println(sum);
 
         PHA_heuristic algorithm4 = new PHA_heuristic(omega.getScenarios(), instance);
     }

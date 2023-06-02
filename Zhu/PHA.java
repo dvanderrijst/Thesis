@@ -37,16 +37,16 @@ public class PHA {
         while(count<7 && ( map_gdistances.isEmpty() ||  map_gdistances.get(v) > epsilon) ){
             //printX
             for (int w = 0; w < omega.lengthOmega; w++) {
-                printint3(getXrit(w,map_v_Xrwit.get(v)));
+//                printint3(getXrit(w,map_v_Xrwit.get(v)));
             }
             //printXaverage
             System.out.println(
-                    " \n\n\n\n\nX AVERAGE"
+//                    " \n\n\n\n\nX AVERAGE"
             );
-            printdouble3(map_average_Xrit.get(v));
+//            printlnintdouble3(map_average_Xrit.get(v));
             //printW
             for (int w = 0; w < omega.lengthOmega; w++) {
-                printdouble3(getWrit(w,map_v_Wrwit.get(v)));
+//                printdouble3(getWrit(w,map_v_Wrwit.get(v)));
             }
 
 

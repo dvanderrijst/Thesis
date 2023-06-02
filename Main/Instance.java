@@ -7,28 +7,28 @@ public class Instance {
     //ZHU and SCHOUTEN
     public final double[] cPR_i;
     public final double[] cCR_i;
-    public final double CR_average = 50;
+    public final double CR_average = 14.4;
     public final double PR_average = 10;
-    public final double delta = 0.2;
+    public final double delta = 0.0;
     public final int d       = 200;
     public final int m = 1; //5 years
-    public final int N = 12; //12 months in one year
+    public final int N = 5; //12 months in one year
     public final int T       = m*N ;
-    public final int[] alpha = new int[]{12}; //alpha is 1 year
-    public final int[] beta = new int[]{2};
+    public final double[] alpha = new double[]{6.5, 6.7}; //alpha is 1 year
+    public final double[] beta = new double[]{6.9, 5};
 
     //ZHU
     public final int q       = 2 ;
     public final int lengthOmega;
     private static double[][] probs; //probabilities for component k and time t : probs[k][t]
-    public final int n       = 1 ;
+    public final int n       = 2 ;
 
 
     //SCHOUTEN
     public final int[] I0;
     public final int[] I1;
     public final int[] I2;
-    public final int[] K = new int[]{1,2};
+    public final int[] K ;
     public final int M = m*N;                //we set the maximum age to 3 years
     public Instance() {
         cCR_i = setVariateCosts(CR_average);
@@ -36,13 +36,16 @@ public class Instance {
 
         //ZHU
         this.lengthOmega = (int) Math.pow(T+1, n*q);
-//        this.lengthOmega = 5;
-//        System.out.println("\n\n\n THIS IS THE WRONG LENGHTOMEGA\n\n\n");
 
         //SCHOUTEN
         I0 = setArray(m*N);
         I1 = setArray(M);
         I2 = setArray(M);
+
+        K = new int[n];
+        for (int i = 0; i < n; i++) {
+            K[i]=i+1;
+        }
     }
     /**
      * sets the variate costs of c_p(i0) and c_f(i0) from the equation on page 985 from Schouten article
