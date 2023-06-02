@@ -13,18 +13,28 @@ public class Omega {
     private int[][][] Twir;
     private int n;
     private int q;
-    public int lenghtOmega;
-    private static double[] p_w;
+    public int lengthOmega;
+    public static double[] p_w;
     private final Instance i;
     public Omega(Instance instance) {
         this.i = instance;
         this.T = i.T;
         this.n = i.n;
         this.q = i.q;
-        this.lenghtOmega = i.lengthOmega;
-        this.Twir = new int[lenghtOmega][n][q];
+        this.lengthOmega = i.lengthOmega;
+        System.out.println("length omega is "+lengthOmega);
+        this.Twir = new int[lengthOmega][n][q];
 
+        System.out.println(Twir[0][0][1]);
         createScenarios();
+    }
+
+    public double[] getProbabilitiesScenarios(){
+        return p_w;
+    }
+
+    public double[] getProbabilityScenario(int w){
+        return new double[]{p_w[w]};
     }
 
 
@@ -55,28 +65,25 @@ public class Omega {
         for (int w = 0; w < size ; w++) {
             int nq = 0;
             for (int r = 0; r < q; r++) {
-                int i = 0 ;
-                while(i<n){
-                    Twir[w][i][r]=s[w][nq];
+                int i = 0;
+                while (i < n) {
+                    Twir[w][i][r] = s[w][nq];
                     i++;
                     nq++;
                 }
-                i = 0;
             }
-            nq = 0;
         }
 
-        for (int r = 0; r < q; r++) {
-//            System.out.println("For r = "+r+" we have matrix T[w][i]");
-            for (int w = 0; w < size; w++) {
-                for (int i = 0; i < n; i++) {
+        System.out.println(Twir.length);
+        for (int w = 0; w < lengthOmega; w++) {
+//            System.out.println("For w = "+w+" we have matrix T[w][i][r]");
+            for (int i = 0; i < n; i++) {
+                for (int r = 0; r < q; r++) {
 //                    System.out.print(Twir[w][i][r]+"\t");
                 }
 //                System.out.println();
             }
         }
-
-
         System.out.println("Now we are linking the probabilities to it....");
         p_w = new double[size];
 
@@ -84,7 +91,7 @@ public class Omega {
         for (int i = 0; i < size; i++) {
             double probability = 1.0;
             for (int j = 0; j < n*q; j++) {
-                probability = probability * this.i.probX_x_k(s[i][j], k);
+                probability = probability * this.i.probX_x_k(s[i][j]-1, k);
             }
             p_w[i] = probability;
             sum = sum + probability;
@@ -108,7 +115,9 @@ public class Omega {
         return Tir;
     }
 
-    public double getpw(int w){
-        return p_w[w];
+    public int getT(int w, int i, int r){
+        return Twir[w][i][r];
     }
+
+
 }

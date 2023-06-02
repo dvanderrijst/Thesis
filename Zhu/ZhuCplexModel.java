@@ -12,43 +12,48 @@ import java.util.List;
 import java.util.Random;
 
 public class ZhuCplexModel {
-    private final IloCplex cplex;
-    private final int T;
-    private final int T_prime;
-    private final int n;
-    private final int q;
-    private final double[] cPR_i;
-    private final double[] cCR_i;
-    private final int d;
-    private final int lengthOmega;
-    private final IloNumVar[] x_i;
-    private final IloNumVar[][][][] x_rwit;
-    private final IloNumVar[][] z_wt;
-    private final IloNumVar[][][][] w_rwit;
-    private final IloNumVar[][][][] y_rwit;
-    private final IloNumVar[][][][] v_rwit;
-    private final IloNumVar[][][][] u_rwit;
-    private final IloNumVar[][][] Y_rwi;
-    private final int[][][] T_wir;
-    private final int[] xi_i;
+    public final IloCplex cplex;
+    public final int T;
+    public final int T_prime;
+    public final int n;
+    public final int q;
+    public final double[] cPR_i;
+    public final double[] cCR_i;
+    public final int d;
+    public final int lengthOmega;
+    public final IloNumVar[] x_i;
+    public final IloNumVar[][][][] x_rwit;
+    public final IloNumVar[][] z_wt;
+    public final IloNumVar[][][][] w_rwit;
+    public final IloNumVar[][][][] y_rwit;
+    public final IloNumVar[][][][] v_rwit;
+    public final IloNumVar[][][][] u_rwit;
+    public final IloNumVar[][][] Y_rwi;
+    public final int[][][] T_wir;
+    public final int[] xi_i;
+    public final double[] probsOmega;
+    public final Instance i;
+    public final String fileName;
 
+    public ZhuCplexModel(Instance i, int[][][] T_wir, double[] probsOmega, String fileName) throws IloException {
 
-    public ZhuCplexModel(Instance i, int[][][] T_wir) throws IloException {
-
+        this.i = i;
+        this.fileName = fileName;
         cplex = new IloCplex();
-//        cplex.setOut(null);
+        cplex.setOut(null);
         cplex.setWarning(null);
 
         T = i.T;
         n = i.n;
         q = i.q;
-        this.lengthOmega = T_wir.length;
+        this.lengthOmega = probsOmega.length;
         cPR_i = i.cPR_i ;
         cCR_i = i.cCR_i;
         d = i.d;
+        this.probsOmega = probsOmega;
 
-        this.T_wir = setScenarios();
-//        this.T_wir = T_wir;
+//        this.T_wir = setScenarios();
+        this.T_wir = T_wir;
         T_prime = T + getMaxTwir();
         xi_i = setXi();
 
@@ -61,13 +66,60 @@ public class ZhuCplexModel {
         v_rwit = new IloNumVar[q][lengthOmega][n][T_prime+1];
         Y_rwi = new IloNumVar[q][lengthOmega][n];
 
+//        setupAndSolve();
+    }
+
+    public void setupAndSolve() throws IloException {
         setVariables();
         setConstraints();
         setObjective();
-        cplex.exportModel("model.lp");
+        cplex.exportModel(fileName);
         cplex.solve();
+        cplex.setOut(null);
 //        System.out.println(cplex.getCplexStatus());
-        checkResult();
+//        checkResult();
+//        printResultMatrix();
+//        System.out.println("best costs are "+cplex.getObjValue());
+//        System.out.println("x1 = "+cplex.getValue(x_i[0])+"\t\t x2 = "+cplex.getValue(x_i[1]));
+    }
+
+    private void printResultMatrix() throws IloException {
+        for (int omega = 0; omega < lengthOmega; omega++) {
+            System.out.print("\n\n\n For omega = "+omega+" we find the following matrixes.");
+            for (int i = 0; i < n; i++) {
+                System.out.println("\nni = "+i+" and we have T[w][i][0] = "+T_wir[omega][i][0]+" and T[w][i][1]="+T_wir[omega][i][1]);
+
+
+                for (int r = 0; r < q; r++) {
+                    System.out.printf("%8s", "\nx_it r=" + r);
+                    for (int t = 0; t <= T; t++) {
+                        System.out.printf("%8.0f", cplex.getValue(x_rwit[r][omega][i][t]));
+                    }
+                }
+                System.out.printf("%8s", "\nz wt    ");
+                for (int t = 0; t <= T; t++) {
+                    System.out.printf("%8.0f", cplex.getValue(z_wt[omega][t]));
+                }
+                for (int r = 0; r < q; r++) {
+                    System.out.printf("%8s", "\nw_it r=" + r);
+                    for (int t = 0; t <= T_prime; t++) {
+                        System.out.printf("%8.0f", cplex.getValue(w_rwit[r][omega][i][t]));
+                    }
+                }
+                for (int r = 1; r < q; r++) {
+                    System.out.printf("%8s", "\ny_it r=" + r);
+                    for (int t = 0; t <= T_prime; t++) {
+                        System.out.printf("%8.0f", cplex.getValue(y_rwit[r][omega][i][t]));
+                    }
+                }
+                for (int r = 0; r < q; r++) {
+                    System.out.printf("%8s", "\nY iw r=" + r);
+
+                    System.out.printf("%8.0f", cplex.getValue(Y_rwi[r][omega][i]));
+
+                }
+            }
+        }
     }
 
     /**
@@ -89,9 +141,8 @@ public class ZhuCplexModel {
      * Sets the objective for our CPLEX model.
      * @throws IloException
      */
-    private void setObjective() throws IloException {
+    public void setObjective() throws IloException {
 
-        //for this example, we set p(w) to 1.
         IloNumExpr sum_w = cplex.constant(0);
 
         for(int w=0 ; w<lengthOmega; w++){
@@ -103,14 +154,14 @@ public class ZhuCplexModel {
                 for (int r = 0; r < q; r++) {
                     sum_r1 = cplex.sum(sum_r1, Y_rwi[r][w][i]);
                 }
-                IloNumExpr prod_r1 = cplex.prod(cPR_i[n-1], sum_r1);
+                IloNumExpr prod_r1 = cplex.prod(cPR_i[n], sum_r1);
 
 
                 IloNumExpr sum_r2 = cplex.constant(0);
                 for (int r = 0; r < q; r++) {
                     sum_r1 = cplex.sum(sum_r1, cplex.diff(x_rwit[r][w][i][T], Y_rwi[r][w][i]));
                 }
-                IloNumExpr prod_r2 = cplex.prod(cCR_i[n-1], sum_r2);
+                IloNumExpr prod_r2 = cplex.prod(cCR_i[n], sum_r2);
 
                 sum_n = cplex.sum(sum_n, prod_r1, prod_r2);
             }
@@ -120,7 +171,7 @@ public class ZhuCplexModel {
                 sum_t = cplex.sum(sum_t, cplex.prod(d, z_wt[w][t]));
             }
 
-            sum_w = cplex.sum(sum_w, cplex.prod(1, cplex.sum(sum_n, sum_t)));
+            sum_w = cplex.sum(sum_w, cplex.prod(probsOmega[w], cplex.sum(sum_n, sum_t)));
         }
 
         cplex.addMinimize(sum_w, "obj");
@@ -311,31 +362,41 @@ public class ZhuCplexModel {
         }
     }
 
-    private void setVariables() throws IloException {
-        for(int i = 1; i<= n; i++){
-            x_i[i-1] = cplex.boolVar("x("+i+")");
-            for(int r=1; r<= q; r++){
-                for(int w=1; w<= lengthOmega ; w++){
+    private void setVariables() throws IloException, OutOfMemoryError {
+        int count = 0;
 
-                    Y_rwi[r-1][w-1][i-1] = cplex.boolVar("YY("+r+","+w+","+i+")");
+        try {
+            for (int i = 0; i < n; i++) {
+                x_i[i] = cplex.boolVar("x(" + i + ")");
+                count++;
+                for (int r = 0; r < q; r++) {
+                    for (int w = 0; w < lengthOmega; w++) {
 
-                    for(int t=0; t<= T_prime; t++){
-                        if(i==1 && r==1 && t<=T){
-                            z_wt[w-1][t] = cplex.boolVar("z("+w+","+i+")");
+                        Y_rwi[r][w][i] = cplex.boolVar("YY(" + r + "," + w + "," + i + ")");
+                        count++;
+
+                        for (int t = 0; t <= T_prime; t++) {
+                            if (i == 0 && r == 0 && t <= T) {
+                                z_wt[w][t] = cplex.boolVar("z(" + w + "," + t + ")");
+                                count++;
+                            }
+                            if (t <= T) {
+                                x_rwit[r][w][i][t] = cplex.boolVar("x(" + r + "," + w + "," + i + "," + t + ")");
+                                count++;
+                            }
+                            w_rwit[r][w][i][t] = cplex.boolVar("w(" + r + "," + w + "," + i + "," + t + ")");
+                            y_rwit[r][w][i][t] = cplex.boolVar("y(" + r + "," + w + "," + i + "," + t + ")");
+                            u_rwit[r][w][i][t] = cplex.boolVar("u(" + r + "," + w + "," + i + "," + t + ")");
+                            v_rwit[r][w][i][t] = cplex.boolVar("v(" + r + "," + w + "," + i + "," + t + ")");
+                            count = count + 4;
+//                            System.out.println(count);
                         }
-                        if(t<=T){x_rwit[r-1][w-1][i-1][t] = cplex.boolVar("x("+r+","+w+","+i+","+t+")");}
-                        w_rwit[r-1][w-1][i-1][t] = cplex.boolVar("w("+r+","+w+","+i+","+t+")");
-                        y_rwit[r-1][w-1][i-1][t] = cplex.boolVar("y("+r+","+w+","+i+","+t+")");
-                        u_rwit[r-1][w-1][i-1][t] = cplex.boolVar("u("+r+","+w+","+i+","+t+")");
-                        v_rwit[r-1][w-1][i-1][t] = cplex.boolVar("v("+r+","+w+","+i+","+t+")");
-//                        if(t<=T){x_rwit[r-1][w-1][i-1][t] = cplex.boolVar("x");}
-//                        w_rwit[r-1][w-1][i-1][t] = cplex.boolVar("w");
-//                        y_rwit[r-1][w-1][i-1][t] = cplex.boolVar("y");
-//                        u_rwit[r-1][w-1][i-1][t] = cplex.boolVar("u");
-//                        v_rwit[r-1][w-1][i-1][t] = cplex.boolVar("v");
                     }
                 }
             }
+        }
+        catch(OutOfMemoryError e){
+            System.out.println(count);
         }
     }
 

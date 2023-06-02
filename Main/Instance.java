@@ -10,18 +10,18 @@ public class Instance {
     public final double CR_average = 50;
     public final double PR_average = 10;
     public final double delta = 0.2;
-    public final int d       = 0 ;
+    public final int d       = 200;
     public final int m = 1; //5 years
-    public final int N = 6; //12 months in one year
+    public final int N = 12; //12 months in one year
     public final int T       = m*N ;
-    public final int[] alpha = new int[]{6,100}; //alpha is 1 year
-    public final int[] beta = new int[]{2,2};
+    public final int[] alpha = new int[]{3,6,10}; //alpha is 1 year
+    public final int[] beta = new int[]{2,2,2};
 
     //ZHU
-    public final int q       = 4 ;
+    public final int q       = 5 ;
     public final int lengthOmega;
     private static double[][] probs; //probabilities for component k and time t : probs[k][t]
-    public final int n       = 2 ;
+    public final int n       = 4 ;
 
 
     //SCHOUTEN
@@ -35,7 +35,9 @@ public class Instance {
         cPR_i = setVariateCosts(PR_average);
 
         //ZHU
-        this.lengthOmega = (int) Math.pow(T+1, n*q);
+//        this.lengthOmega = (int) Math.pow(T+1, n*q);
+        this.lengthOmega = 5;
+        System.out.println("\n\n\n THIS IS THE WRONG LENGHTOMEGA\n\n\n");
 
         //SCHOUTEN
         I0 = setArray(m*N);

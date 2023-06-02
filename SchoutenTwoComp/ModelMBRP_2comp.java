@@ -533,7 +533,7 @@ public class ModelMBRP_2comp {
                         constraints.add(cplex.addLe(cplex.sum(t[k][i0], cplex.prod(j0, y[k][j0]), cplex.prod(m * N, y[k][j0])),  m * N + i0, "9h"));
                     }
                     if (j0 > i0) {
-                        constraints.add(cplex.addLe(cplex.sum(t[k][i0], cplex.prod(j0, y[k][j0])), m * N + i0, "9i"));
+//                        constraints.add(cplex.addLe(cplex.sum(t[k][i0], cplex.prod(j0, y[k][j0])), m * N + i0, "9i"));
                     }
                 }
             }
