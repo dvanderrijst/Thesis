@@ -25,23 +25,34 @@ public class PHA_heuristic {
         initialize();
         int count = 0;
         while(count<7 && ( map_gdistances.isEmpty() ||  map_gdistances.get(v) > epsilon) ){
-//            updateV();
-//            decomposition();
-//            aggregation();
-//            updatePrice();
+//            printXwit(map_v_Xwit.get(v));
+//            if(v>0){printXwitDiff(map_v_Xwit.get(v-1), map_v_Xwit.get(v));}
+            printWwit(map_v_Wwit.get(v));
+            printXaverage(map_average_Xit.get(v));
+            updateV();
+            decomposition();
+            aggregation();
+            updatePrice();
 //            calculateDistance();
 //            System.out.println(map_gdistances.get(v));
             count++;
         }
     }
 
-    private void decomposition() throws IloException {
-
-        int[][][] Xwit = new int[scenarios.size()][instance.n+1][instance.T+1];
-        map_v_Xwit.put(v,Xwit);
-        for (int w = 0; w < scenarios.size() ; w++) {}
+    private void calculateDistance(){
 
     }
+    private void decomposition() {
+        int[][][] Xwit = new int[scenarios.size()][instance.n+1][instance.T+1];
+        map_v_Xwit.put(v,Xwit);
+
+        for (int w = 0; w < scenarios.size() ; w++) {
+            Algorithm4Decomposition hello = new Algorithm4Decomposition(scenarios.get(w), instance, map_v_Xwit.get(v), w, map_v_Wwit.get(v-1), map_average_Xit.get(v-1), penalty);
+            map_v_Xwit.put(v, hello.doAlgorithm4());
+        }
+    }
+
+
 
     private void updateV() {
         v = v + 1;
@@ -52,23 +63,41 @@ public class PHA_heuristic {
         //intialize Xwit
         int[][][] Xwit = new int[scenarios.size()][instance.n+1][instance.T+1];
         map_v_Xwit.put(v,Xwit);
-        int w = 0;
-        for(int[][] scenario : scenarios){
-            Algorithm4 hello = new Algorithm4(scenario, instance, map_v_Xwit.get(v), w);
-            w++;
+        for (int w = 0; w < scenarios.size() ; w++) {
+//            System.out.println("w="+w);
+            Algorithm4 hello = new Algorithm4(scenarios.get(w), instance, map_v_Xwit.get(v), w);
+            map_v_Xwit.put(v,hello.doAlgorithm4());
         }
 
         //initialize x average
-        double[][] average_Xrit = aggregation();
-        map_average_Xit.put(v, average_Xrit);
+        aggregation();
 
         //initialize w
-        double[][][] Wwit = new double[scenarios.size()][instance.n+1][instance.T+1];
-        for (int i = 0; i <= instance.n; i++) {
+        updatePrice();
+    }
 
-            for (int t = 0; t < instance.T; t++) {
-                for (w = 0; w < scenarios.size() ; w++) {
-                    Wwit[w][i][t] = penalty * (Xwit[w][i][t] - average_Xrit[i][t]);
+    private void updatePrice(){
+        double[][][] Wwit = new double[scenarios.size()][instance.n+1][instance.T+1];
+
+        double[][] Xit_average = map_average_Xit.get(v);
+        int[][][] Xwit = map_v_Xwit.get(v);
+
+        if(v>0){
+            double[][][] Writ_prev = map_v_Wwit.get(v-1);
+            for (int i = 0; i <= instance.n; i++) {
+                for (int t = 0; t < instance.T; t++) {
+                    for (int w = 0; w < scenarios.size() ; w++) {
+                        Wwit[w][i][t] = Writ_prev[w][i][t] + penalty * (Xwit[w][i][t] - Xit_average[i][t]);
+                    }
+                }
+            }
+        }
+        else{ //for initialization
+            for (int i = 0; i <= instance.n; i++) {
+                for (int t = 0; t < instance.T; t++) {
+                    for (int w = 0; w < scenarios.size() ; w++) {
+                        Wwit[w][i][t] = penalty * (Xwit[w][i][t] - Xit_average[i][t]);
+                    }
                 }
             }
         }
@@ -76,9 +105,14 @@ public class PHA_heuristic {
     }
 
 
-    private double[][] aggregation() {
+    private void aggregation() {
         double[][] average_Xit = new double[instance.n+1][instance.T+1];
         int[][][] Xwit = map_v_Xwit.get(v);
+
+
+        //print Xwit X
+//        printXwit(map_v_Xwit.get(v));
+
         for (int i = 0; i <= instance.n; i++) {
             for (int t = 0; t < instance.T; t++) {
                 double sum = 0.0;
@@ -89,6 +123,56 @@ public class PHA_heuristic {
                 average_Xit[i][t] = sum;
             }
         }
-        return average_Xit;
+
+        //print average X
+//        printXaverage(average_Xit);
+
+        map_average_Xit.put(v, average_Xit);
     }
+
+
+
+    private void printWwit(double[][][] doubles) {
+        for (int w = 0; w < scenarios.size(); w++) {
+            for (int i = 0; i < instance.n + 1; i++) {
+                for (int t = 0; t < instance.T + 1; t++) {
+                    System.out.print(doubles[w][i][t]+"\t");
+                }
+                System.out.println();
+            }
+            System.out.println("\n");
+        }
+    }
+
+    private void printXwit(int[][][] ints) {
+        for (int w = 0; w < scenarios.size(); w++) {
+            for (int i = 0; i < instance.n + 1; i++) {
+                for (int t = 0; t < instance.T + 1; t++) {
+                    System.out.print(ints[w][i][t]+"\t");
+                }
+                System.out.println();
+            }
+            System.out.println("\n");
+        }
+    }
+
+    private void printXwitDiff(int[][][] ints, int[][][] ints2) {
+        for (int w = 0; w < scenarios.size(); w++) {
+            for (int i = 0; i < instance.n + 1; i++) {
+                for (int t = 0; t < instance.T + 1; t++) {
+                    System.out.print((ints[w][i][t]-ints2[w][i][t])+"\t");
+                }
+                System.out.println();
+            }
+            System.out.println("\n");
+        }
+    }
+
+    private void printXaverage(double[][] doubles){
+        for (int i = 0; i < instance.n + 1; i++) {
+        for (int t = 0; t < instance.T + 1; t++) {
+            System.out.print(doubles[i][t]+"\t");
+        }
+        System.out.println();
+    }}
 }

@@ -62,8 +62,8 @@ public class GroupingAlg4 {
         K.sort(Comparator.comparingInt(Individual::getBeta));
 
         //step 2
-        while (m < K.size()) {
-            System.out.println("m="+m);
+        while (m <= K.size()) {
+//            System.out.println("m="+m);
             //step 2.1
             v = m ;
 
@@ -82,7 +82,7 @@ public class GroupingAlg4 {
             groups.clear();
             m++;
         }
-        System.out.println("created all groups");
+//        System.out.println("created all groups");
 
         //step 2
         Map.Entry<Integer, Double> minEntry = Collections.min(groupCosts.entrySet(), Map.Entry.comparingByValue());
@@ -90,7 +90,7 @@ public class GroupingAlg4 {
             System.out.println("minEntry is null, so we cannot find the value for m.");
             System.exit(1);
         } else {
-            System.out.println("found the minEntry and resetting the costs");
+//            System.out.println("found the minEntry and resetting the costs");
             m = minEntry.getKey();
             resetFinalCosts();
         }
@@ -141,8 +141,6 @@ public class GroupingAlg4 {
                 }
             }
         }
-
-        //fill up z values located at row instance.n
         for (int t = 0; t < instance.T+1 ; t++) {
             for (int i = 0; i < instance.n; i++) {
                 if (Xit[i][t]==1) {
@@ -151,14 +149,7 @@ public class GroupingAlg4 {
             }
         }
 
-        //jsut for printing
-        for (int i = 0; i < instance.n+1; i++) {
-            for (int t = 0; t < instance.T + 1; t++) {
-                System.out.print(Xit[i][t]+"\t");
-            }
-            System.out.println();
-        }
-
+//        printXit(Xit);
 
 
 //      public double calculateCosts(int[][] Xit) {
@@ -179,8 +170,18 @@ public class GroupingAlg4 {
             }
         }
         finalCosts = costs2;
-        System.out.println("Costs ="+costs2);
-        System.out.println("\n\n");
+//        System.out.println("Costs ="+costs2);
+//        System.out.println("\n\n");
+    }
+
+    private void printXit(int[][] Xit) {
+        //jsut for printing
+        for (int i = 0; i < instance.n+1; i++) {
+            for (int t = 0; t < instance.T + 1; t++) {
+                System.out.print(Xit[i][t]+"\t");
+            }
+            System.out.println();
+        }
     }
 
     /**
