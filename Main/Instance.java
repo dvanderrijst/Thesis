@@ -17,6 +17,12 @@ public class Instance {
     public final double[] alpha = new double[]{6.5, 6.7}; //alpha is 1 year
     public final double[] beta = new double[]{6.9, 5};
 
+    //ZHU instance
+//    public final double CR_average_i = new double[]{14.4, 11.4, 9.4, 8.0, 11.1, 14.2, 7.4};
+//    public final double alpha = new double[]{6.5, 6.7, 5.4, 4.9, 4.8, 4.4, 5.5};
+//    public final double beta = new double[]{6.9,    5, 7.3, 4.8, 4.2, 4.5, 3.2};
+
+
     //ZHU
     public final int q       = 2 ;
     public final int lengthOmega;
