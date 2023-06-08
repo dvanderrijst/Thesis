@@ -4,14 +4,14 @@ import Main.Instance;
 
 import java.util.List;
 
-public class Algorithm4Decomposition extends Algorithm4{
+public class Algorithm4_Decomposition extends Algorithm4{
     public final double[][][] Wwit;
     public final double[][] Xit_average;
     public final int w;
     public final double penalty;
     public int[][][] Xwit;
 
-    public Algorithm4Decomposition(int[][] lifetimes, Instance instance, int[][][] Xwit, int w, double[][][] Wwit, double[][] Xit_average, double penalty) {
+    public Algorithm4_Decomposition(int[][] lifetimes, Instance instance, int[][][] Xwit, int w, double[][][] Wwit, double[][] Xit_average, double penalty) {
         super(lifetimes, instance, Xwit, w);
         this.Wwit = Wwit;
         this.Xit_average = Xit_average;
@@ -22,7 +22,7 @@ public class Algorithm4Decomposition extends Algorithm4{
 
     @Override
     public void step2_2(List<Individual> K, int iota, Instance instance) {
-        GroupingAlg4Decomposition group = new GroupingAlg4Decomposition(K, iota, instance, Xwit, w, Wwit, Xit_average, penalty);
+        Algorithm4_GroupingDecomposition group = new Algorithm4_GroupingDecomposition(K, iota, instance, Xwit, w, Wwit, Xit_average, penalty);
         group.doGrouping();
     }
     @Override

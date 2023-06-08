@@ -6,12 +6,12 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-public class GroupingAlg4Decomposition extends GroupingAlg4{
+public class Algorithm4_GroupingDecomposition extends Algorithm4_Grouping {
     public final double[][][] Wwit;
     public final double[][] Xit_average;
     public final int w;
     public final double penalty;
-    public GroupingAlg4Decomposition(List<Individual> K, int iota, Instance instance, int[][][] Xwit, int w, double[][][] Wwit, double[][] Xit_average, double penalty) {
+    public Algorithm4_GroupingDecomposition(List<Individual> K, int iota, Instance instance, int[][][] Xwit, int w, double[][][] Wwit, double[][] Xit_average, double penalty) {
         super(K, iota, instance);
         this.Wwit = Wwit;
         this.Xit_average = Xit_average;

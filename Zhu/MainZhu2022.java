@@ -8,21 +8,26 @@ import java.util.List;
 
 public class MainZhu2022 {
     public static void main(String[] args) throws IloException {
-        System.out.println("Hello donnie");
         Instance instance = new Instance();
         Omega omega = new Omega(instance);
 
-        //zhuSmallInstance(instance, omega)
-        PHA pha = new PHA(omega, instance);
-//        List<int[][]> list = generate5scenarios();
-        double[] hello = new double[]{0.0	,0.006920387509683934,	0.020523027137251914	,0.033474806045074725,	0.04545237206562901,	0.0561917060722181,	0.06550032276851925	,0.07326289826737059,	0.07944020638276157	,0.08406202315667718,	0.08721530016576963,	0.08902932948876624,	0.0};
-        double sum = 0.0;
-        for(double hi : hello){
-            sum = sum + hi;
+        //print Twir
+        for (int w = 0; w < instance.lengthOmega ; w++) {
+            System.out.println("omega="+w);
+            System.out.println("r\t1\t2\t3\t4\t5");
+            for (int i = 0; i < instance.n; i++) {
+                System.out.print("i\t");
+                for (int r = 0; r < instance.q; r++) {
+                    System.out.print(omega.Twir[w][i][r]+"\t");
+                }
+                System.out.println();
+            }
         }
-        System.out.println(sum);
 
-        PHA_heuristic algorithm4 = new PHA_heuristic(omega.getScenarios(), instance);
+        DEF def = new DEF(instance, omega, "outputHere.lp");
+        def.setupAndSolve();
+
+//        List<int[][]> list = generate5scenarios();
     }
 
     private static List<Individual> manuallyCreateIndividuals(Instance instance, int[][] lifetimes){
@@ -75,27 +80,4 @@ public class MainZhu2022 {
         list.add(array5);
         return list;
     }
-
-    private static void zhuSmallInstance(Instance instance, Omega omega) throws IloException {        //manually create three scenarios as input.
-        int[][][] Twir = new int[3][2][2]; // w = 3, q = 2, n = 2
-        Twir[0][0][0] = 0;
-        Twir[0][0][1] = 1;
-        Twir[0][1][0] = 2;
-        Twir[0][1][1] = 3;
-        //        Twir[1][0][0] = 2;
-//        Twir[1][0][1] = 1;
-//        Twir[1][1][0] = 3;
-//        Twir[1][1][1] = 2;
-//        Twir[2][0][0] = 1;
-//        Twir[2][0][1] = 1;
-//        Twir[2][1][0] = 3;
-//        Twir[2][1][1] = 1;
-        double[] probs = new double[]{0.0000000001};//, 0.333333, 0.666666666};
-
-        //        ZhuCplexModel model = new ZhuCplexModel(instance, omega.getTwir(), omega.getProbabilityScenario());
-        ZhuCplexModel model = new ZhuCplexModel(instance, Twir, probs, "modelZhuDEF.lp");
-        model.setupAndSolve();
-    }
-
-
 }

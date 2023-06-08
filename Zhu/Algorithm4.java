@@ -2,8 +2,6 @@ package Zhu;
 
 import Main.Instance;
 
-import javax.lang.model.type.ErrorType;
-import java.security.KeyPair;
 import java.util.*;
 
 /**
@@ -87,7 +85,7 @@ public class Algorithm4 {
     }
 
     public void step2_2(List<Individual> K, int iota, Instance instance) {
-        GroupingAlg4 group = new GroupingAlg4(K, iota, instance);
+        Algorithm4_Grouping group = new Algorithm4_Grouping(K, iota, instance);
         group.doGrouping();
     }
 

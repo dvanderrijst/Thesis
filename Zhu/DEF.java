@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public class ZhuCplexModel {
+public class DEF {
     public final IloCplex cplex;
     public final int T;
     public final int T_prime;
@@ -30,32 +30,31 @@ public class ZhuCplexModel {
     public final IloNumVar[][][][] u_rwit;
     public final IloNumVar[][][] Y_rwi;
     public final int[][][] T_wir;
-    public final int[] xi_i;
-    public final double[] probsOmega;
+    public final int[] kesi;
+    public final double[] p_w;
     public final Instance i;
     public final String fileName;
 
-    public ZhuCplexModel(Instance i, int[][][] T_wir, double[] probsOmega, String fileName) throws IloException {
-
-        this.i = i;
+    public DEF(Instance instance, Omega Omega, String fileName) throws IloException {
         this.fileName = fileName;
         cplex = new IloCplex();
-        cplex.setOut(null);
-        cplex.setWarning(null);
+//        cplex.setOut(null);
+//        cplex.setWarning(null);
 
-        T = i.T;
-        n = i.n;
-        q = i.q;
-        this.lengthOmega = probsOmega.length;
-        cPR_i = i.cPR_i ;
-        cCR_i = i.cCR_i;
-        d = i.d;
-        this.probsOmega = probsOmega;
+        this.i = instance;
+        T = instance.T;
+        n = instance.n;
+        q = instance.q;
+        lengthOmega = instance.lengthOmega;
+        cPR_i = instance.cPR_i ;
+        cCR_i = instance.cCR_i;
+        d = instance.d;
+        kesi = instance.kesi;
 
-//        this.T_wir = setScenarios();
-        this.T_wir = T_wir;
+        p_w = Omega.p_w;
+        T_wir = Omega.Twir;
+
         T_prime = T + getMaxTwir();
-        xi_i = setXi();
 
         x_i = new IloNumVar[n];
         x_rwit = new IloNumVar[q][lengthOmega][n][T+1];
@@ -65,8 +64,6 @@ public class ZhuCplexModel {
         u_rwit = new IloNumVar[q][lengthOmega][n][T_prime+1];
         v_rwit = new IloNumVar[q][lengthOmega][n][T_prime+1];
         Y_rwi = new IloNumVar[q][lengthOmega][n];
-
-//        setupAndSolve();
     }
 
     public void setupAndSolve() throws IloException {
@@ -75,12 +72,12 @@ public class ZhuCplexModel {
         setObjective();
         cplex.exportModel(fileName);
         cplex.solve();
-        cplex.setOut(null);
-//        System.out.println(cplex.getCplexStatus());
+//        cplex.setOut(null);
+        System.out.println(cplex.getCplexStatus());
 //        checkResult();
 //        printResultMatrix();
-//        System.out.println("best costs are "+cplex.getObjValue());
-//        System.out.println("x1 = "+cplex.getValue(x_i[0])+"\t\t x2 = "+cplex.getValue(x_i[1]));
+        System.out.println("best costs are "+cplex.getObjValue());
+        System.out.println("x1 = "+cplex.getValue(x_i[0])+"\t\t x2 = "+cplex.getValue(x_i[1]));
     }
 
     private void printResultMatrix() throws IloException {
@@ -171,17 +168,17 @@ public class ZhuCplexModel {
                 sum_t = cplex.sum(sum_t, cplex.prod(d, z_wt[w][t]));
             }
 
-            sum_w = cplex.sum(sum_w, cplex.prod(probsOmega[w], cplex.sum(sum_n, sum_t)));
+            sum_w = cplex.sum(sum_w, cplex.prod(p_w[w], cplex.sum(sum_n, sum_t)));
         }
 
         cplex.addMinimize(sum_w, "obj");
     }
 
     /**
-     * Sets all the constratins found in the article in our CPLEX model.
+     * Sets all the constraints found in the article in our CPLEX model.
      * @throws IloException
      */
-    private void setConstraints() throws IloException {
+    private void setConstraints() throws IloException{
         // Constraint 1b is the definition for x_rwit and ensures that the item is replaced at or before t+1 when it is replaced at or before t. In other words, I makes sure that I_ir can not come to live suddenly and remains replaced.
 //        System.out.print("adding constraints 1b");
         for(int i = 0; i< n ; i++){
@@ -242,10 +239,10 @@ public class ZhuCplexModel {
 //        System.out.print("adding constraints 1g");
         //constraint 1g ensures that the first individual is replaced before its lifetime.
         for (int w = 0; w < lengthOmega ; w++) {
-            for (int j = 0; j < n ; j++) {
-                if(T_wir[w][j][0] <= T){
+            for (int i = 0; i < n ; i++) {
+                if(T_wir[w][i][0] <= T){
 
-                    cplex.addEq(x_rwit[0][w][j][T_wir[w][j][0]], 1,"g_0"+w+j) ;
+                    cplex.addEq(x_rwit[0][w][i][T_wir[w][i][0]], 1,"g_0"+w+i) ;
 
                 }
             }
@@ -273,7 +270,7 @@ public class ZhuCplexModel {
 //        System.out.print("adding constraints 1j");
         //constraint 1j
         for (int i = 0; i < n ; i++) {
-            cplex.addGe(x_i[i],xi_i[i],"j_"+i);
+            cplex.addGe(x_i[i], kesi[i],"j_"+i);
         }
 //        System.out.print("adding constraints 1k");
         //constraint 1k
@@ -385,34 +382,20 @@ public class ZhuCplexModel {
                                 count++;
                             }
                             w_rwit[r][w][i][t] = cplex.boolVar("w(" + r + "," + w + "," + i + "," + t + ")");
-                            y_rwit[r][w][i][t] = cplex.boolVar("y(" + r + "," + w + "," + i + "," + t + ")");
+                            y_rwit[r][w][i][t] = cplex.intVar(-1,1,"y(" + r + "," + w + "," + i + "," + t + ")");
                             u_rwit[r][w][i][t] = cplex.boolVar("u(" + r + "," + w + "," + i + "," + t + ")");
                             v_rwit[r][w][i][t] = cplex.boolVar("v(" + r + "," + w + "," + i + "," + t + ")");
                             count = count + 4;
-//                            System.out.println(count);
                         }
                     }
                 }
+                System.out.println(count);
             }
         }
         catch(OutOfMemoryError e){
             System.out.println(count);
         }
     }
-
-
-    /**
-     * This method sets all components on working modus.
-     * @return boolean saying that all components start in working modus
-     */
-    private int[] setXi() {
-        int[] xi = new int[n];
-        for(int i=0; i< n; i++){
-            xi[i]=0;
-        }
-        return xi;
-    }
-
 
     /**
      * This method sets the scenarios. The life times are uniformly distributed over [0, (2T)/q ]. The fraction is then rounded
@@ -484,4 +467,5 @@ public class ZhuCplexModel {
         cplex.clearModel();
         cplex.end();
     }
+
 }

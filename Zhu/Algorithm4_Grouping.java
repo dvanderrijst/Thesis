@@ -21,7 +21,7 @@ import java.util.*;
  * K - the set received from Algorithm 4 and the set to create groups from.
  * finalCosts - updated for every iota value, needed in Algorithm 4.
  */
-public class GroupingAlg4 {
+public class Algorithm4_Grouping {
     public  final List<List<Individual>> groups = new ArrayList<>();
     public  final Map<Integer, Double> groupCosts = new HashMap<>();
     public  int v;
@@ -37,7 +37,7 @@ public class GroupingAlg4 {
     public  final Instance instance;
 
 
-    public GroupingAlg4(List<Individual> K, int iota, Instance instance) {
+    public Algorithm4_Grouping(List<Individual> K, int iota, Instance instance) {
         this.K = K;
         this.iota = iota;
         this.instance = instance;

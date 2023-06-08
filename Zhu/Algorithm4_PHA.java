@@ -1,13 +1,12 @@
 package Zhu;
 
 import Main.Instance;
-import ilog.concert.IloException;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class PHA_heuristic {
+public class Algorithm4_PHA {
     private static int v = 0;
     private final double epsilon = 0.01;
     private final List<Scenario> scenarios;
@@ -18,7 +17,7 @@ public class PHA_heuristic {
     private final Map<Integer, double[][]> map_average_Xit = new HashMap<>();
     private final Map<Integer, Double> map_gdistances = new HashMap<>();
 
-    public PHA_heuristic(List<Scenario> scenarios, Instance instance) {
+    public Algorithm4_PHA(List<Scenario> scenarios, Instance instance) {
         this.scenarios = scenarios;
         this.instance = instance;
 
@@ -64,7 +63,7 @@ public class PHA_heuristic {
 //        for (int w = 0; w < scenarios.size() ; w++) {
         for(Scenario scenario : scenarios){
             int w = scenario.w;
-            Algorithm4Decomposition hello = new Algorithm4Decomposition(scenario.scenario, instance, map_v_Xwit.get(v), w, map_v_Wwit.get(v-1), map_average_Xit.get(v-1), penalty);
+            Algorithm4_Decomposition hello = new Algorithm4_Decomposition(scenario.scenario, instance, map_v_Xwit.get(v), w, map_v_Wwit.get(v-1), map_average_Xit.get(v-1), penalty);
             map_v_Xwit.put(v, hello.doAlgorithm4());
         }
     }

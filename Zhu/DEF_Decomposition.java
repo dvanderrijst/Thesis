@@ -4,14 +4,14 @@ import Main.Instance;
 import ilog.concert.IloException;
 import ilog.concert.IloNumExpr;
 
-public class ZhuCplexModelPHA extends ZhuCplexModel{
+public class DEF_Decomposition extends DEF {
     private final double[][][] average_Xrit;
     private final double[][][] Writ_prev;
     private final int w = 0;
     private final double penalty;
 
-    public ZhuCplexModelPHA(Instance i, int[][][] T_wir, double[] probsOmega, double[][][] average_Xrit, double[][][] Writ_prev, double penalty, String fileName) throws IloException {
-        super(i, T_wir, probsOmega, fileName);
+    public DEF_Decomposition(Instance i, Omega Omega, double[][][] average_Xrit, double[][][] Writ_prev, double penalty, String fileName) throws IloException {
+        super(i, Omega, fileName);
         this.average_Xrit = average_Xrit;
         this.Writ_prev = Writ_prev;
         this.penalty = penalty;
