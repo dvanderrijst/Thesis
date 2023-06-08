@@ -21,7 +21,7 @@ import java.util.*;
  * K - the set received from Algorithm 4 and the set to create groups from.
  * finalCosts - updated for every iota value, needed in Algorithm 4.
  */
-public class GroupingAlg4 {
+public class Algorithm4_Grouping {
     public  final List<List<Individual>> groups = new ArrayList<>();
     public  final Map<Integer, Double> groupCosts = new HashMap<>();
     public  int v;
@@ -37,7 +37,7 @@ public class GroupingAlg4 {
     public  final Instance instance;
 
 
-    public GroupingAlg4(List<Individual> K, int iota, Instance instance) {
+    public Algorithm4_Grouping(List<Individual> K, int iota, Instance instance) {
         this.K = K;
         this.iota = iota;
         this.instance = instance;
@@ -62,8 +62,7 @@ public class GroupingAlg4 {
         K.sort(Comparator.comparingInt(Individual::getBeta));
 
         //step 2
-        while (m < K.size()) {
-            System.out.println("m="+m);
+        while (m <= K.size()) {
             //step 2.1
             v = m ;
 
@@ -76,21 +75,21 @@ public class GroupingAlg4 {
 
             //step 2.4
             resetFinalCosts();
-//            System.out.print("costs="+finalCosts+" for ");
 //            printGroups();
             groupCosts.put(m, finalCosts);
             groups.clear();
             m++;
         }
-        System.out.println("created all groups");
+//        System.out.println("created all groups");
 
         //step 2
+
         Map.Entry<Integer, Double> minEntry = Collections.min(groupCosts.entrySet(), Map.Entry.comparingByValue());
         if (minEntry == null) {
             System.out.println("minEntry is null, so we cannot find the value for m.");
             System.exit(1);
         } else {
-            System.out.println("found the minEntry and resetting the costs");
+//            System.out.println("found the minEntry and resetting the costs");
             m = minEntry.getKey();
             resetFinalCosts();
         }
@@ -137,12 +136,10 @@ public class GroupingAlg4 {
             if (individual.getTau(m) < instance.T + 1) {
                 Xit[individual.i()][individual.getTau(m)]++;
                 if (Xit[individual.i()][individual.getTau(m)] > 1) {
-                    System.out.println("Xit takes the value of 2, meaning that once a replacement is done it is immediately replaced again, which ofcourse doesn't make sense.");
+//                    System.out.println("Xit takes the value of 2, meaning that once a replacement is done it is immediately replaced again, which ofcourse doesn't make sense.");
                 }
             }
         }
-
-        //fill up z values located at row instance.n
         for (int t = 0; t < instance.T+1 ; t++) {
             for (int i = 0; i < instance.n; i++) {
                 if (Xit[i][t]==1) {
@@ -151,14 +148,7 @@ public class GroupingAlg4 {
             }
         }
 
-        //jsut for printing
-        for (int i = 0; i < instance.n+1; i++) {
-            for (int t = 0; t < instance.T + 1; t++) {
-                System.out.print(Xit[i][t]+"\t");
-            }
-            System.out.println();
-        }
-
+//        printXit(Xit);
 
 
 //      public double calculateCosts(int[][] Xit) {
@@ -179,8 +169,18 @@ public class GroupingAlg4 {
             }
         }
         finalCosts = costs2;
-        System.out.println("Costs ="+costs2);
-        System.out.println("\n\n");
+//        System.out.println("Costs ="+costs2);
+//        System.out.println("\n\n");
+    }
+
+    private void printXit(int[][] Xit) {
+        //jsut for printing
+        for (int i = 0; i < instance.n+1; i++) {
+            for (int t = 0; t < instance.T + 1; t++) {
+                System.out.print(Xit[i][t]+"\t");
+            }
+            System.out.println();
+        }
     }
 
     /**

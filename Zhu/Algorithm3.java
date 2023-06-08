@@ -6,12 +6,12 @@ import ilog.concert.IloException;
 import java.util.HashMap;
 import java.util.Map;
 
-public class PHA {
+public class Algorithm3 {
     private static int v = 0;
     private final double epsilon = 0.01;
-    private Omega omega;
+    private Omega Omega;
     private Instance instance;
-    private double penalty = 1.0;
+    private double penalty = 0.5;
     private int n;
     private int T;
     private int q;
@@ -20,34 +20,36 @@ public class PHA {
     private static Map<Integer, double[][][]> map_average_Xrit = new HashMap<>();
     private static Map<Integer, Double> map_gdistances = new HashMap<>();
 
-    public PHA(Omega omega, Instance instance) throws IloException {
-        this.omega = omega;
+    public Algorithm3(Omega omega, Instance instance) throws IloException {
+        this.Omega = omega;
         this.instance = instance;
         n = instance.n;
         T = instance.T;
         q = instance.q;
 
-//        for (int i = 0; i < omega.getProbabilitiesScenarios().length; i++) {
-//            System.out.println("i="+i+"\t "+omega.getProbabilityScenario(i)[0]);
+//        for (int i = 0; i < Omega.getProbabilitiesScenarios().length; i++) {
+//            System.out.println("i="+i+"\t "+Omega.getProbabilityScenario(i)[0]);
 //        }
 
         initialize();
 
         int count = 0;
-        while(count<7 && ( map_gdistances.isEmpty() ||  map_gdistances.get(v) > epsilon) ){
+        while(count<5 && ( map_gdistances.isEmpty() ||  map_gdistances.get(v) > epsilon) ){
             //printX
-            for (int w = 0; w < omega.lengthOmega; w++) {
-                printint3(getXrit(w,map_v_Xrwit.get(v)));
+            for (int w = 0; w < instance.lengthOmega; w++) {
+//                printint3(getXrit(w,map_v_Xrwit.get(v)));
             }
+
+            //printW
+            for (int w = 0; w < instance.lengthOmega; w++) {
+//                printdouble3(getWrit(w,map_v_Wrwit.get(v)), "W");
+            }
+
             //printXaverage
             System.out.println(
                     " \n\n\n\n\nX AVERAGE"
             );
-            printdouble3(map_average_Xrit.get(v));
-            //printW
-            for (int w = 0; w < omega.lengthOmega; w++) {
-                printdouble3(getWrit(w,map_v_Wrwit.get(v)));
-            }
+            printdouble3(map_average_Xrit.get(v), "X_average");
 
 
             updateV();
@@ -69,7 +71,7 @@ public class PHA {
         double[][][] average_Xrit = map_average_Xrit.get(v);
         int[][][][] x_rwit = map_v_Xrwit.get(v);
 
-        for (int w = 0; w < omega.lengthOmega ; w++) {
+        for (int w = 0; w < instance.lengthOmega ; w++) {
             double distance = 0.0;
             for (int r = 0; r < q; r++) {
                 for (int i = 0; i < n; i++) {
@@ -79,13 +81,13 @@ public class PHA {
                 }
             }
 //            System.out.println(distance);
-            sumW = sumW + omega.getProbabilityScenario(w)[0]*distance;
+            sumW = sumW + Omega.p_w[w]*distance;
         }
         map_gdistances.put(v,sumW);
     }
 
     private void updatePrice() {
-        double[][][][] Wrwit_v = new double[q][omega.lengthOmega][n][T+1];
+        double[][][][] Wrwit_v = new double[q][instance.lengthOmega][n][T+1];
         double[][][][] Wrwit_vprev = map_v_Wrwit.get(v-1);
         double[][][] average_Xrit = map_average_Xrit.get(v);
         int[][][][] Xrwit = map_v_Xrwit.get(v);
@@ -94,7 +96,7 @@ public class PHA {
         for (int i = 0; i < n; i++) {
             for (int r = 0; r < q; r++) {
                 for (int t = 0; t <= T; t++) {
-                    for (int w = 0; w < omega.lengthOmega; w++) {
+                    for (int w = 0; w < instance.lengthOmega; w++) {
                         Wrwit_v[r][w][i][t] = Wrwit_vprev[r][w][i][t] + penalty * ( Xrwit[r][w][i][t] - average_Xrit[r][i][t]);
 //                        Wrwit_v[r][w][i][t] = penalty * ( Xrwit[r][w][i][t] - average_Xrit[r][i][t]);
                     }
@@ -113,8 +115,8 @@ public class PHA {
                 for (int t = 0; t <= T; t++) {
 
                     double sum = 0.0;
-                    for (int w = 0; w < omega.lengthOmega; w++) {
-                        sum = sum + omega.getProbabilityScenario(w)[0] * Xrwit[r][w][i][t];
+                    for (int w = 0; w < instance.lengthOmega; w++) {
+                        sum = sum + Omega.p_w[w] * Xrwit[r][w][i][t];
                     }
                     average_Xrit[r][i][t] = sum;
                 }
@@ -130,9 +132,10 @@ public class PHA {
         System.out.println("v = "+v);
     }
     private void decomposition() throws IloException {
-        int[][][][] Xrwit = new int[q][omega.lengthOmega][n][T+1];
-        for (int w = 0; w < omega.lengthOmega ; w++) {
-            ZhuCplexModelPHA model = new ZhuCplexModelPHA(instance, omega.getTir(w), new double[]{1.0}, map_average_Xrit.get(v-1), getWrit(w, map_v_Wrwit.get(v-1)), penalty, "model.lp");
+        int[][][][] Xrwit = new int[q][instance.lengthOmega][n][T+1];
+        for (int w = 0; w < instance.lengthOmega ; w++) {
+            Omega omegaOneScenario = new Omega(instance, this.Omega.getTir(w), new double[]{1.0});
+            DEF_Decomposition model = new DEF_Decomposition(instance, omegaOneScenario, map_average_Xrit.get(v-1), getWrit(w, map_v_Wrwit.get(v-1)), penalty, "model.lp");
             int[][][] x_rit = model.get_x_rit();
             model.cleanup();
 
@@ -152,9 +155,9 @@ public class PHA {
     private void initialize() throws IloException {
 
         //initialize Xrwit
-        int[][][][] Xrwit = new int[q][omega.lengthOmega][n][T+1];
-        for (int w = 0; w < omega.lengthOmega; w++) {
-            ZhuCplexModel model = new ZhuCplexModel(instance, omega.getTir(w), omega.getProbabilityScenario(w), "modelZhuPha_v="+v+".lp");
+        int[][][][] Xrwit = new int[q][instance.lengthOmega][n][T+1];
+        for (int w = 0; w < instance.lengthOmega; w++) {
+            DEF model = new DEF(instance, Omega, "modelZhuPha_v="+v+".lp");
             model.setupAndSolve();
             int[][][] x_rit = model.get_x_rit();
 //            printint3(x_rit);
@@ -175,11 +178,11 @@ public class PHA {
         double[][][] average_Xrit = map_average_Xrit.get(0);
 
         //initialize w
-        double[][][][] Wrwit = new double[q][omega.lengthOmega][n][T+1];
+        double[][][][] Wrwit = new double[q][instance.lengthOmega][n][T+1];
         for (int i = 0; i < n; i++) {
             for (int r = 0; r < q; r++) {
                 for (int t = 0; t <= T; t++) {
-                    for (int w = 0; w < omega.lengthOmega; w++) {
+                    for (int w = 0; w < instance.lengthOmega; w++) {
                         Wrwit[r][w][i][t] = penalty * ( Xrwit[r][w][i][t] - average_Xrit[r][i][t]);
                     }
                 }
@@ -216,9 +219,9 @@ public class PHA {
     }
 
 
-    private void printdouble3(double[][][] writ) {
+    private void printdouble3(double[][][] writ, String variable) {
         for (int i = 0; i < n; i++) {
-            System.out.println("\n\nw or x_average for i="+i);
+            System.out.println("\n\n"+variable+" for i="+i);
 
             System.out.printf("%8s", "\nt= ");
             for (int t = 0; t <= T; t++) {

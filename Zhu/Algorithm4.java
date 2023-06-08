@@ -2,8 +2,6 @@ package Zhu;
 
 import Main.Instance;
 
-import javax.lang.model.type.ErrorType;
-import java.security.KeyPair;
 import java.util.*;
 
 /**
@@ -22,8 +20,8 @@ public class Algorithm4 {
 
     public Algorithm4(int[][] lifetimes, Instance instance, int[][][] Xwit, int w) {
         List<Individual> scenario = new ArrayList<>();
-        for (int i = 0; i < 4; i++) {
-            for (int r = 0; r < 5; r++) {
+        for (int i = 0; i < instance.n ; i++) {
+            for (int r = 0; r < instance.q ; r++) {
                 Individual individual = new Individual(i, r, lifetimes[i][r], instance);
                 scenario.add(individual);
             }
@@ -37,16 +35,19 @@ public class Algorithm4 {
         for (int i = 0; i < instance.T; i++) {
             iotas[i] = i+1;
         }
+    }
 
+    public int[][][] doAlgorithm4() {
         for(int delta : deltas){
             for(int iota : iotas){
                 scenario.get(0).initializeAllBetas(instance.n, instance.q);
-                System.out.print("\ndelta="+delta+" and iota="+iota+"\t\t\t\t");
+//                System.out.print("\ndelta="+delta+" and iota="+iota+"\t\t\t\t");
                 doStep2(delta, iota);
                 cleanIndividuals();
             }
         }
         Xwit = returnBestSolution(Xwit, w);
+        return Xwit;
     }
 
     private void cleanIndividuals() {
@@ -66,7 +67,7 @@ public class Algorithm4 {
         //step 2.1
         List<Individual> K = createK(r);
 
-        while(!stop && r < instance.q ) {
+        while(r < instance.q && K.size() !=0) {
             //step 2.2
             step2_2(K, iota, instance);
 
@@ -76,9 +77,6 @@ public class Algorithm4 {
             assignTentativeReplacementTimes(delta);
 
             K = createK(r);
-            if (K.size() == 0) {
-                stop = true;
-            }
         }
 
         index++;
@@ -87,7 +85,7 @@ public class Algorithm4 {
     }
 
     public void step2_2(List<Individual> K, int iota, Instance instance) {
-        GroupingAlg4 group = new GroupingAlg4(K, iota, instance);
+        Algorithm4_Grouping group = new Algorithm4_Grouping(K, iota, instance);
         group.doGrouping();
     }
 
@@ -124,7 +122,7 @@ public class Algorithm4 {
             if (individual.getBetaPrime() < instance.T + 1) {
                 Xit[individual.i()][individual.getBetaPrime()]++;
                 if (Xit[individual.i()][individual.getBetaPrime()] > 1) {
-                    System.out.println("Xit takes the value of 2, meaning that once a replacement is done it is immediately replaced again, which ofcourse doesn't make sense.");
+//                    System.out.println("Xit takes the value of 2, meaning that once a replacement is done it is immediately replaced again, which ofcourse doesn't make sense.");
                 }
             }
         }
@@ -198,31 +196,38 @@ public class Algorithm4 {
 
         //just for printing
         if (minKey != null) {
-            System.out.println("Key with the lowest value: " + minKey);
+//            System.out.println("Key with the lowest value: " + minKey);
         } else {
             System.out.println("The map is empty.");
         }
-        System.out.println("these groups have the lowest costs="+keepTrackCosts.get(minKey));
+//        System.out.println("these groups have the lowest costs="+keepTrackCosts.get(minKey));
         {
             for (int i = 0; i < instance.n + 1 ; i++) {
                 for (int t = 0; t < instance.T + 1 ; t++) {
-                    System.out.print(keepTrackGroups.get(minKey)[i][t]+"\t");
+//                    System.out.print(keepTrackGroups.get(minKey)[i][t]+"\t");
                 }
-                System.out.println();
+//                System.out.println();
             }
         }
 
-        //filling in Xwit
-        for (int i = 0; i < instance.n ; i++) {
-            for (int r = 0; r < instance.q; r++) {
-                int timeToReplace = keepTrackGroups.get(minKey)[i][r];
-                if(timeToReplace < instance.T + 1){
-                    Xwit[w][i][timeToReplace] = 1;
-                    Xwit[w][instance.n][timeToReplace] = 1;
-                }
+        //filling in Xwit by setting it equal to the best Xit in keeptrackgroups.
+        for (int i = 0; i < instance.n + 1 ; i++) {
+            for (int t = 0; t < instance.T + 1; t++) {
+                Xwit[w][i][t] = keepTrackGroups.get(minKey)[i][t];
             }
         }
+
+//        printXwit(Xwit, w);
 
         return Xwit;
+    }
+
+    private void printXwit(int[][][] Xwit, int w) {
+        for (int i = 0; i < instance.n + 1 ; i++) {
+            for (int t = 0; t < instance.T + 1 ; t++) {
+                System.out.print(Xwit[w][i][t]+"\t");
+            }
+            System.out.println();
+        }
     }
 }

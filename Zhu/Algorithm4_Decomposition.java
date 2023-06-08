@@ -4,23 +4,25 @@ import Main.Instance;
 
 import java.util.List;
 
-public class Algorithm4Decomposition extends Algorithm4{
+public class Algorithm4_Decomposition extends Algorithm4{
     public final double[][][] Wwit;
-    public final double[][][] Xit_average;
+    public final double[][] Xit_average;
     public final int w;
     public final double penalty;
+    public int[][][] Xwit;
 
-    public Algorithm4Decomposition(int[][] lifetimes, Instance instance, int[][][] Xwit, int w, double[][][] Wwit, double[][][] Xit_average, double penalty) {
+    public Algorithm4_Decomposition(int[][] lifetimes, Instance instance, int[][][] Xwit, int w, double[][][] Wwit, double[][] Xit_average, double penalty) {
         super(lifetimes, instance, Xwit, w);
         this.Wwit = Wwit;
         this.Xit_average = Xit_average;
         this.w = w;
         this.penalty = penalty;
+        this.Xwit = Xwit;
     }
 
     @Override
     public void step2_2(List<Individual> K, int iota, Instance instance) {
-        GroupingAlg4Decomposition group = new GroupingAlg4Decomposition(K, iota, instance, Xwit, w, Wwit, Xit_average);
+        Algorithm4_GroupingDecomposition group = new Algorithm4_GroupingDecomposition(K, iota, instance, Xwit, w, Wwit, Xit_average, penalty);
         group.doGrouping();
     }
     @Override
@@ -40,7 +42,7 @@ public class Algorithm4Decomposition extends Algorithm4{
         //adding WX and rho/2||X-Xbar|| as well
         for (int t = 0; t < instance.T+1; t++) {
             for (int i = 0; i < instance.n + 1; i++) {
-                costs = costs + Wwit[w][i][t]*Xit[i][t] + 0.5*penalty* Math.abs(Xit[i][t]-Xit_average[w][i][t]) ;
+                costs = costs + Wwit[w][i][t]*Xit[i][t] + 0.5*penalty* Math.abs(Xit[i][t]-Xit_average[i][t]) ;
             }
         }
         return costs;

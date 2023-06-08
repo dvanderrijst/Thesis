@@ -2,6 +2,9 @@ package Zhu;
 
 import Main.Instance;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * As the article in Schouten also a discretised Weibull distribution is used, we will do the same.
  * Here, de CDF is F(x)=1-exp((x/alpha)^beta). Then P(X=x)=F(x)-F(x-1)
@@ -9,115 +12,69 @@ import Main.Instance;
  * We say that the components fail independently.
  */
 public class Omega {
-    private int T;
-    private int[][][] Twir;
-    private int n;
-    private int q;
-    public int lengthOmega;
-    public static double[] p_w;
-    private final Instance i;
+    public int[][][] Twir;
+    public final double[] p_w;
+    public final Instance instance;
     public Omega(Instance instance) {
-        this.i = instance;
-        this.T = i.T;
-        this.n = i.n;
-        this.q = i.q;
-        this.lengthOmega = i.lengthOmega;
-        System.out.println("length omega is "+lengthOmega);
-        this.Twir = new int[lengthOmega][n][q];
-
-        System.out.println(Twir[0][0][1]);
+        this.instance = instance;
+        this.Twir = new int[instance.lengthOmega][instance.n][instance.q];
+        this.p_w = new double[instance.lengthOmega];
         createScenarios();
     }
-
-    public double[] getProbabilitiesScenarios(){
-        return p_w;
+    public Omega(Instance instance, int[][][] Twir, double[] p_w){
+        this.instance = instance;
+        this.Twir = Twir;
+        this.p_w = p_w;
     }
 
-    public double[] getProbabilityScenario(int w){
-        return new double[]{p_w[w]};
-    }
-
-
+    /**
+     * This creates scenarios like it is done in the paper of Zhu. It computes variables according to the Weibull distribution and put it in a scenario.
+     * The values for p(w) are all the same: 1/lengthOmega
+     */
     public void createScenarios(){
-        int size = (int) Math.pow(T+1, n*q);
-        int[][] s = new int[size][n*q];
-        int V = T+1;
-        int k = 1 ;//This is wrong!! Needs to be adjusted.
+        int[] kesi = instance.kesi;
+        int[] startAges = instance.startAges;
 
-        for(int i = 0; i<n*q ; i++) {
-            int R = (int) Math.pow(T+1, i);
-            int S = (int) Math.pow(T+1, n*q - i);
-            int D = (int) Math.pow(T+1, n*q - i - 1);
-
-            for (int r = 0; r < R; r++) {
-                for (int v = 0; v < V; v++) {
-                    int d = 0;
-                    while (d < D) {
-                        int i1 = r * S + v * D + d;
-                        s[i1][i] = v+1;
-                        d++;
-                    }
+        for (int omega = 0; omega < instance.lengthOmega; omega++) {
+            for (int i = 0; i < instance.n; i++) {
+                for (int r = 0; r < instance.q; r++) {
+                    if(kesi[i]==1 && r==0){
+                        Twir[omega][i][r] = 0 ;
+                    } else{
+                    Twir[omega][i][r] = instance.inverseWeibull(i, startAges[i]);}
                 }
             }
+            p_w[omega] = 1.0 / instance.lengthOmega;
         }
-        System.out.println("Distributing them between components n");
-
-        for (int w = 0; w < size ; w++) {
-            int nq = 0;
-            for (int r = 0; r < q; r++) {
-                int i = 0;
-                while (i < n) {
-                    Twir[w][i][r] = s[w][nq];
-                    i++;
-                    nq++;
-                }
-            }
-        }
-
-        System.out.println(Twir.length);
-        for (int w = 0; w < lengthOmega; w++) {
-//            System.out.println("For w = "+w+" we have matrix T[w][i][r]");
-            for (int i = 0; i < n; i++) {
-                for (int r = 0; r < q; r++) {
-//                    System.out.print(Twir[w][i][r]+"\t");
-                }
-//                System.out.println();
-            }
-        }
-        System.out.println("Now we are linking the probabilities to it....");
-        p_w = new double[size];
-
-        double sum = 0.0;
-        for (int i = 0; i < size; i++) {
-            double probability = 1.0;
-            for (int j = 0; j < n*q; j++) {
-                probability = probability * this.i.probX_x_k(s[i][j]-1, k);
-            }
-            p_w[i] = probability;
-            sum = sum + probability;
-        }
-        System.out.println("The sum is "+sum+" if this is not equal to one, something goes wrong here.");
     }
 
-
-
-    public int[][][] getTwir(){
-        return Twir;
-    }
-
+    /**
+     * This method is to only return one scenario of the whole scenario set, so we can use the PHA.
+     * @param w the scenario
+     * @return a very small scenario set, namelijk a scenario set containing only one scenario.
+     */
     public int[][][] getTir(int w){
-        int[][][] Tir = new int[1][n][q];
-        for (int i = 0; i < n; i++) {
-            for (int r = 0; r < q; r++) {
+        int[][][] Tir = new int[1][instance.n][instance.q];
+        for (int i = 0; i < instance.n; i++) {
+            for (int r = 0; r < instance.q; r++) {
                 Tir[0][i][r]=Twir[w][i][r];
             }
         }
         return Tir;
     }
 
-    public int getT(int w, int i, int r){
-        return Twir[w][i][r];
+    public List<Scenario> getScenarios(){
+        List<Scenario> scenarios = new ArrayList<>();
+        for (int w = 0; w < instance.lengthOmega; w++) {
+            int[][] scenario = new int[instance.n][instance.q];
+            for (int i = 0; i < instance.n; i++) {
+                for (int r = 0; r < instance.q; r++) {
+                    scenario[i][r]=Twir[w][i][r];
+                }
+            }
+            Scenario scenarioObject = new Scenario(w, scenario, p_w[w], instance);
+            scenarios.add(scenarioObject);
+        }
+        return scenarios;
     }
-
-
 }

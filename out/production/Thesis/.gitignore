@@ -32,3 +32,4 @@ hs_err_pid*
 
 *.lp
 out/production/Thesis/model.lp
+*.DS_Store
