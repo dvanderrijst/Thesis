@@ -2,13 +2,10 @@ package SchoutenTwoComp;
 
 import Main.Instance;
 import ilog.concert.*;
-import ilog.cplex.CpxException;
 import ilog.cplex.IloCplex;
-import ilog.cplex.IloCplex.ConflictStatus;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import static ilog.cplex.IloCplex.BasisStatus.Basic;
 
 public class ModelMBRP_2comp {
     public final Instance i;
@@ -392,9 +389,9 @@ public class ModelMBRP_2comp {
                 System.out.println("this can not be possible");
                 System.exit(1);
             } else if (i1 != 0) {
-                c = i.cPR_i[i0] + i.d;
+                c = i.cPR_i_t[0][i0] + i.d;
             } else if (i1 == 0) {
-                c = i.cCR_i[i0] + i.d;
+                c = i.cCR_i_t[0][i0] + i.d;
             }
         } else if (a == 2) {
             if (i1 == 0) {
@@ -402,19 +399,19 @@ public class ModelMBRP_2comp {
                 System.exit(1);
             }
             else if (i2 != 0) {
-                c = i.cPR_i[i0] + i.d;
+                c = i.cPR_i_t[1][i0] + i.d;
             } else if (i2 == 0) {
-                c = i.cCR_i[i0] + i.d;
+                c = i.cCR_i_t[1][i0] + i.d;
             }
         } else if (a == 3) {
             if (i1 != 0 & i2 != 0) {
-                c = 2 * i.cPR_i[i0] + i.d;
+                c = i.cPR_i_t[0][i0] + i.cPR_i_t[1][i0] + i.d;
             } else if (i1 == 0 & i2 != 0) {
-                c = i.cCR_i[i0] + i.cPR_i[i0] + i.d;
+                c = i.cCR_i_t[0][i0] + i.cPR_i_t[1][i0] + i.d;
             } else if (i1 != 0 & i2 == 0) {
-                c = i.cCR_i[i0] + i.cPR_i[i0] + i.d;
+                c = i.cCR_i_t[1][i0] + i.cPR_i_t[0][i0] + i.d;
             } else if (i1 == 0 & i2 == 0) {
-                c = 2 * i.cCR_i[i0] + i.d;
+                c = i.cCR_i_t[0][i0] + i.cCR_i_t[1][i0] + i.d;
             }
         } else {
             System.out.println("This value for a does not exist");
@@ -437,17 +434,17 @@ public class ModelMBRP_2comp {
                 System.out.println("this can not be possible");
                 System.exit(1);
             } else if (i1 != 0) {
-                c = i.cPR_i[i0] + i.d;
+                c = i.cPR_i_t[0][i0] + i.d;
             } else if (i1 == 0) {
-                c = i.cCR_i[i0] + i.d;
+                c = i.cCR_i_t[0][i0] + i.d;
             }
         } else if (a == 2) {
             c = 0.0;
         } else if (a == 3) {
             if (i1 != 0) {
-                c = i.cPR_i[i0] + i.d;
+                c = i.cPR_i_t[0][i0] + i.d;
             } else if (i1 == 0) {
-                c = i.cCR_i[i0] + i.d;
+                c = i.cCR_i_t[0][i0] + i.d;
             }
         } else {
             System.out.println("This value for a does not exist");

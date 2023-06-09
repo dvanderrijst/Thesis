@@ -6,9 +6,6 @@ import ilog.concert.IloNumExpr;
 import ilog.concert.IloNumVar;
 import ilog.cplex.IloCplex;
 
-import java.util.Arrays;
-import java.util.stream.IntStream;
-
 public class ModelBRP {
     public final Instance i;
     public final int M;
@@ -175,10 +172,10 @@ public class ModelBRP {
         }
         else if(a==1){
             if(i1!=0) {
-                c = i.cPR_i[i0];
+                c = i.cPR_i_t[0][i0];
             }
             else {
-                c = i.cCR_i[i0];
+                c = i.cCR_i_t[0][i0];
             }
         }
         return c;

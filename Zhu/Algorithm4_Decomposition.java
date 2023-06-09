@@ -34,7 +34,7 @@ public class Algorithm4_Decomposition extends Algorithm4{
                     costs = costs + instance.d * Xit[i][t];
                 }
                 else {
-                    costs = costs + instance.cPR_i[t % instance.N ] * Xit[i][t];
+                    costs = costs + instance.cPR_i_t[i][t % instance.N ] * Xit[i][t];
                 }
             }
         }

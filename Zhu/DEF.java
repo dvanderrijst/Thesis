@@ -7,8 +7,6 @@ import ilog.concert.IloNumExpr;
 import ilog.concert.IloNumVar;
 import ilog.cplex.IloCplex;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
 
 public class DEF {
@@ -17,8 +15,8 @@ public class DEF {
     public final int T_prime;
     public final int n;
     public final int q;
-    public final double[] cPR_i;
-    public final double[] cCR_i;
+    public final double[][] cPR_i_t;
+    public final double[][] cCR_i_t;
     public final int d;
     public final int lengthOmega;
     public final IloNumVar[] x_i;
@@ -46,8 +44,8 @@ public class DEF {
         n = instance.n;
         q = instance.q;
         lengthOmega = instance.lengthOmega;
-        cPR_i = instance.cPR_i ;
-        cCR_i = instance.cCR_i;
+        cPR_i_t = instance.cPR_i_t;
+        cCR_i_t = instance.cCR_i_t;
         d = instance.d;
         kesi = instance.kesi;
 
@@ -75,13 +73,13 @@ public class DEF {
 //        cplex.setOut(null);
         System.out.println(cplex.getCplexStatus());
 //        checkResult();
-//        printResultMatrix();
+        printResultMatrix();
         System.out.println("best costs are "+cplex.getObjValue());
         System.out.println("x1 = "+cplex.getValue(x_i[0])+"\t\t x2 = "+cplex.getValue(x_i[1]));
     }
 
     private void printResultMatrix() throws IloException {
-        for (int omega = 0; omega < lengthOmega; omega++) {
+        for (int omega = 0; omega < 10; omega++) {
             System.out.print("\n\n\n For omega = "+omega+" we find the following matrixes.");
             for (int i = 0; i < n; i++) {
                 System.out.println("\nni = "+i+" and we have T[w][i][0] = "+T_wir[omega][i][0]+" and T[w][i][1]="+T_wir[omega][i][1]);
@@ -109,7 +107,7 @@ public class DEF {
                         System.out.printf("%8.0f", cplex.getValue(y_rwit[r][omega][i][t]));
                     }
                 }
-                for (int r = 0; r < q; r++) {
+                for (int r = 0; r < 2; r++) {
                     System.out.printf("%8s", "\nY iw r=" + r);
 
                     System.out.printf("%8.0f", cplex.getValue(Y_rwi[r][omega][i]));
@@ -151,14 +149,13 @@ public class DEF {
                 for (int r = 0; r < q; r++) {
                     sum_r1 = cplex.sum(sum_r1, Y_rwi[r][w][i]);
                 }
-                IloNumExpr prod_r1 = cplex.prod(cPR_i[n], sum_r1);
-
+                IloNumExpr prod_r1 = cplex.prod(cPR_i_t[i][0], sum_r1);
 
                 IloNumExpr sum_r2 = cplex.constant(0);
                 for (int r = 0; r < q; r++) {
-                    sum_r1 = cplex.sum(sum_r1, cplex.diff(x_rwit[r][w][i][T], Y_rwi[r][w][i]));
+                    sum_r2 = cplex.sum(sum_r2, cplex.diff(x_rwit[r][w][i][T], Y_rwi[r][w][i]));
                 }
-                IloNumExpr prod_r2 = cplex.prod(cCR_i[n], sum_r2);
+                IloNumExpr prod_r2 = cplex.prod(cCR_i_t[i][0], sum_r2);
 
                 sum_n = cplex.sum(sum_n, prod_r1, prod_r2);
             }
@@ -298,22 +295,45 @@ public class DEF {
                         sum2 = cplex.sum(sum2, w_rwit[r][w][i][t]);
                     }
 
-                    cplex.addEq(Y_rwi[r][w][i], cplex.prod(0.5,cplex.sum(sum1,sum2)),"l_"+r+w+i);
+                    cplex.addLe(Y_rwi[r][w][i], cplex.prod(0.5,cplex.sum(sum1,sum2)),"l_"+r+w+i);
                 }
             }
         }
+        //zelf bedachte constraint voor Y
+        for (int r = 0; r < q; r++) {
+            for (int w = 0; w < i.lengthOmega; w++) {
+                for (int i = 0; i < n; i++) {
+                    cplex.addLe(Y_rwi[r][w][i], x_rwit[r][w][i][T]);
+                }
+            }
+        }
+        //zelf bedacht constraint voor eventjes
+//        cplex.addEq(x_i[1],0);
+
 //        System.out.print("adding constraints 1m");
         //constraint 1m
         for (int i = 0; i < n ; i++) {
-            for (int r = 1; r < q ; r++) {
-                for (int w = 0; w < lengthOmega ; w++) {
-                    List<Integer> tList = new ArrayList<>();tList.add(T_wir[w][i][r]);tList.add(T_prime);
-                    for(int t : tList){
+            for (int w = 0; w < lengthOmega ; w++) {
+                for (int r = 1; r < q ; r++) {
+//                    List<Integer> tList = new ArrayList<>();tList.add(T_wir[w][i][r]);tList.add(T_prime);
+//                    for(int t : tList){
+                    for (int t = T_wir[w][i][r] ; t <= T_prime; t++) {
+//                        cplex.addEq(y_rwit[r][w][i][t], cplex.diff(w_rwit[r][w][i][t],w_rwit[r-1][w][i][t-T_wir[w][i][r]]),"m_"+r+w+i+t);
                         cplex.addEq(y_rwit[r][w][i][t], cplex.diff(w_rwit[r][w][i][t],w_rwit[r-1][w][i][t-T_wir[w][i][r]]),"m_"+r+w+i+t);
                     }
                 }
+//                for (int t = 0 ; t <= T; t++) {
+//                    cplex.addEq(y_rwit[0][w][i][t], cplex.diff(w_rwit[0][w][i][t+T_wir[w][i][0]], 1));
+//                    for (int r = 1; r < q; r++) {
+//                        cplex.addEq(y_rwit[r][w][i][t], cplex.diff(w_rwit[r][w][i][t+T_wir[w][i][r]],w_rwit[r-1][w][i][t]));
+//                    }
+//                }
+
             }
         }
+
+
+
 //        System.out.print("adding constraints 1n");
         //constraint 1n
         for(int i = 0; i< n ; i++) {

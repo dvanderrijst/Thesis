@@ -29,14 +29,14 @@ public class DEF_Decomposition extends DEF {
             for (int r = 0; r < q; r++) {
                 sum_r1 = cplex.sum(sum_r1, Y_rwi[r][w][i]);
             }
-            IloNumExpr prod_r1 = cplex.prod(cPR_i[n], sum_r1);
+            IloNumExpr prod_r1 = cplex.prod(cPR_i_t[n][0], sum_r1);
 
 
             IloNumExpr sum_r2 = cplex.constant(0);
             for (int r = 0; r < q; r++) {
                 sum_r1 = cplex.sum(sum_r1, cplex.diff(x_rwit[r][w][i][T], Y_rwi[r][w][i]));
             }
-            IloNumExpr prod_r2 = cplex.prod(cCR_i[n], sum_r2);
+            IloNumExpr prod_r2 = cplex.prod(cCR_i_t[n][0], sum_r2);
 
             sum_n = cplex.sum(sum_n, prod_r1, prod_r2);
         }
