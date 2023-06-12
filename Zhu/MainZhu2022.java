@@ -20,6 +20,13 @@ public class MainZhu2022 {
         DEF def = new DEF(instance, omega, "HELOOO.lp");
         def.setupAndSolve();
 
+        double sum = 0.0;
+        for (int w = 0; w < instance.lengthOmega; w++) {
+            sum = sum + omega.p_w[w];
+        }
+        System.out.println(sum);
+//        Algorithm3 alg3 = new Algorithm3(omega, instance);
+
 
 
 

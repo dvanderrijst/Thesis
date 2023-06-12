@@ -7,6 +7,8 @@ import ilog.concert.IloNumExpr;
 import ilog.concert.IloNumVar;
 import ilog.cplex.IloCplex;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 public class DEF {
@@ -107,12 +109,11 @@ public class DEF {
                         System.out.printf("%8.0f", cplex.getValue(y_rwit[r][omega][i][t]));
                     }
                 }
-                for (int r = 0; r < 2; r++) {
+                for (int r = 0; r < q; r++) {
                     System.out.printf("%8s", "\nY iw r=" + r);
-
-                    System.out.printf("%8.0f", cplex.getValue(Y_rwi[r][omega][i]));
-
+                    System.out.printf("%8.1f", cplex.getValue(Y_rwi[r][omega][i]));
                 }
+                System.out.println();
             }
         }
     }
@@ -157,7 +158,13 @@ public class DEF {
                 }
                 IloNumExpr prod_r2 = cplex.prod(cCR_i_t[i][0], sum_r2);
 
-                sum_n = cplex.sum(sum_n, prod_r1, prod_r2);
+                IloNumExpr sumCorrection = cplex.constant(0);
+                for (int r = 1; r < q; r++) {
+                    sumCorrection = cplex.sum(sumCorrection, cplex.diff(x_rwit[r-1][w][i][T], x_rwit[r][w][i][T]));
+                }
+                IloNumExpr prodCorrection = cplex.prod( -0.5 * (cPR_i_t[i][0] - cCR_i_t[i][0]), sumCorrection);
+
+                sum_n = cplex.sum(sum_n, prod_r1, prod_r2, prodCorrection);
             }
 
             IloNumExpr sum_t = cplex.constant(0);
@@ -238,9 +245,7 @@ public class DEF {
         for (int w = 0; w < lengthOmega ; w++) {
             for (int i = 0; i < n ; i++) {
                 if(T_wir[w][i][0] <= T){
-
                     cplex.addEq(x_rwit[0][w][i][T_wir[w][i][0]], 1,"g_0"+w+i) ;
-
                 }
             }
         }
@@ -249,9 +254,7 @@ public class DEF {
         for (int i = 0; i < n ; i++) {
             for (int r = 1; r < q ; r++) {
                 for (int w = 0; w < lengthOmega; w++) {
-
                     cplex.addEq(x_rwit[r][w][i][0], 0,"h_"+r+w+i+"0");
-
                 }
             }
         }
@@ -259,9 +262,7 @@ public class DEF {
         //constraint 1i
         for (int i = 0; i < n ; i++) {
             for (int w = 0; w < lengthOmega; w++) {
-
                 cplex.addEq(x_i[i], x_rwit[0][w][i][0],"i_"+w+i);
-
             }
         }
 //        System.out.print("adding constraints 1j");
@@ -273,10 +274,8 @@ public class DEF {
         //constraint 1k
         for (int i = 0; i < n ; i++) {
             for (int w = 0; w < lengthOmega; w++) {
-
                 IloNumExpr diff = cplex.diff(1,w_rwit[0][w][i][T_wir[w][i][0]]);
                 cplex.addEq(Y_rwi[0][w][i], diff,"k_0"+w+i);
-
             }
         }
 //        System.out.print("adding constraints 1l");
@@ -291,44 +290,24 @@ public class DEF {
                     }
 
                     IloNumExpr sum2 = cplex.constant(0);
-                    for(int t=0; t<=T_wir[w][i][r]-1; t++){
+                    for(int t=0; t<= (T_wir[w][i][r]-1); t++){
                         sum2 = cplex.sum(sum2, w_rwit[r][w][i][t]);
                     }
 
-                    cplex.addLe(Y_rwi[r][w][i], cplex.prod(0.5,cplex.sum(sum1,sum2)),"l_"+r+w+i);
+                    cplex.addEq(Y_rwi[r][w][i], cplex.prod(0.5 , cplex.sum(sum1,sum2)),"l_"+r+w+i);
                 }
             }
         }
-        //zelf bedachte constraint voor Y
-        for (int r = 0; r < q; r++) {
-            for (int w = 0; w < i.lengthOmega; w++) {
-                for (int i = 0; i < n; i++) {
-                    cplex.addLe(Y_rwi[r][w][i], x_rwit[r][w][i][T]);
-                }
-            }
-        }
-        //zelf bedacht constraint voor eventjes
-//        cplex.addEq(x_i[1],0);
 
 //        System.out.print("adding constraints 1m");
         //constraint 1m
         for (int i = 0; i < n ; i++) {
             for (int w = 0; w < lengthOmega ; w++) {
                 for (int r = 1; r < q ; r++) {
-//                    List<Integer> tList = new ArrayList<>();tList.add(T_wir[w][i][r]);tList.add(T_prime);
-//                    for(int t : tList){
                     for (int t = T_wir[w][i][r] ; t <= T_prime; t++) {
-//                        cplex.addEq(y_rwit[r][w][i][t], cplex.diff(w_rwit[r][w][i][t],w_rwit[r-1][w][i][t-T_wir[w][i][r]]),"m_"+r+w+i+t);
                         cplex.addEq(y_rwit[r][w][i][t], cplex.diff(w_rwit[r][w][i][t],w_rwit[r-1][w][i][t-T_wir[w][i][r]]),"m_"+r+w+i+t);
                     }
                 }
-//                for (int t = 0 ; t <= T; t++) {
-//                    cplex.addEq(y_rwit[0][w][i][t], cplex.diff(w_rwit[0][w][i][t+T_wir[w][i][0]], 1));
-//                    for (int r = 1; r < q; r++) {
-//                        cplex.addEq(y_rwit[r][w][i][t], cplex.diff(w_rwit[r][w][i][t+T_wir[w][i][r]],w_rwit[r-1][w][i][t]));
-//                    }
-//                }
-
             }
         }
 
@@ -389,7 +368,7 @@ public class DEF {
                 for (int r = 0; r < q; r++) {
                     for (int w = 0; w < lengthOmega; w++) {
 
-                        Y_rwi[r][w][i] = cplex.boolVar("YY(" + r + "," + w + "," + i + ")");
+                        Y_rwi[r][w][i] = cplex.numVar(0.0, 1.0,"YY(" + r + "," + w + "," + i + ")");
                         count++;
 
                         for (int t = 0; t <= T_prime; t++) {

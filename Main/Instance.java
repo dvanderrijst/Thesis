@@ -18,7 +18,7 @@ public class Instance {
     public final int m = 1; //5 years
     public final int N = 5; //12 months in one year
     public final int T       = m*N ;
-    public final double[] alpha = new double[]{6.9, 5}; //alpha is 1 year
+    public final double[] alpha = new double[]{6.9, 5 }; //alpha is 1 year
     public final double[] beta = new double[]{6.5, 6.7};
 
     //ZHU instance
@@ -82,8 +82,8 @@ public class Instance {
      */
     private double[][] setVariateCosts(double[] averages) {
         double[][] array = new double[n][N];
-        for (int t = 0; t < N; t++) {
-            for (int i = 0; i < n; i++) {
+        for (int i = 0; i < n; i++) {
+            for (int t = 0; t < N; t++) {
                 array[i][t] = averages[i] + delta * averages[i] * Math.cos(2 * Math.PI * t * (1.0 / N));
                 System.out.print(array[i][t] + "\t");
             }
