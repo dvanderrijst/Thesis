@@ -259,13 +259,7 @@ public class ModelBRP {
                         }
                     }
                 }
-
-
-
                 cplex.addEq(cplex.diff(sum1, sum2), 0.0, "10b," + i0 + "," + i1);
-
-
-
             }
         }
     }

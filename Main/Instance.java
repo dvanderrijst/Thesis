@@ -12,19 +12,20 @@ public class Instance {
     public final double[][] cPR_i_t;
     public final double[][] cCR_i_t;
     public final double[] CR_average = new double[]{14.4, 11.4};
-    public final double[] PR_average = new double[]{1,1};
+    public final double[] PR_average = new double[]{1, 1};
     public final double delta = 0.0;
     public final int d       = 5;
     public final int m = 1; //5 years
-    public final int N = 6; //12 months in one year
+    public final int N = 5; //12 months in one year
     public final int T       = m*N ;
-    public final double[] alpha = new double[]{6.5, 6.7}; //alpha is 1 year
-    public final double[] beta = new double[]{ 6.9,   5 };
+    public final double[] alpha = new double[]{6.9, 5}; //alpha is 1 year
+    public final double[] beta = new double[]{6.5, 6.7};
 
     //ZHU instance
 //    public final double CR_average_i = new double[]{14.4, 11.4, 9.4, 8.0, 11.1, 14.2, 7.4};
-//    public final double alpha = new double[]{6.5, 6.7, 5.4, 4.9, 4.8, 4.4, 5.5};
-//    public final double beta = new double[] {6.9,   5, 7.3, 4.8, 4.2, 4.5, 3.2};
+//    public final double alpha = new double[] {6.9,   5, 7.3, 4.8, 4.2, 4.5, 3.2};
+//    public final double beta = new double[]  {6.5, 6.7, 5.4, 4.9, 4.8, 4.4, 5.5};
+
 
 
     //ZHU
@@ -60,18 +61,17 @@ public class Instance {
         tau_SAA = 0.1 * epsilon_SAA;
         alpha_SAA = 0.1;
         int sizeX = q*n*(T+1);
-        lengthOmega = (int) Math.round((2*Math.pow(sigma_SAA, 2)) / (Math.pow(epsilon_SAA - tau_SAA, 2)) * Math.log(sizeX/alpha_SAA));
+//        lengthOmega = (int) Math.round((2*Math.pow(sigma_SAA, 2)) / (Math.pow(epsilon_SAA - tau_SAA, 2)) * Math.log(sizeX/alpha_SAA));
+        lengthOmega = 1000;
 //lengthOmega = 100;
         //SCHOUTEN
         I0 = setArray(m*N);
         I1 = setArray(M);
         I2 = setArray(M);
-        K = setArray(n);
-        System.out.println("Something wrong here? No? Delete below!");
-//        K = new int[n];
-//        for (int i = 0; i < n; i++) {
-//            K[i]=i+1;
-//        }
+        K = new int[n];
+        for (int i = 0; i < n; i++) {
+            K[i]=i+1;
+        }
     }
     /**
      * sets the variate costs of c_p(i0) and c_f(i0) from the equation on page 985 from Schouten article

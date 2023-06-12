@@ -6,26 +6,42 @@ import ilog.concert.IloException;
 import java.util.ArrayList;
 import java.util.List;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+
+
 public class MainZhu2022 {
     public static void main(String[] args) throws IloException {
         Instance instance = new Instance();
         Omega omega = new Omega(instance);
 
-        //print Twir
-        for (int w = 0; w < instance.lengthOmega ; w++) {
-            System.out.println("omega="+w);
-            System.out.println("r\t1\t2\t3\t4\t5");
-            for (int i = 0; i < instance.n; i++) {
-                System.out.print("i\t");
-                for (int r = 0; r < instance.q; r++) {
-                    System.out.print(omega.Twir[w][i][r]+"\t");
-                }
-                System.out.println();
-            }
-        }
-
-        DEF def = new DEF(instance, omega, "outputHere.lp");
+        DEF def = new DEF(instance, omega, "HELOOO.lp");
         def.setupAndSolve();
+
+
+
+
+
+        //print Twir
+//        for (int w = 0; w < instance.lengthOmega ; w++) {
+//            System.out.println("omega="+w);
+//            System.out.println("r\t1\t2\t3\t4\t5");
+//            for (int i = 0; i < instance.n; i++) {
+//                System.out.print("i\t");
+//                for (int r = 0; r < instance.q; r++) {
+//                    System.out.print(omega.Twir[w][i][r]+"\t");
+//                }
+//                System.out.println();
+//            }
+//        }
+
+//        DEF def = new DEF(instance, omega, "outputHere.lp");
+//        def.setupAndSolve();
+
+
+
 
 //        List<int[][]> list = generate5scenarios();
     }

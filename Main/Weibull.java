@@ -84,11 +84,14 @@ public class Weibull {
      */
     public int inverseWeibull(int i, int startAge) {
         double Fx_forStartAge = 1.0 - Math.exp(-1.0 * Math.pow(startAge / instance.getAlpha()[i], instance.getBeta()[i]));
-        System.out.println("startAge=" + startAge + "\t alpha[i]=" + instance.getAlpha()[i] + "\tbeta[i]=" + instance.getBeta()[i] + " Fx=" + Fx_forStartAge);
-
+//        System.out.println("startAge=" + startAge + "\t alpha[i]=" + instance.getAlpha()[i] + "\tbeta[i]=" + instance.getBeta()[i] + " Fx=" + Fx_forStartAge);
+//
         double random = Fx_forStartAge + (1.0 - Fx_forStartAge) * Instance.random.nextDouble();
-        int x = (int) Math.ceil(instance.getAlpha()[i] * Math.pow(-Math.log(1 - random), 1.0 / instance.getBeta()[i])) - startAge;
-        System.out.println(x);
+//       This is exactly how they do it in the paper. HOWEVER, we now take the rounded value, and not the ceil. What does this mean for our benadering naar Schouten
+        int x = Math.max(1,(int) Math.round(instance.getAlpha()[i] * Math.pow(-Math.log(1 - random), 1.0 / instance.getBeta()[i])) - startAge);
+
+
+//        System.out.println(x);
         return x;
     }
 }
