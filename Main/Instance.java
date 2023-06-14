@@ -16,7 +16,7 @@ public class Instance {
     public final double delta = 0.0;
     public final int d       = 5;
     public final int m = 1; //5 years
-    public final int N = 5; //12 months in one year
+    public final int N = 12; //12 months in one year
     public final int T       = m*N ;
     public final double[] alpha = new double[]{6.9, 5 }; //alpha is 1 year
     public final double[] beta = new double[]{6.5, 6.7};
@@ -26,11 +26,9 @@ public class Instance {
 //    public final double alpha = new double[] {6.9,   5, 7.3, 4.8, 4.2, 4.5, 3.2};
 //    public final double beta = new double[]  {6.5, 6.7, 5.4, 4.9, 4.8, 4.4, 5.5};
 
-
-
     //ZHU
     public static Random random = new Random(0);
-    public final int q       = T+2 ;
+    public final int q       = 5 ;
     public final int lengthOmega;
     public static double[][] probs; //probabilities for component k and time t : probs[k][t]
     public final int n       = 2 ;
@@ -38,8 +36,8 @@ public class Instance {
     public final double epsilon_SAA ;
     public final double tau_SAA;
     public final double alpha_SAA;
-    public final int[] startAges = new int[n];
-    public final int[] kesi = new int[n];
+    public static int[] startAges;
+    public static int[] kesi ;
 
     //SCHOUTEN
     public final int[] I0;
@@ -55,14 +53,14 @@ public class Instance {
         cPR_i_t = setVariateCosts(PR_average);
 
         //ZHU
-        setKesiandStartAge();
+        startAges = new int[n];
+        kesi = new int[n];
         sigma_SAA = 2*T*(CR_average[0]*n+d);
         epsilon_SAA = 0.1 * sigma_SAA;
         tau_SAA = 0.1 * epsilon_SAA;
         alpha_SAA = 0.1;
         int sizeX = q*n*(T+1);
-//        lengthOmega = (int) Math.round((2*Math.pow(sigma_SAA, 2)) / (Math.pow(epsilon_SAA - tau_SAA, 2)) * Math.log(sizeX/alpha_SAA));
-        lengthOmega = 1000;
+        lengthOmega = (int) Math.round((2*Math.pow(sigma_SAA, 2)) / (Math.pow(epsilon_SAA - tau_SAA, 2)) * Math.log(sizeX/alpha_SAA));
 //lengthOmega = 100;
         //SCHOUTEN
         I0 = setArray(m*N);
@@ -92,10 +90,10 @@ public class Instance {
         return array;
     }
 
-    private void setKesiandStartAge(){
+    public void setKesiandStartAge(int[] ages){
         for (int i = 0; i < n; i++) {
-            startAges[i] = 2;
-            if(i==0){kesi[i]=1;}
+            startAges[i] = ages[i];
+//            if(i==0){kesi[i]=1;}
         }
     }
     /**

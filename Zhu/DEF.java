@@ -7,8 +7,6 @@ import ilog.concert.IloNumExpr;
 import ilog.concert.IloNumVar;
 import ilog.cplex.IloCplex;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
 
 public class DEF {
@@ -48,7 +46,9 @@ public class DEF {
         lengthOmega = instance.lengthOmega;
         cPR_i_t = instance.cPR_i_t;
         cCR_i_t = instance.cCR_i_t;
+
         d = instance.d;
+
         kesi = instance.kesi;
 
         p_w = Omega.p_w;
@@ -72,9 +72,9 @@ public class DEF {
         setObjective();
         cplex.exportModel(fileName);
         cplex.solve();
-//        cplex.setOut(null);
-        System.out.println(cplex.getCplexStatus());
-//        checkResult();
+        cplex.setOut(null);
+//        System.out.println(cplex.getCplexStatus());
+        checkResult();
         printResultMatrix();
         System.out.println("best costs are "+cplex.getObjValue());
         System.out.println("x1 = "+cplex.getValue(x_i[0])+"\t\t x2 = "+cplex.getValue(x_i[1]));
@@ -127,7 +127,6 @@ public class DEF {
             for (int w = 0; w < lengthOmega ; w++) {
                 if(cplex.getValue(x_rwit[q-1][w][i][T])==1){
                     System.out.println("This model is not correct. The value for q is chosen too small, causing less replacement too occur than neccessary");
-                    System.exit(1);
                }
             }
         }
@@ -275,9 +274,22 @@ public class DEF {
         for (int i = 0; i < n ; i++) {
             for (int w = 0; w < lengthOmega; w++) {
                 IloNumExpr diff = cplex.diff(1,w_rwit[0][w][i][T_wir[w][i][0]]);
-                cplex.addEq(Y_rwi[0][w][i], diff,"k_0"+w+i);
+                cplex.addLe(Y_rwi[0][w][i], diff,"k_0"+w+i);
             }
         }
+        //added this constraint myself.. this is neccessary in case the first component is never replaced
+        for (int i = 0; i < n ; i++) {
+            for (int w = 0; w < lengthOmega; w++) {
+                IloNumExpr sumW = cplex.constant(0);
+                for (int t = 0; t < T; t++) {
+                    sumW = cplex.sum(sumW, w_rwit[0][w][i][t]);
+                }
+                cplex.addLe(Y_rwi[0][w][i], sumW,"k_0sum"+w+i);
+            }
+        }
+
+
+
 //        System.out.print("adding constraints 1l");
         //constraint 1l
         for (int i = 0; i < n ; i++) {
@@ -454,6 +466,16 @@ public class DEF {
         }
         return x_rit;
     }
+    public int[] get_x_i() throws IloException{
+        int[] xvalues = new int[i.n];
+        for (int j = 0; j < n; j++) {
+            xvalues[j] = (int) Math.round(cplex.getValue(x_i[j]));
+        }
+        return xvalues;
+    }
+    public double getObjValue() throws IloException{
+        return cplex.getObjValue();
+    }
 
     /**
      * Cleans up the CPLEX model in order to free up some memory.
@@ -463,8 +485,17 @@ public class DEF {
      */
     public void cleanup() throws IloException
     {
-        cplex.clearModel();
         cplex.end();
     }
 
+    public int[] returnNewStartAges() throws IloException {
+        int[] newAges = new int[i.n];
+        for (int ii = 0; ii < n; ii++) {
+            if(cplex.getValue(x_i[ii])==0){
+                newAges[ii] = i.startAges[ii] + 1;
+            }
+            else {newAges[ii] = 0;}
+        }
+        return newAges;
+    }
 }

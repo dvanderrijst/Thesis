@@ -23,8 +23,8 @@ public class Omega {
         this.instance = instance;
         this.Twir = new int[instance.lengthOmega][instance.n][instance.q];
         this.p_w = new double[instance.lengthOmega];
-//        createScenarios();
-        createScenariosFromZhu();
+        createScenarios();
+//        createScenariosFromZhu();
     }
     public Omega(Instance instance, int[][][] Twir, double[] p_w){
         this.instance = instance;
