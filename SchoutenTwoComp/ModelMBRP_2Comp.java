@@ -4,10 +4,12 @@ import Main.Instance;
 import ilog.concert.*;
 import ilog.cplex.IloCplex;
 
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ModelMBRP_2comp {
+public class ModelMBRP_2Comp {
     public final Instance i;
     public final int M;
     public final int m;
@@ -23,10 +25,12 @@ public class ModelMBRP_2comp {
     public static IloNumVar[][] y;
     public static IloNumVar[][][] z;
     public static IloNumVar[][] t;
+    public final String fileName;
 
-    public ModelMBRP_2comp(Instance i) throws IloException {
+    public ModelMBRP_2Comp(Instance i, String fileName) throws IloException, IOException {
         cplex = new IloCplex();
         this.i = i;
+        this.fileName = fileName;
         M = i.M;
         m = i.m;
         N = i.N;
@@ -34,6 +38,7 @@ public class ModelMBRP_2comp {
         I1 = i.I1;
         I2 = i.I2;
         K = i.K;
+
 
         setVariables();
         setObjective();
@@ -43,6 +48,7 @@ public class ModelMBRP_2comp {
 //        cplex.setOut(null);
         cplex.solve();
         printSolution();
+        writePolicy();
     }
 
     public void printSolution() throws IloException {
@@ -65,8 +71,60 @@ public class ModelMBRP_2comp {
 //        printX();
         printYTZ();
         printActionGridComp1();
-
     }
+
+    public void writePolicy() throws IOException, IloException {
+        FileWriter writer = new FileWriter(fileName, true);
+        double yearlyCosts = cplex.getObjValue() * N;
+        writer.write("The class "+getClass().getSimpleName()+" is used.\n");
+        writer.write("\nYearly costs are " + yearlyCosts);
+        
+        writer.write("i1\ti2\ti0\ta\n");
+
+        int[][][] a_i0_i1_i2 = new int[i.T][M][M];
+        for (int i0 = 0; i0 < i.T ; i0++) {
+            for (int i1 = 0; i1 < M; i1++) {
+                for (int i2 = 0; i2 < M; i2++) {
+                    a_i0_i1_i2[i0][i1][i2] = 4;
+                    int count = 0;
+                    for (int a : A(i0, i1, i2)) {
+                        if (cplex.getValue(x[i0][i1][i2][a]) > 0.000000) {
+                            a_i0_i1_i2[i0][i1][i2] = a;
+                            count++;
+                        }
+                    }
+                    if (count > 1) {
+                        writer.write("\noeps! two values of x are higher than 0.0, a is overwritten. The values for x are: ");
+                        for (int a : A(i0, i1, i2)) {
+                            writer.write("\na=" + a + "\t" + cplex.getValue(x[i0][i1][i2][a]));
+                        }
+                    }
+                }
+            }
+        }
+
+        for (int i0 = 0; i0 < i.T ; i0++) {
+            for (int i1 = 0; i1 < M; i1++) {
+                for (int i2 = 0; i2 < M; i2++) {
+
+                    if(a_i0_i1_i2[i0][i1][i2]==4){
+                        if(i2==0){
+                            a_i0_i1_i2[i0][i1][i2] = a_i0_i1_i2[i0][i1 - 1][i2];
+                        }
+                        else if(i1==0){
+                            a_i0_i1_i2[i0][i1][i2] = a_i0_i1_i2[i0][i1][i2 - 1];
+                        }
+                        else {
+                            a_i0_i1_i2[i0][i1][i2] = a_i0_i1_i2[i0][i1 - 1][i2 - 1];
+                        }
+                    }
+                    writer.write("\n" + i1 + " " + i2 + " " + i0 + " " + a_i0_i1_i2[i0][i1][i2]);
+                }
+            }
+        }
+        writer.close();
+    }
+
 
     public void printActionGridComp1() throws IloException {
         System.out.println("\n actions grid - rows are age, columns time.");

@@ -4,13 +4,15 @@ import Main.Instance;
 import ilog.concert.IloException;
 import ilog.concert.IloNumExpr;
 
+import java.io.IOException;
+
 public class DEF_Decomposition extends DEF {
     private final double[][][] average_Xrit;
     private final double[][][] Writ_prev;
     private final int w = 0;
     private final double penalty;
 
-    public DEF_Decomposition(Instance i, Omega Omega, double[][][] average_Xrit, double[][][] Writ_prev, double penalty, String fileName) throws IloException {
+    public DEF_Decomposition(Instance i, Omega Omega, double[][][] average_Xrit, double[][][] Writ_prev, double penalty, String fileName) throws IloException, IOException {
         super(i, Omega, fileName);
         this.average_Xrit = average_Xrit;
         this.Writ_prev = Writ_prev;
@@ -19,7 +21,7 @@ public class DEF_Decomposition extends DEF {
     }
 
     @Override
-    public void setObjective()throws IloException {
+    public void setObjective()throws IloException, IOException {
 
         //sum over N, individual costs
         IloNumExpr sum_n = cplex.constant(0);

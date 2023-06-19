@@ -1,13 +1,13 @@
 package SchoutenTwoComp;
 
 import Main.Instance;
-import ilog.concert.IloConstraint;
 import ilog.concert.IloException;
-import ilog.cplex.IloCplex;
 
-public class ModelBRP_2Comp extends ModelMBRP_2comp{
-    public ModelBRP_2Comp(Instance i) throws IloException {
-        super(i);
+import java.io.IOException;
+
+public class ModelBRP_2Comp extends ModelMBRP_2Comp {
+    public ModelBRP_2Comp(Instance i, String fileName) throws IloException, IOException {
+        super(i, fileName);
     }
 
     @Override

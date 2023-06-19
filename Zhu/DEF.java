@@ -7,6 +7,10 @@ import ilog.concert.IloNumExpr;
 import ilog.concert.IloNumVar;
 import ilog.cplex.IloCplex;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.Arrays;
 import java.util.Random;
 
 public class DEF {
@@ -15,6 +19,8 @@ public class DEF {
     public final int T_prime;
     public final int n;
     public final int q;
+    public final int N;
+    public final int startTime;
     public final double[][] cPR_i_t;
     public final double[][] cCR_i_t;
     public final int d;
@@ -40,9 +46,11 @@ public class DEF {
 //        cplex.setWarning(null);
 
         this.i = instance;
-        T = instance.T;
+        T = instance.ThorizonZhu;
         n = instance.n;
         q = instance.q;
+        N = instance.N;
+        startTime = instance.startTime;
         lengthOmega = instance.lengthOmega;
         cPR_i_t = instance.cPR_i_t;
         cCR_i_t = instance.cCR_i_t;
@@ -66,21 +74,28 @@ public class DEF {
         Y_rwi = new IloNumVar[q][lengthOmega][n];
     }
 
-    public void setupAndSolve() throws IloException {
+    public void setupAndSolve() throws IloException, IOException {
         setVariables();
         setConstraints();
         setObjective();
-        cplex.exportModel(fileName);
+        cplex.exportModel("def.lp");
+        cplex.setParam(IloCplex.Param.MIP.Tolerances.MIPGap, 0.01);
         cplex.solve();
         cplex.setOut(null);
 //        System.out.println(cplex.getCplexStatus());
         checkResult();
         printResultMatrix();
+
         System.out.println("best costs are "+cplex.getObjValue());
         System.out.println("x1 = "+cplex.getValue(x_i[0])+"\t\t x2 = "+cplex.getValue(x_i[1]));
+
+        FileWriter w = new FileWriter(fileName, true);
+        w.write("\nstartTime ="+i.startTime+"\tstartAges="+ Arrays.toString(i.startAges)+"\t kesi="+Arrays.toString(kesi)+"\n");
+        w.write("x1 = "+cplex.getValue(x_i[0])+"\t\t x2 = "+cplex.getValue(x_i[1])+"\n");
+        w.close();
     }
 
-    private void printResultMatrix() throws IloException {
+    public void printResultMatrix() throws IloException {
         for (int omega = 0; omega < 10; omega++) {
             System.out.print("\n\n\n For omega = "+omega+" we find the following matrixes.");
             for (int i = 0; i < n; i++) {
@@ -122,7 +137,7 @@ public class DEF {
      * In this method, we put some notes that we could forget later in. To make sure that we do not forget.
      * @throws IloException
      */
-    private void checkResult() throws IloException {
+    public void checkResult() throws IloException {
         for(int i = 0; i< n ; i++){
             for (int w = 0; w < lengthOmega ; w++) {
                 if(cplex.getValue(x_rwit[q-1][w][i][T])==1){
@@ -136,7 +151,7 @@ public class DEF {
      * Sets the objective for our CPLEX model.
      * @throws IloException
      */
-    public void setObjective() throws IloException {
+    public void setObjective() throws IloException, IOException {
 
         IloNumExpr sum_w = cplex.constant(0);
 
@@ -181,7 +196,7 @@ public class DEF {
      * Sets all the constraints found in the article in our CPLEX model.
      * @throws IloException
      */
-    private void setConstraints() throws IloException{
+    public void setConstraints() throws IloException{
         // Constraint 1b is the definition for x_rwit and ensures that the item is replaced at or before t+1 when it is replaced at or before t. In other words, I makes sure that I_ir can not come to live suddenly and remains replaced.
 //        System.out.print("adding constraints 1b");
         for(int i = 0; i< n ; i++){
@@ -269,7 +284,8 @@ public class DEF {
         for (int i = 0; i < n ; i++) {
             cplex.addGe(x_i[i], kesi[i],"j_"+i);
         }
-//        System.out.print("adding constraints 1k");
+
+        //        System.out.print("adding constraints 1k");
         //constraint 1k
         for (int i = 0; i < n ; i++) {
             for (int w = 0; w < lengthOmega; w++) {
@@ -288,28 +304,7 @@ public class DEF {
             }
         }
 
-
-
-//        System.out.print("adding constraints 1l");
-        //constraint 1l
-        for (int i = 0; i < n ; i++) {
-            for (int r = 1; r <q ; r++) {
-                for (int w = 0; w < lengthOmega ; w++) {
-
-                    IloNumExpr sum1 = cplex.constant(0);
-                    for(int t=T_wir[w][i][r]; t<=T+T_wir[w][i][r]; t++){
-                        sum1 = cplex.sum(sum1, cplex.sum(u_rwit[r][w][i][t], v_rwit[r][w][i][t]));
-                    }
-
-                    IloNumExpr sum2 = cplex.constant(0);
-                    for(int t=0; t<= (T_wir[w][i][r]-1); t++){
-                        sum2 = cplex.sum(sum2, w_rwit[r][w][i][t]);
-                    }
-
-                    cplex.addEq(Y_rwi[r][w][i], cplex.prod(0.5 , cplex.sum(sum1,sum2)),"l_"+r+w+i);
-                }
-            }
-        }
+        addConstraintsYrwi_l();
 
 //        System.out.print("adding constraints 1m");
         //constraint 1m
@@ -370,7 +365,30 @@ public class DEF {
         }
     }
 
-    private void setVariables() throws IloException, OutOfMemoryError {
+    public void addConstraintsYrwi_l() throws IloException {
+//        System.out.print("adding constraints 1l");
+        //constraint 1l
+        for (int i = 0; i < n ; i++) {
+            for (int r = 1; r <q ; r++) {
+                for (int w = 0; w < lengthOmega ; w++) {
+
+                    IloNumExpr sum1 = cplex.constant(0);
+                    for(int t=T_wir[w][i][r]; t<=T+T_wir[w][i][r]; t++){
+                        sum1 = cplex.sum(sum1, cplex.sum(u_rwit[r][w][i][t], v_rwit[r][w][i][t]));
+                    }
+
+                    IloNumExpr sum2 = cplex.constant(0);
+                    for(int t=0; t<= (T_wir[w][i][r]-1); t++){
+                        sum2 = cplex.sum(sum2, w_rwit[r][w][i][t]);
+                    }
+
+                    cplex.addEq(Y_rwi[r][w][i], cplex.prod(0.5 , cplex.sum(sum1,sum2)),"l_"+r+w+i);
+                }
+            }
+        }
+    }
+
+    public void setVariables() throws IloException, OutOfMemoryError {
         int count = 0;
 
         try {
@@ -380,7 +398,7 @@ public class DEF {
                 for (int r = 0; r < q; r++) {
                     for (int w = 0; w < lengthOmega; w++) {
 
-                        Y_rwi[r][w][i] = cplex.numVar(0.0, 1.0,"YY(" + r + "," + w + "," + i + ")");
+                        setVariablesY_rwi(r,w,i);
                         count++;
 
                         for (int t = 0; t <= T_prime; t++) {
@@ -400,7 +418,7 @@ public class DEF {
                         }
                     }
                 }
-                System.out.println(count);
+                System.out.println(count+" variables in cplex");
             }
         }
         catch(OutOfMemoryError e){
@@ -408,12 +426,16 @@ public class DEF {
         }
     }
 
+    public void setVariablesY_rwi(int r, int w, int i) throws IloException {
+        Y_rwi[r][w][i] = cplex.numVar(0.0, 1.0,"YY(" + r + "," + w + "," + i + ")");
+    }
+
     /**
      * This method sets the scenarios. The life times are uniformly distributed over [0, (2T)/q ]. The fraction is then rounded
      * to its nearest higher integer. This is just for keeping the algorithm running. Life times are actually exponential distributed.
      * @return one set of scenarios
      */
-    private int[][][] setScenarios() {
+    public int[][][] setScenarios() {
         int[][][] scenarios = new int[lengthOmega][n][q];
         Random rand = new Random(1234);
 
@@ -442,7 +464,7 @@ public class DEF {
      * The value for Tprime needs the higstest possible lifetime T^w_ir. This value is determined here by searching though the Twir values
      * @return max Twir
      */
-    private int getMaxTwir() {
+    public int getMaxTwir() {
         int max = 0;
         for (int w = 0; w < lengthOmega ; w++) {
             for (int i = 0; i < n ; i++) {

@@ -3,6 +3,7 @@ package Zhu;
 import Main.Instance;
 import ilog.concert.IloException;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -20,7 +21,7 @@ public class Algorithm3 {
     private static Map<Integer, double[][][]> map_average_Xrit = new HashMap<>();
     private static Map<Integer, Double> map_gdistances = new HashMap<>();
 
-    public Algorithm3(Omega omega, Instance instance) throws IloException {
+    public Algorithm3(Omega omega, Instance instance) throws IloException, IOException {
         this.Omega = omega;
         this.instance = instance;
         n = instance.n;
@@ -131,7 +132,7 @@ public class Algorithm3 {
         v = v + 1;
         System.out.println("v = "+v);
     }
-    private void decomposition() throws IloException {
+    private void decomposition() throws IloException, IOException {
         int[][][][] Xrwit = new int[q][instance.lengthOmega][n][T+1];
         for (int w = 0; w < instance.lengthOmega ; w++) {
             Omega omegaOneScenario = new Omega(instance, this.Omega.getTir(w), new double[]{1.0});
@@ -152,7 +153,7 @@ public class Algorithm3 {
 
 
 
-    private void initialize() throws IloException {
+    private void initialize() throws IloException, IOException {
 
         //initialize Xrwit
         int[][][][] Xrwit = new int[q][instance.lengthOmega][n][T+1];

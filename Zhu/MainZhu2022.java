@@ -14,7 +14,30 @@ public class MainZhu2022 {
     public static void main(String[] args) throws IloException, IOException {
         Instance instance = new Instance();
 
-        String fileName = "rolllinnng.lp";
+        System.exit(1);
+
+        String fileName = "policy.txt";
+        writeInfo(instance, fileName);
+
+
+        for (int i0 = 0; i0 < instance.N; i0++) {
+            for (int i1 = 1; i1 < 6; i1++) {
+                for (int i2 = 1; i2 < 5; i2++) {
+                    //changing instance settings
+                    instance.startTime = i0;
+                    instance.startAges[0]=i1;
+                    instance.startAges[1]=i2;
+
+                    Omega omega = new Omega(instance);
+                    DEF_period defperiod = new DEF_period(instance, omega, fileName);
+                    defperiod.setupAndSolve();
+                    defperiod.cleanup();
+                }
+            }
+        }
+    }
+
+    private static void writeInfo(Instance instance, String fileName) {
         //document what is done
         try (FileWriter writer = new FileWriter(fileName, true)) {
             writer.write("\nm="+instance.m);
@@ -33,58 +56,5 @@ public class MainZhu2022 {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-        DEF_rolling defRol = new DEF_rolling(instance, fileName);
-    }
-
-    private static List<Individual> manuallyCreateIndividuals(Instance instance, int[][] lifetimes){
-        List<Individual> list = new ArrayList<>();
-        for (int i = 0; i < 4; i++) {
-            for (int r = 0; r < 5; r++) {
-                Individual individual = new Individual(i, r, lifetimes[i][r], instance);
-                list.add(individual);
-            }
-        }
-        return list;
-    }
-
-    private static List<int[][]> generate5scenarios(){
-        int[][] array1 = {
-                {4, 6, 8, 3, 9},
-                {5, 7, 10, 2, 4},
-                {9, 3, 6, 8, 5},
-                {7, 2, 4, 10, 6}
-        };
-        int[][] array2 = {
-                {5, 8, 2, 9, 6},
-                {7, 4, 10, 3, 8},
-                {9, 5, 6, 2, 4},
-                {3, 7, 4, 6, 10}
-        };
-        int[][] array3 = {
-                {3, 9, 4, 8, 5},
-                {6, 2, 10, 7, 9},
-                {4, 3, 5, 6, 8},
-                {7, 10, 2, 9, 4}
-        };
-        int[][] array4 = {
-                {9, 5, 8, 2, 7},
-                {4, 10, 3, 6, 9},
-                {7, 4, 9, 5, 3},
-                {2, 6, 8, 10, 4}
-        };
-        int[][] array5 = {
-                {6, 2, 9, 4, 8},
-                {10, 7, 3, 5, 9},
-                {4, 6, 8, 2, 3},
-                {5, 9, 7, 10, 4}
-        };
-        List<int[][]> list = new ArrayList<>();
-        list.add(array1);
-        list.add(array2);
-        list.add(array3);
-        list.add(array4);
-        list.add(array5);
-        return list;
     }
 }

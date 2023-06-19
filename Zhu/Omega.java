@@ -68,12 +68,12 @@ public class Omega {
                 if (file.isFile() && file.getName().endsWith(".csv")) {
                     try (BufferedReader br = new BufferedReader(new FileReader(file))) {
                         int i = 0;
-                        while(i<instance.n) {
+                        while (i < instance.n) {
                             String line = br.readLine();
-                            if (!line.equals("") && line!=null) {
+                            if (!line.equals("") && line != null) {
                                 String[] values = line.split(",");
                                 int r = 0;
-                                while(r < instance.q){
+                                while (r < instance.q) {
                                     Twir[omega][i][r] = (int) Double.parseDouble(values[r].trim());
                                     r++;
                                 }
@@ -85,6 +85,7 @@ public class Omega {
                     }
                 }
                 p_w[omega] = 1.0 / instance.lengthOmega;
+//            }
             }
         }
     }
