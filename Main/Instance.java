@@ -11,16 +11,16 @@ public class Instance {
     //ZHU and SCHOUTEN
     public final double[][] cPR_i_t;
     public final double[][] cCR_i_t;
-    public final double[] CR_average = new double[]{50, 50};
-    public final double[] PR_average = new double[]{10, 10};
+    public final double[] CR_average = new double[]{50.0, 50.0};
+    public final double[] PR_average = new double[]{10.0, 10.0};
     public final double delta = 0.2;
     public final int d       = 5;
     public final int m = 1; //5 years
     public final int N = 12; //12 months in one year
-    public final int ThorizonZhu = 5;
+    public final int ThorizonZhu = 15;
     public final int T       = m*N ;
-    public final double[] alpha = new double[]{6, 4 }; //alpha is 1 year
-    public final double[] beta = new double[]{2, 2};
+    public final double[] alpha = new double[]{6.0, 12.0 }; //alpha is 1 year
+    public final double[] beta = new double[]{2.0, 2.0};
 
     //ZHU instance
 //    public final double CR_average_i = new double[]{14.4, 11.4, 9.4, 8.0, 11.1, 14.2, 7.4};
@@ -29,7 +29,7 @@ public class Instance {
 
     //ZHU
     public static Random random = new Random(0);
-    public final int q       = ThorizonZhu+2 ;
+    public final int q       = 6 ;
     public final int lengthOmega;
     public static double[][] probs; //probabilities for component k and time t : probs[k][t]
     public final int n       = 2 ;
@@ -63,9 +63,9 @@ public class Instance {
         tau_SAA = 0.1 * epsilon_SAA;
         alpha_SAA = 0.1;
         int sizeX = (int) Math.pow(2, n);
-        lengthOmega = (int) Math.round((2*Math.pow(sigma_SAA, 2)) / (Math.pow(epsilon_SAA - tau_SAA, 2)) * Math.log(sizeX/alpha_SAA));
+//        lengthOmega = (int) Math.round((2*Math.pow(sigma_SAA, 2)) / (Math.pow(epsilon_SAA - tau_SAA, 2)) * Math.log(sizeX/alpha_SAA));
 //        System.out.println(lengthOmega);
-//lengthOmega = 1000;
+lengthOmega = 100;
         //SCHOUTEN
         I0 = setArray(m*N);
         I1 = setArray(M+1);

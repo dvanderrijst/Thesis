@@ -1,0 +1,215 @@
+m=1
+N=12
+T=mN=12
+ThorizonZhu=15
+n=2
+q=6
+lengthOmega=100
+d=5
+CR_average_i=[50.0, 50.0]
+PR_average_i=[10.0, 10.0]
+startAges=[0, 0]
+kesi=[0, 0]
+alpha=[6.0, 12.0]
+beta=[2.0, 2.0]
+delta=0.2
+startTime =0	startAges=[0, 0]	 kesi=[0, 0]
+x1 = 0.0		 x2 = 0.0
+
+startTime =0	startAges=[0, 1]	 kesi=[0, 0]
+x1 = 0.0		 x2 = 0.0
+
+startTime =0	startAges=[0, 2]	 kesi=[0, 0]
+x1 = 0.0		 x2 = 0.0
+
+startTime =0	startAges=[0, 3]	 kesi=[0, 0]
+x1 = 0.0		 x2 = 0.0
+
+startTime =0	startAges=[0, 4]	 kesi=[0, 0]
+x1 = 0.0		 x2 = 0.0
+
+startTime =0	startAges=[0, 5]	 kesi=[0, 0]
+x1 = 0.0		 x2 = 0.0
+
+startTime =0	startAges=[0, 6]	 kesi=[0, 0]
+x1 = 0.0		 x2 = 0.0
+
+startTime =0	startAges=[0, 7]	 kesi=[0, 0]
+x1 = 0.0		 x2 = 0.0
+
+startTime =0	startAges=[0, 8]	 kesi=[0, 0]
+x1 = 0.0		 x2 = 0.0
+
+startTime =0	startAges=[0, 9]	 kesi=[0, 0]
+x1 = 0.0		 x2 = 0.0
+
+startTime =0	startAges=[0, 10]	 kesi=[0, 0]
+x1 = 0.0		 x2 = 0.0
+
+startTime =0	startAges=[0, 11]	 kesi=[0, 0]
+x1 = 0.0		 x2 = 0.0
+
+startTime =0	startAges=[1, 0]	 kesi=[0, 0]
+x1 = 0.0		 x2 = 0.0
+
+startTime =0	startAges=[1, 1]	 kesi=[0, 0]
+x1 = 0.0		 x2 = 0.0
+
+startTime =0	startAges=[1, 2]	 kesi=[0, 0]
+x1 = 0.0		 x2 = 0.0
+
+startTime =0	startAges=[1, 3]	 kesi=[0, 0]
+x1 = 0.0		 x2 = 0.0
+
+startTime =0	startAges=[1, 4]	 kesi=[0, 0]
+x1 = 0.0		 x2 = 0.0
+
+startTime =0	startAges=[1, 5]	 kesi=[0, 0]
+x1 = 0.0		 x2 = 0.0
+
+startTime =0	startAges=[1, 6]	 kesi=[0, 0]
+x1 = 0.0		 x2 = 0.0
+
+startTime =0	startAges=[1, 7]	 kesi=[0, 0]
+x1 = 0.0		 x2 = 0.0
+
+startTime =0	startAges=[1, 8]	 kesi=[0, 0]
+x1 = 0.0		 x2 = 0.0
+
+startTime =0	startAges=[1, 9]	 kesi=[0, 0]
+x1 = 0.0		 x2 = 0.0
+
+startTime =0	startAges=[1, 10]	 kesi=[0, 0]
+x1 = 0.0		 x2 = 0.0
+
+startTime =0	startAges=[1, 11]	 kesi=[0, 0]
+x1 = 0.0		 x2 = 0.0
+
+startTime =0	startAges=[2, 0]	 kesi=[0, 0]
+x1 = 0.0		 x2 = 0.0
+
+startTime =0	startAges=[2, 1]	 kesi=[0, 0]
+x1 = 0.0		 x2 = 0.0
+
+startTime =0	startAges=[2, 2]	 kesi=[0, 0]
+x1 = 0.0		 x2 = 0.0
+
+startTime =0	startAges=[2, 3]	 kesi=[0, 0]
+x1 = 0.0		 x2 = 0.0
+
+startTime =0	startAges=[2, 4]	 kesi=[0, 0]
+x1 = 0.0		 x2 = 0.0
+
+startTime =0	startAges=[2, 5]	 kesi=[0, 0]
+x1 = 0.0		 x2 = 0.0
+
+startTime =0	startAges=[2, 6]	 kesi=[0, 0]
+x1 = 0.0		 x2 = 0.0
+
+startTime =0	startAges=[2, 7]	 kesi=[0, 0]
+x1 = 0.0		 x2 = 0.0
+
+startTime =0	startAges=[2, 8]	 kesi=[0, 0]
+x1 = 0.0		 x2 = 0.0
+
+startTime =0	startAges=[2, 9]	 kesi=[0, 0]
+x1 = 0.0		 x2 = 0.0
+
+startTime =0	startAges=[2, 10]	 kesi=[0, 0]
+x1 = 0.0		 x2 = 0.0
+
+startTime =0	startAges=[0, 0]	 kesi=[1, 0]
+x1 = 1.0		 x2 = 0.0
+
+startTime =0	startAges=[0, 1]	 kesi=[1, 0]
+x1 = 1.0		 x2 = 0.0
+
+startTime =0	startAges=[0, 2]	 kesi=[1, 0]
+x1 = 1.0		 x2 = 0.0
+
+startTime =0	startAges=[0, 3]	 kesi=[1, 0]
+x1 = 1.0		 x2 = 0.0
+
+startTime =0	startAges=[0, 4]	 kesi=[1, 0]
+x1 = 1.0		 x2 = 0.0
+
+startTime =0	startAges=[0, 5]	 kesi=[1, 0]
+x1 = 1.0		 x2 = 0.0
+
+startTime =0	startAges=[0, 6]	 kesi=[1, 0]
+x1 = 1.0		 x2 = 0.0
+
+startTime =0	startAges=[0, 7]	 kesi=[1, 0]
+x1 = 1.0		 x2 = 0.0
+
+startTime =0	startAges=[0, 8]	 kesi=[1, 0]
+x1 = 1.0		 x2 = 0.0
+
+startTime =0	startAges=[0, 9]	 kesi=[1, 0]
+x1 = 1.0		 x2 = 1.0
+
+startTime =0	startAges=[0, 10]	 kesi=[1, 0]
+x1 = 1.0		 x2 = 1.0
+
+startTime =0	startAges=[0, 11]	 kesi=[1, 0]
+x1 = 1.0		 x2 = 1.0
+
+startTime =0	startAges=[0, 0]	 kesi=[0, 1]
+x1 = 0.0		 x2 = 1.0
+
+startTime =0	startAges=[1, 0]	 kesi=[0, 1]
+x1 = 0.0		 x2 = 1.0
+
+startTime =0	startAges=[2, 0]	 kesi=[0, 1]
+x1 = 1.0		 x2 = 1.0
+
+startTime =0	startAges=[3, 0]	 kesi=[0, 1]
+x1 = 0.0		 x2 = 1.0
+
+startTime =0	startAges=[4, 0]	 kesi=[0, 1]
+x1 = 1.0		 x2 = 1.0
+
+startTime =0	startAges=[5, 0]	 kesi=[0, 1]
+x1 = 1.0		 x2 = 1.0
+
+startTime =0	startAges=[6, 0]	 kesi=[0, 1]
+x1 = 1.0		 x2 = 1.0
+
+startTime =0	startAges=[7, 0]	 kesi=[0, 1]
+x1 = 1.0		 x2 = 1.0
+
+startTime =0	startAges=[8, 0]	 kesi=[0, 1]
+x1 = 1.0		 x2 = 1.0
+
+startTime =0	startAges=[9, 0]	 kesi=[0, 1]
+x1 = 1.0		 x2 = 1.0
+
+startTime =0	startAges=[10, 0]	 kesi=[0, 1]
+x1 = 1.0		 x2 = 1.0
+
+startTime =0	startAges=[11, 0]	 kesi=[0, 1]
+x1 = 1.0		 x2 = 1.0
+
+
+
+
+
+
+
+m=1
+N=12
+T=mN=12
+ThorizonZhu=15
+n=2
+q=6
+lengthOmega=100
+d=5
+CR_average_i=[50.0, 50.0]
+PR_average_i=[10.0, 10.0]
+startAges=[0, 0]
+kesi=[0, 0]
+alpha=[6.0, 12.0]
+beta=[2.0, 2.0]
+delta=0.2
+startTime =0	startAges=[2, 15]	 kesi=[0, 0]
+x1 = 1.0		 x2 = 1.0

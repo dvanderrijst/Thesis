@@ -8,6 +8,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.TreeMap;
 
 public class ModelMBRP_2Comp {
     public final Instance i;
@@ -44,7 +45,7 @@ public class ModelMBRP_2Comp {
         setObjective();
         setConstraints();
         cplex.setParam(IloCplex.Param.DetTimeLimit, 60000);
-        cplex.exportModel("model.lp");
+        cplex.exportModel("modelarp.lp");
 //        cplex.setOut(null);
         cplex.solve();
         printSolution();
@@ -88,7 +89,7 @@ public class ModelMBRP_2Comp {
                     a_i0_i1_i2[i0][i1][i2] = 4;
                     int count = 0;
                     for (int a : A(i0, i1, i2)) {
-                        if (cplex.getValue(x[i0][i1][i2][a]) > 0.000000) {
+                        if (cplex.getValue(x[i0][i1][i2][a]) > 0.00000000000) {
                             a_i0_i1_i2[i0][i1][i2] = a;
                             count++;
                         }
@@ -103,22 +104,53 @@ public class ModelMBRP_2Comp {
             }
         }
 
+//        for (int i0 = 0; i0 < i.T ; i0++) {
+//            for (int i1 = 0; i1 < M; i1++) {
+//                int i2 = M;
+//                while (a_i0_i1_i2[i0][i1][i2] == 4) {
+//                    i2--;
+//                }
+//
+//                int action = a_i0_i1_i2[i0][i1][i2];
+//                for (int i2iterate = i2; i2iterate < M; i2iterate ++) {
+//                    a_i0_i1_i2[i0][i1][i2iterate] = action;
+//                }
+//            }
+//        }
+//
+//        for (int i0 = 0; i0 < i.T ; i0++) {
+//            for (int i2 = 0; i2 < M; i2++) {
+//                int i1 = M;
+//                while (a_i0_i1_i2[i0][i1][i2] == 4) {
+//                    i1--;
+//                }
+//
+//                int action = a_i0_i1_i2[i0][i1][i2];
+//                for (int i1iterate = i1; i1iterate < M; i1iterate++) {
+//                    a_i0_i1_i2[i0][i1iterate][i2] = action;
+//                }
+//            }
+//        }
+//
+//        for (int i0 = 0; i0 < i.T ; i0++) {
+//            for (int i1 = 0; i1 < M; i1++) {
+//                int i2 = M;
+//                while (a_i0_i1_i2[i0][i1][i2] == 4) {
+//                    i2--;
+//                }
+//
+//                int action = a_i0_i1_i2[i0][i1][i2];
+//                for (int i2iterate = i2; i2 < M; i2++) {
+//                    a_i0_i1_i2[i0][i1][i2iterate] = action;
+//                }
+//            }
+//        }
+
+
         for (int i0 = 0; i0 < i.T ; i0++) {
             for (int i1 = 0; i1 < M; i1++) {
                 for (int i2 = 0; i2 < M; i2++) {
-
-                    if(a_i0_i1_i2[i0][i1][i2]==4){
-                        if(i2==0){
-                            a_i0_i1_i2[i0][i1][i2] = a_i0_i1_i2[i0][i1 - 1][i2];
-                        }
-                        else if(i1==0){
-                            a_i0_i1_i2[i0][i1][i2] = a_i0_i1_i2[i0][i1][i2 - 1];
-                        }
-                        else {
-                            a_i0_i1_i2[i0][i1][i2] = a_i0_i1_i2[i0][i1 - 1][i2 - 1];
-                        }
-                    }
-                    writer.write("\n" + i1 + " " + i2 + " " + i0 + " " + a_i0_i1_i2[i0][i1][i2]);
+                    if(a_i0_i1_i2[i0][i1][i2]!=4){writer.write("\n" + i1 + " " + i2 + " " + i0 + " " + a_i0_i1_i2[i0][i1][i2]);}
                 }
             }
         }
@@ -129,28 +161,31 @@ public class ModelMBRP_2Comp {
     public void printActionGridComp1() throws IloException {
         System.out.println("\n actions grid - rows are age, columns time.");
 
-        for (int i1 : I1) {
-            for (int i0 : I0) {
-                boolean notPrinted = true;
-                List<Integer> list = new ArrayList<>();
-                for (int i2 : I2) {
-                    int[] actions = A(i0, i1, i2);
-                    for (int a : actions) {
-                        if (cplex.getValue(x[i0][i1][i2][a]) > 0.00000000) {
-                            list.add(a);
-                            notPrinted = false;
-                        }
-                    }
-                }
-                if (!notPrinted) {
-                    System.out.printf("%8s", list.get(0));
-                }
-                if (notPrinted) {
-                    System.out.printf("%8s", "-");
-                }
+        for (int i0 : I0) {
 
+            for (int i1 : I1) {
+                for (int i2 : I2) {
+                    boolean notPrinted = true;
+                        int[] actions = A(i0, i1, i2);
+                        TreeMap<Double, Integer> sortedActionMap = new TreeMap<>();
+                        for (int a : actions) {
+                            if (cplex.getValue(x[i0][i1][i2][a]) > 0.00000001) {
+                                sortedActionMap.put(cplex.getValue(x[i0][i1][i2][a]), a);
+//                                System.out.println(cplex.getValue(x[i0][i1][i2][a]));
+                                notPrinted = false;
+                            }
+                        }
+                    if (!notPrinted) {
+                        System.out.printf("%8s", sortedActionMap.lastEntry().getValue());
+                    }
+                    if (notPrinted) {
+                        System.out.printf("%8s", "-");
+                    }
+
+                }
+                System.out.println();
             }
-            System.out.println();
+            System.out.println("\n\nt="+(i0+1)+"\n");
         }
     }
 

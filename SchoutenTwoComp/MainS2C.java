@@ -2,6 +2,8 @@ package SchoutenTwoComp;
 
 import Main.Instance;
 import ilog.concert.IloException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -11,14 +13,16 @@ public class MainS2C {
     public static void main(String[] args) throws IloException, IOException {
 
         Instance instance = new Instance();
-        String fileName = "policySchoutenARP.txt";
-        writeInfo(instance, fileName);
+        String fileName = "policiesaARP2/policySchoutenARP.txt";
 
+        writeInfo(instance, fileName);
         //Schouten
         ModelARP_2Comp ARP2comp = new ModelARP_2Comp(instance, fileName);
 
+
+
 //        ModelBRP_2Comp modelarp2 = new ModelBRP_2Comp(instance, fileName);
-//        ModelMBRP_2Comp modelarp2 = new ModelMBRP_2Comp(instance, fileName);
+//        ModelMBRP_2Comp modelmbrp2 = new ModelMBRP_2Comp(instance, fileName);
     }
 
     private static void writeInfo(Instance instance, String fileName) {
@@ -36,9 +40,11 @@ public class MainS2C {
             writer.write("\nalpha="+ Arrays.toString(instance.alpha));
             writer.write("\nbeta="+ Arrays.toString(instance.beta));
             writer.write("\ndelta="+instance.delta);
+            writer.write(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
             writer.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 }
+

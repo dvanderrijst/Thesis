@@ -93,6 +93,7 @@ public class Weibull {
 
         //This is how we do it, as also described in the appendix
         int x = (int) Math.ceil(instance.getAlpha()[i] * Math.pow(-Math.log(1 - random), 1.0 / instance.getBeta()[i])) - startAge;
+        System.out.println(x);
 
 
 //        System.out.println(x);

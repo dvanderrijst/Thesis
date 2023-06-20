@@ -4,7 +4,9 @@ import Main.Instance;
 import ilog.concert.IloException;
 import ilog.concert.IloNumExpr;
 import ilog.concert.IloNumVar;
+import ilog.cplex.IloCplex;
 
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Arrays;
@@ -31,10 +33,11 @@ public class DEF_period extends DEF {
         setExtraConstraints();
         setObjective();
         cplex.exportModel("def_period.lp");
+        cplex.setParam(IloCplex.Param.MIP.Tolerances.MIPGap, 0.03);
         cplex.solve();
         cplex.setOut(null);
         checkResult();
-        printResultMatrix();
+//        printResultMatrix();
         System.out.println("best costs are "+cplex.getObjValue());
         System.out.println("x1 = "+cplex.getValue(x_i[0])+"\t\t x2 = "+cplex.getValue(x_i[1]));
 
