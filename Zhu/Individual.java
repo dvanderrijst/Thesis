@@ -87,7 +87,7 @@ public class Individual {
 //        System.out.println("difference is "+difference);
         for (int r = this.r + 1; r < allBetas[0].length ; r++) {
             if(allBetas[i][r] > instance.T && allBetas[i][r] - difference <= instance.T){
-                costs = costs + instance.cPR_i[(allBetas[i][r] - difference) % instance.N ]+ instance.d;
+                costs = costs + instance.cPR_i_t[i][(allBetas[i][r] - difference) % instance.N ]+ instance.d;
             }
         }
         penaltyCosts.put(m, costs);

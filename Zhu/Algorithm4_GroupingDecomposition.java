@@ -24,7 +24,7 @@ public class Algorithm4_GroupingDecomposition extends Algorithm4_Grouping {
         double costs = 0.0;
         Set<Integer> countUniqueTaus = new LinkedHashSet<>();
         for (Individual individual : K) {
-            double costsIndividualMaintenance = instance.cPR_i[individual.getTau(m) % instance.N];
+            double costsIndividualMaintenance = instance.cPR_i_t[individual.i][individual.getTau(m) % instance.N];
             double costsIndividualPenalty = individual.getPenaltyCosts(m);
             costs = costs + costsIndividualMaintenance + costsIndividualPenalty ;
 //            System.out.println("add for tau ="+individual.getTau(m));

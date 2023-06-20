@@ -2,6 +2,10 @@ package Zhu;
 
 import Main.Instance;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,6 +24,7 @@ public class Omega {
         this.Twir = new int[instance.lengthOmega][instance.n][instance.q];
         this.p_w = new double[instance.lengthOmega];
         createScenarios();
+//        createScenariosFromZhu();
     }
     public Omega(Instance instance, int[][][] Twir, double[] p_w){
         this.instance = instance;
@@ -39,12 +44,49 @@ public class Omega {
             for (int i = 0; i < instance.n; i++) {
                 for (int r = 0; r < instance.q; r++) {
                     if(kesi[i]==1 && r==0){
-                        Twir[omega][i][r] = 0 ;
-                    } else{
-                    Twir[omega][i][r] = instance.inverseWeibull(i, startAges[i]);}
+                        Twir[omega][i][r] = 0 ;}
+                    else if(r==0){
+                        Twir[omega][i][r] = instance.inverseWeibull(i, startAges[i]);}
+                    else{
+                        Twir[omega][i][r] = instance.inverseWeibull(i, 0);}
                 }
             }
             p_w[omega] = 1.0 / instance.lengthOmega;
+        }
+    }
+
+    public void createScenariosFromZhu(){
+        String folderPath = "table1_2";
+
+        File folder = new File(folderPath);
+        File[] files = folder.listFiles();
+
+        if (files != null) {
+            int omega = -1;
+            for (File file : files) {
+                omega++;
+                if (file.isFile() && file.getName().endsWith(".csv")) {
+                    try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+                        int i = 0;
+                        while (i < instance.n) {
+                            String line = br.readLine();
+                            if (!line.equals("") && line != null) {
+                                String[] values = line.split(",");
+                                int r = 0;
+                                while (r < instance.q) {
+                                    Twir[omega][i][r] = (int) Double.parseDouble(values[r].trim());
+                                    r++;
+                                }
+                                i++;
+                            }
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+                p_w[omega] = 1.0 / instance.lengthOmega;
+//            }
+            }
         }
     }
 

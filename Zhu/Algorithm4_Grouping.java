@@ -165,7 +165,7 @@ public class Algorithm4_Grouping {
             int t = individual.getTau(m);
 
             if(t<instance.T+1) {
-                costs2 = costs2 + instance.cPR_i[t % instance.N] * Xit[i][t] + individual.getPenaltyCosts(m) * Xit[i][t];
+                costs2 = costs2 + instance.cPR_i_t[i][t % instance.N] * Xit[i][t] + individual.getPenaltyCosts(m) * Xit[i][t];
             }
         }
         finalCosts = costs2;
