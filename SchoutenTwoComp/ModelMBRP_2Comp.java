@@ -89,7 +89,7 @@ public class ModelMBRP_2Comp {
                     a_i0_i1_i2[i0][i1][i2] = 4;
                     int count = 0;
                     for (int a : A(i0, i1, i2)) {
-                        if (cplex.getValue(x[i0][i1][i2][a]) > 0.00000000000) {
+                        if (cplex.getValue(x[i0][i1][i2][a]) > 0.000000000000000000000) {
                             a_i0_i1_i2[i0][i1][i2] = a;
                             count++;
                         }
@@ -382,7 +382,8 @@ public class ModelMBRP_2Comp {
 
         boolean b = (j1 == (i1 + 1)) & (j2 == (i2 + 1)) & (i1 != 0) & (i1 != M - 1) & (i2 != 0) & (i2 != M - 1);
 
-        if (a == 0) {
+        if (j0 != (i0 + 1) % (m * N)) {
+        } else if (a == 0) {
             if (b) {
                 pi_value = (1.0 - i.probCondX_x_k(i1, 1)) * (1.0 - i.probCondX_x_k(i2, 2)) ;
             } else if ((j1 == (i1 + 1)) & (j2 == 0) & (i1 != 0) & (i1 != M - 1) & (i2 != 0) & (i2 != M - 1)) {
@@ -396,13 +397,13 @@ public class ModelMBRP_2Comp {
             }
         } else if (a == 1) {
             if ((j1 == 1) & (j2 == (i2 + 1)) & (i2 != 0) & (i2 != M - 1)) {
-                pi_value = (1.0 - i.probCondX_x_k(0, 1)) * (1.0 - i.probCondX_x_k(i2, 2))                  ;// - 0.25*i.p_epsilon;
+                pi_value = (1.0 - i.probCondX_x_k(0, 1)) * (1.0 - i.probCondX_x_k(i2, 2))                 - 0.25*i.p_epsilon;
             } else if ((j1 == 1) & (j2 == 0) & (i2 != 0) & (i2 != M - 1)) {
-                pi_value = (1.0 - i.probCondX_x_k(0, 1)) * i.probCondX_x_k(i2, 2)                          ;// - 0.25*i.p_epsilon;
+                pi_value = (1.0 - i.probCondX_x_k(0, 1)) * i.probCondX_x_k(i2, 2)                         - 0.25*i.p_epsilon;
             } else if ((j1 == 0) & (j2 == (i2 + 1)) & (i2 != 0) & (i2 != M - 1)) {
-                pi_value = i.probCondX_x_k(0, 1) * (1.0 - i.probCondX_x_k(i2, 2))                          ;// - 0.25*i.p_epsilon;
+                pi_value = i.probCondX_x_k(0, 1) * (1.0 - i.probCondX_x_k(i2, 2))                         - 0.25*i.p_epsilon;
             } else if ((j1 == 0) & (j2 == 0) & (i2 != 0) & (i2 != M - 1)) {
-                pi_value = i.probCondX_x_k(0, 1) * i.probCondX_x_k(i2, 2)                                   ;// - 0.25*i.p_epsilon;
+                pi_value = i.probCondX_x_k(0, 1) * i.probCondX_x_k(i2, 2)                                  - 0.25*i.p_epsilon;
             } else if (b){
                 pi_value = i.p_epsilon;
             }
@@ -411,13 +412,13 @@ public class ModelMBRP_2Comp {
             }
         } else if (a == 2) {
             if ((j1 == (i1 + 1)) & (j2 == 1) & (i1 != 0) & (i1 != M - 1)) {
-                pi_value = (1.0 - i.probCondX_x_k(i1, 1)) * (1.0 - i.probCondX_x_k(0, 2))                   ;// - 0.25*i.p_epsilon;
+                pi_value = (1.0 - i.probCondX_x_k(i1, 1)) * (1.0 - i.probCondX_x_k(0, 2))                  - 0.25*i.p_epsilon;
             } else if ((j1 == (i1 + 1)) & (j2 == 0) & (i1 != 0) & (i1 != M - 1)) {
-                pi_value = (1.0 - i.probCondX_x_k(i1, 1)) * i.probCondX_x_k(0, 2)                            ;// - 0.25*i.p_epsilon;
+                pi_value = (1.0 - i.probCondX_x_k(i1, 1)) * i.probCondX_x_k(0, 2)                           - 0.25*i.p_epsilon;
             } else if ((j1 == 0) & (j2 == 1) & (i1 != 0) & (i1 != M - 1)) {
-                pi_value = i.probCondX_x_k(i1, 1) * (1.0 - i.probCondX_x_k(0, 2))                             ;// - 0.25*i.p_epsilon;
+                pi_value = i.probCondX_x_k(i1, 1) * (1.0 - i.probCondX_x_k(0, 2))                            - 0.25*i.p_epsilon;
             } else if ((j1 == 0) & (j2 == 0) & (i1 != 0) & (i1 != M - 1)) {
-                pi_value = i.probCondX_x_k(i1, 1) * i.probCondX_x_k(0, 2)                                    ;// - 0.25*i.p_epsilon;
+                pi_value = i.probCondX_x_k(i1, 1) * i.probCondX_x_k(0, 2)                                   - 0.25*i.p_epsilon;
             } else if (b){
                 pi_value = i.p_epsilon;
             } else {
@@ -426,13 +427,13 @@ public class ModelMBRP_2Comp {
         } else if (a == 3) {
             if ((j1 == 1) & (j2 == 1)) {
 
-                pi_value = (1.0 - i.probCondX_x_k(0, 1)) * (1.0 - i.probCondX_x_k(0, 2))                 ;// - 0.25*i.p_epsilon;
+                pi_value = (1.0 - i.probCondX_x_k(0, 1)) * (1.0 - i.probCondX_x_k(0, 2))                - 0.25*i.p_epsilon;
             } else if ((j1 == 1) & (j2 == 0)) {
-                pi_value = (1.0 - i.probCondX_x_k(0, 1)) * i.probCondX_x_k(0, 2)                            ;// - 0.25*i.p_epsilon;
+                pi_value = (1.0 - i.probCondX_x_k(0, 1)) * i.probCondX_x_k(0, 2)                           - 0.25*i.p_epsilon;
             } else if ((j1 == 0) & (j2 == 1)) {
-                pi_value = i.probCondX_x_k(0, 1) * (1.0 - i.probCondX_x_k(0, 2))                        ;// - 0.25*i.p_epsilon;
+                pi_value = i.probCondX_x_k(0, 1) * (1.0 - i.probCondX_x_k(0, 2))                       - 0.25*i.p_epsilon;
             } else if ((j1 == 0) & (j2 == 0)) {
-                pi_value = i.probCondX_x_k(0, 1) * i.probCondX_x_k(0, 2)                                 ;// - 0.25*i.p_epsilon;
+                pi_value = i.probCondX_x_k(0, 1) * i.probCondX_x_k(0, 2)                                - 0.25*i.p_epsilon;
             } else if (b){
                 pi_value = i.p_epsilon;
             } else {
