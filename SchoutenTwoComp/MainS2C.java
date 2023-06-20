@@ -40,7 +40,7 @@ public class MainS2C {
             writer.write("\nalpha="+ Arrays.toString(instance.alpha));
             writer.write("\nbeta="+ Arrays.toString(instance.beta));
             writer.write("\ndelta="+instance.delta);
-            writer.write(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+            writer.write("\n"+LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))+"\n");
             writer.close();
         } catch (IOException e) {
             e.printStackTrace();

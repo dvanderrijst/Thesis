@@ -1,8 +1,7 @@
 package SchoutenTwoComp;
 
 import Main.Instance;
-import ilog.concert.IloConstraint;
-import ilog.concert.IloException;
+import ilog.concert.*;
 import ilog.cplex.IloCplex;
 
 import java.io.IOException;
@@ -33,7 +32,7 @@ public class ModelARP_2Comp extends ModelMBRP_2Comp {
         for (IloConstraint cons : constraints) {
             IloCplex.BasisStatus status = cplex.getBasisStatus(cons);
             if(status == IloCplex.BasisStatus.Basic) {
-                System.out.println("constraint " + cons.getName() + " has basic status of " + cplex.getBasisStatus(cons));
+//                System.out.println("constraint " + cons.getName() + " has basic status of " + cplex.getBasisStatus(cons));
             }
         }
 

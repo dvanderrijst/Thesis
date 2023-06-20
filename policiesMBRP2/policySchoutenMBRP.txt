@@ -1,19 +1,3 @@
-
-m=1
-N=12
-T=mN=12
-n=2
-q=6
-lengthOmega=100
-d=5
-CR_average_i=[50.0, 50.0]
-PR_average_i=[10.0, 10.0]
-alpha=[6.0, 12.0]
-beta=[2.0, 2.0]
-delta=0.2The class ModelMBRP_2Comp is used.
-
-Yearly costs are 140.02863621516119i1	i2	i0	a
-
 0 0 0 3
 0 1 0 1
 0 2 0 1
@@ -556,3 +540,21 @@ Yearly costs are 140.02863621516119i1	i2	i0	a
 2 4 11 0
 2 5 11 0
 2 6 11 0
+
+
+
+m=1
+N=12
+T=mN=12
+n=2
+q=6
+lengthOmega=100
+d=5
+CR_average_i=[50.0, 50.0]
+PR_average_i=[10.0, 10.0]
+alpha=[6.0, 12.0]
+beta=[2.0, 2.0]
+delta=0.2The class ModelMBRP_2Comp is used.
+
+Yearly costs are 140.02863621516119i1	i2	i0	a
+

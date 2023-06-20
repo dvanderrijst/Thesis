@@ -380,10 +380,11 @@ public class ModelMBRP_2Comp {
     public double pi(int i0, int i1, int i2, int j0, int j1, int j2, int a) {
         double pi_value = 0.0;
 
-        if (j0 != (i0 + 1) % (m * N)) {
-        } else if (a == 0) {
-            if ((j1 == (i1 + 1)) & (j2 == (i2 + 1)) & (i1 != 0) & (i1 != M - 1) & (i2 != 0) & (i2 != M - 1)) {
-                pi_value = (1.0 - i.probCondX_x_k(i1, 1)) * (1.0 - i.probCondX_x_k(i2, 2));
+        boolean b = (j1 == (i1 + 1)) & (j2 == (i2 + 1)) & (i1 != 0) & (i1 != M - 1) & (i2 != 0) & (i2 != M - 1);
+
+        if (a == 0) {
+            if (b) {
+                pi_value = (1.0 - i.probCondX_x_k(i1, 1)) * (1.0 - i.probCondX_x_k(i2, 2)) ;
             } else if ((j1 == (i1 + 1)) & (j2 == 0) & (i1 != 0) & (i1 != M - 1) & (i2 != 0) & (i2 != M - 1)) {
                 pi_value = (1.0 - i.probCondX_x_k(i1, 1)) * i.probCondX_x_k(i2, 2);
             } else if ((j1 == 0) & (j2 == (i2 + 1)) & (i1 != 0) & (i1 != M - 1) & (i2 != 0) & (i2 != M - 1)) {
@@ -395,40 +396,45 @@ public class ModelMBRP_2Comp {
             }
         } else if (a == 1) {
             if ((j1 == 1) & (j2 == (i2 + 1)) & (i2 != 0) & (i2 != M - 1)) {
-                pi_value = (1.0 - i.probCondX_x_k(0, 1)) * (1.0 - i.probCondX_x_k(i2, 2));
+                pi_value = (1.0 - i.probCondX_x_k(0, 1)) * (1.0 - i.probCondX_x_k(i2, 2))                  ;// - 0.25*i.p_epsilon;
             } else if ((j1 == 1) & (j2 == 0) & (i2 != 0) & (i2 != M - 1)) {
-                pi_value = (1.0 - i.probCondX_x_k(0, 1)) * i.probCondX_x_k(i2, 2);
+                pi_value = (1.0 - i.probCondX_x_k(0, 1)) * i.probCondX_x_k(i2, 2)                          ;// - 0.25*i.p_epsilon;
             } else if ((j1 == 0) & (j2 == (i2 + 1)) & (i2 != 0) & (i2 != M - 1)) {
-                pi_value = i.probCondX_x_k(0, 1) * (1.0 - i.probCondX_x_k(i2, 2));
+                pi_value = i.probCondX_x_k(0, 1) * (1.0 - i.probCondX_x_k(i2, 2))                          ;// - 0.25*i.p_epsilon;
             } else if ((j1 == 0) & (j2 == 0) & (i2 != 0) & (i2 != M - 1)) {
-                pi_value = i.probCondX_x_k(0, 1) * i.probCondX_x_k(i2, 2);
-            } else {
+                pi_value = i.probCondX_x_k(0, 1) * i.probCondX_x_k(i2, 2)                                   ;// - 0.25*i.p_epsilon;
+            } else if (b){
+                pi_value = i.p_epsilon;
+            }
+            else {
                 pi_value = 0.0;
             }
         } else if (a == 2) {
             if ((j1 == (i1 + 1)) & (j2 == 1) & (i1 != 0) & (i1 != M - 1)) {
-                pi_value = (1.0 - i.probCondX_x_k(i1, 1)) * (1.0 - i.probCondX_x_k(0, 2));
+                pi_value = (1.0 - i.probCondX_x_k(i1, 1)) * (1.0 - i.probCondX_x_k(0, 2))                   ;// - 0.25*i.p_epsilon;
             } else if ((j1 == (i1 + 1)) & (j2 == 0) & (i1 != 0) & (i1 != M - 1)) {
-                pi_value = (1.0 - i.probCondX_x_k(i1, 1)) * i.probCondX_x_k(0, 2);
+                pi_value = (1.0 - i.probCondX_x_k(i1, 1)) * i.probCondX_x_k(0, 2)                            ;// - 0.25*i.p_epsilon;
             } else if ((j1 == 0) & (j2 == 1) & (i1 != 0) & (i1 != M - 1)) {
-                pi_value = i.probCondX_x_k(i1, 1) * (1.0 - i.probCondX_x_k(0, 2));
+                pi_value = i.probCondX_x_k(i1, 1) * (1.0 - i.probCondX_x_k(0, 2))                             ;// - 0.25*i.p_epsilon;
             } else if ((j1 == 0) & (j2 == 0) & (i1 != 0) & (i1 != M - 1)) {
-                pi_value = i.probCondX_x_k(i1, 1) * i.probCondX_x_k(0, 2);
+                pi_value = i.probCondX_x_k(i1, 1) * i.probCondX_x_k(0, 2)                                    ;// - 0.25*i.p_epsilon;
+            } else if (b){
+                pi_value = i.p_epsilon;
             } else {
                 pi_value = 0.0;
             }
         } else if (a == 3) {
             if ((j1 == 1) & (j2 == 1)) {
 
-                pi_value = (1.0 - i.probCondX_x_k(0, 1)) * (1.0 - i.probCondX_x_k(0, 2));
+                pi_value = (1.0 - i.probCondX_x_k(0, 1)) * (1.0 - i.probCondX_x_k(0, 2))                 ;// - 0.25*i.p_epsilon;
             } else if ((j1 == 1) & (j2 == 0)) {
-                pi_value = (1.0 - i.probCondX_x_k(0, 1)) * i.probCondX_x_k(0, 2);
+                pi_value = (1.0 - i.probCondX_x_k(0, 1)) * i.probCondX_x_k(0, 2)                            ;// - 0.25*i.p_epsilon;
             } else if ((j1 == 0) & (j2 == 1)) {
-                pi_value = i.probCondX_x_k(0, 1) * (1.0 - i.probCondX_x_k(0, 2));
+                pi_value = i.probCondX_x_k(0, 1) * (1.0 - i.probCondX_x_k(0, 2))                        ;// - 0.25*i.p_epsilon;
             } else if ((j1 == 0) & (j2 == 0)) {
-//                double one = i.probCondX_x_k(0, 1);
-//                double two = i.probCondX_x_k(0, 2);
-                pi_value = i.probCondX_x_k(0, 1) * i.probCondX_x_k(0, 2);
+                pi_value = i.probCondX_x_k(0, 1) * i.probCondX_x_k(0, 2)                                 ;// - 0.25*i.p_epsilon;
+            } else if (b){
+                pi_value = i.p_epsilon;
             } else {
                 pi_value = 0.0;
             }
@@ -570,7 +576,7 @@ public class ModelMBRP_2Comp {
                             }
                         }
                     }
-                    cplex.addEq(cplex.diff(sum1, sum2), 0.0, "9b," + i0 + "," + i1 + "," + i2);
+                    constraints.add(cplex.addEq(cplex.diff(sum1, sum2), 0.0, "9b," + i0 + "," + i1 + "," + i2));
                 }
             }
         }
@@ -588,7 +594,7 @@ public class ModelMBRP_2Comp {
                 }
             }
             double fraction = 1.0 / (m * N);
-            cplex.addEq(sum, fraction, "9c," + i0);
+            constraints.add(cplex.addEq(sum, fraction, "9c," + i0));
         }
     }
 

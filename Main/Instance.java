@@ -17,6 +17,7 @@ public class Instance {
     public final int d       = 5;
     public final int m = 1; //5 years
     public final int N = 12; //12 months in one year
+    public final double p_epsilon = 0.000000000000000000000000;
     public final int ThorizonZhu = 15;
     public final int T       = m*N ;
     public final double[] alpha = new double[]{6.0, 12.0 }; //alpha is 1 year
