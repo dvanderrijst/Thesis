@@ -1,34 +1,36 @@
 
 
-
 m=1
 N=12
 T=mN=12
 n=2
-q=7
+q=6
 lengthOmega=100
 d=5
 CR_average_i=[50.0, 50.0]
 PR_average_i=[10.0, 10.0]
 alpha=[6.0, 12.0]
 beta=[2.0, 2.0]
-delta=0.2The class ModelARP_2Comp is used.
+delta=0.2
+2023-06-20 20:43:50
+The class ModelARP_2Comp is used.
 
 Yearly costs are 137.89638123714258i1	i2	i0	a
 
 
-
 m=1
 N=12
 T=mN=12
 n=2
-q=7
+q=6
 lengthOmega=100
 d=5
 CR_average_i=[50.0, 50.0]
 PR_average_i=[10.0, 10.0]
 alpha=[6.0, 12.0]
 beta=[2.0, 2.0]
-delta=0.2The class ModelARP_2Comp is used.
+delta=0.2
+2023-06-20 20:43:50
+The class ModelARP_2Comp is used.
 
 Yearly costs are 137.89638123714258i1	i2	i0	a

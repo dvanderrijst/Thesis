@@ -11,8 +11,8 @@ import java.util.regex.Pattern;
 
 public class MainRandom {
     public static void main(String[] args) throws IloException, IOException {
-//        splitARPSchouten();
-        splitMBRPSchouten();
+        splitARPSchouten();
+//        splitMBRPSchouten();
 //        splitDEFZhu();
     }
 
