@@ -20,3 +20,8 @@ file2 contains the natural output for ARP policy where all outer actions are put
 file3 contains the new output for ARP policy with warm start, the manipulated markov chain. 
 file4 contains the final out for ARP policy, where file1 and file3 are combined. 
 
+
+l_1 = i_1
+l_2 = i_2
+l_0 = i_0
+l_3 = a

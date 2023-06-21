@@ -30,12 +30,12 @@ public class ModelARP_warmstart extends ModelARP {
             for (int i1 : I1) {
                 for (int i2 : I2) {
                     //action should be 0 here. So in case action was 0, it remains zero. In case it was 1,2,3 it should become zero.
-                    if( (i2 == 0 || i2 == M-1) && i1 !=0 && i1 !=M-1 ) {
+                    if( (i2 == 0 || i2 == M) && i1 !=0 && i1 !=M ) {
                         if (this.actions[i0][i1][i2] != 4) {
                             cplex.addEq(x[i0][i1][i2][3], 0);
                         }
                     }
-                    else if((i1 ==0 || i1 == M-1 ) && i2 !=0 && i2 !=M-1) {
+                    else if((i1 ==0 || i1 == M ) && i2 !=0 && i2 !=M) {
                         if (this.actions[i0][i1][i2] != 4) {
                             cplex.addEq(x[i0][i1][i2][3], 0);
                         }

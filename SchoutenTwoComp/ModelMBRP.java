@@ -51,7 +51,7 @@ public class ModelMBRP {
         cplex.exportModel("modelarp.lp");
         cplex.setOut(null);
         cplex.solve();
-        printSolution();
+//        printSolution();
         writePolicy();
     }
 
@@ -103,7 +103,7 @@ public class ModelMBRP {
         for (int i0 : I0) {
             for (int i1 : I1) {
                 for (int i2 : I2) {
-                    if(a_i0_i1_i2[i0][i1][i2]!=4){writer.write("\n" + i1 + " " + i2 + " " + i0 + " " + a_i0_i1_i2[i0][i1][i2]);}
+                    if(a_i0_i1_i2[i0][i1][i2]!=4){writer.write("\n" + i1 + " " + i2 + " " + (i0+1) + " " + a_i0_i1_i2[i0][i1][i2]);}
                 }
             }
         }
@@ -304,11 +304,11 @@ public class ModelMBRP {
      */
     public int[] A(int i0, int i1, int i2) {
         int[] A;
-        if ((i1 == 0 || i1 == M-1) && (i2 == 0 || i2 == M-1)) {
+        if ((i1 == 0 || i1 == M) && (i2 == 0 || i2 == M)) {
             A = new int[]{3};
-        } else if ((i1 == 0 || i1 == M-1) && (i2 != 0 & i2 != M-1)) {
+        } else if ((i1 == 0 || i1 == M) && (i2 != 0 & i2 != M)) {
             A = new int[]{1, 3};
-        } else if ((i2 == 0 || i2 == M-1) && (i1 != 0 & i1 != M-1)) {
+        } else if ((i2 == 0 || i2 == M) && (i1 != 0 & i1 != M)) {
             A = new int[]{2, 3};
         } else {
             A = new int[]{0, 1, 2, 3};
@@ -334,37 +334,37 @@ public class ModelMBRP {
 
         if (j0 != (i0 + 1) % (m * N)) {
         } else if (a == 0) {
-            if ((j1 == (i1 + 1)) & (j2 == (i2 + 1)) & (i1 != 0) & (i1 != M - 1) & (i2 != 0) & (i2 != M - 1)) {
+            if ((j1 == (i1 + 1)) & (j2 == (i2 + 1)) & (i1 != 0) & (i1 != M) & (i2 != 0) & (i2 != M)) {
                 pi_value = (1.0 - i.probCondX_x_k(i1, 1)) * (1.0 - i.probCondX_x_k(i2, 2));
-            } else if ((j1 == (i1 + 1)) & (j2 == 0) & (i1 != 0) & (i1 != M - 1) & (i2 != 0) & (i2 != M - 1)) {
+            } else if ((j1 == (i1 + 1)) & (j2 == 0) & (i1 != 0) & (i1 != M) & (i2 != 0) & (i2 != M)) {
                 pi_value = (1.0 - i.probCondX_x_k(i1, 1)) * i.probCondX_x_k(i2, 2);
-            } else if ((j1 == 0) & (j2 == (i2 + 1)) & (i1 != 0) & (i1 != M - 1) & (i2 != 0) & (i2 != M - 1)) {
+            } else if ((j1 == 0) & (j2 == (i2 + 1)) & (i1 != 0) & (i1 != M) & (i2 != 0) & (i2 != M)) {
                 pi_value = i.probCondX_x_k(i1, 1) * (1.0 - i.probCondX_x_k(i2, 2));
-            } else if ((j1 == 0) & (j2 == 0) & (i1 != 0) & (i1 != M - 1) & (i2 != 0) & (i2 != M - 1)) {
+            } else if ((j1 == 0) & (j2 == 0) & (i1 != 0) & (i1 != M) & (i2 != 0) & (i2 != M)) {
                 pi_value = i.probCondX_x_k(i1, 1) * i.probCondX_x_k(i2, 2);
             } else {
                 pi_value = 0.0;
             }
         } else if (a == 1) {
-            if ((j1 == 1) & (j2 == (i2 + 1)) & (i2 != 0) & (i2 != M - 1)) {
+            if ((j1 == 1) & (j2 == (i2 + 1)) & (i2 != 0) & (i2 != M)) {
                 pi_value = (1.0 - i.probCondX_x_k(0, 1)) * (1.0 - i.probCondX_x_k(i2, 2));
-            } else if ((j1 == 1) & (j2 == 0) & (i2 != 0) & (i2 != M - 1)) {
+            } else if ((j1 == 1) & (j2 == 0) & (i2 != 0) & (i2 != M)) {
                 pi_value = (1.0 - i.probCondX_x_k(0, 1)) * i.probCondX_x_k(i2, 2);
-            } else if ((j1 == 0) & (j2 == (i2 + 1)) & (i2 != 0) & (i2 != M - 1)) {
+            } else if ((j1 == 0) & (j2 == (i2 + 1)) & (i2 != 0) & (i2 != M)) {
                 pi_value = i.probCondX_x_k(0, 1) * (1.0 - i.probCondX_x_k(i2, 2));
-            } else if ((j1 == 0) & (j2 == 0) & (i2 != 0) & (i2 != M - 1)) {
+            } else if ((j1 == 0) & (j2 == 0) & (i2 != 0) & (i2 != M)) {
                 pi_value = i.probCondX_x_k(0, 1) * i.probCondX_x_k(i2, 2);
             } else {
                 pi_value = 0.0;
             }
         } else if (a == 2) {
-            if ((j1 == (i1 + 1)) & (j2 == 1) & (i1 != 0) & (i1 != M - 1)) {
+            if ((j1 == (i1 + 1)) & (j2 == 1) & (i1 != 0) & (i1 != M)) {
                 pi_value = (1.0 - i.probCondX_x_k(i1, 1)) * (1.0 - i.probCondX_x_k(0, 2));
-            } else if ((j1 == (i1 + 1)) & (j2 == 0) & (i1 != 0) & (i1 != M - 1)) {
+            } else if ((j1 == (i1 + 1)) & (j2 == 0) & (i1 != 0) & (i1 != M)) {
                 pi_value = (1.0 - i.probCondX_x_k(i1, 1)) * i.probCondX_x_k(0, 2);
-            } else if ((j1 == 0) & (j2 == 1) & (i1 != 0) & (i1 != M - 1)) {
+            } else if ((j1 == 0) & (j2 == 1) & (i1 != 0) & (i1 != M)) {
                 pi_value = i.probCondX_x_k(i1, 1) * (1.0 - i.probCondX_x_k(0, 2));
-            } else if ((j1 == 0) & (j2 == 0) & (i1 != 0) & (i1 != M - 1)) {
+            } else if ((j1 == 0) & (j2 == 0) & (i1 != 0) & (i1 != M)) {
                 pi_value = i.probCondX_x_k(i1, 1) * i.probCondX_x_k(0, 2);
             } else {
                 pi_value = 0.0;
@@ -424,7 +424,7 @@ public class ModelMBRP {
         double c = 0.0;
         i0 = i0 % N;
         if (a == 0) {
-            if (i2 == 0 || i1 == 0 || i1==M-1 || i2==M-1) {
+            if (i2 == 0 || i1 == 0 || i1==M || i2==M) {
                 System.out.println("this can not be possible");
                 System.exit(1);
             }
@@ -549,11 +549,11 @@ public class ModelMBRP {
             for (int i1 : I1) {
                 for (int i2 : I2) {
                     //constraint 9d
-                    if (i1 != 0 && i1 != M - 1) {
+                    if (i1 != 0 && i1 != M ) {
                         constraints.add(cplex.addLe(cplex.diff(x[i0][i1][i2][1], z[1][i0][i1]), 0.0, "9e" + i0 + "," + i1 + "," + i2 + ",k=" + 1 + "a=1"));
                         constraints.add(cplex.addLe(cplex.diff(x[i0][i1][i2][3], z[1][i0][i1]), 0.0, "9g" + i0 + "," + i1 + "," + i2 + ",k=" + 1 + "a=3"));
                     }
-                    if (i2 != 0 && i2 != M - 1) {
+                    if (i2 != 0 && i2 != M ) {
                         constraints.add(cplex.addLe(cplex.diff(x[i0][i1][i2][2], z[2][i0][i2]), 0.0, "9e" + i0 + "," + i1 + "," + i2 + ",k=" + 2 + "a=1"));
                         constraints.add(cplex.addLe(cplex.diff(x[i0][i1][i2][3], z[2][i0][i2]), 0.0, "9g" + i0 + "," + i1 + "," + i2 + ",k=" + 2 + "a=3"));
                     }

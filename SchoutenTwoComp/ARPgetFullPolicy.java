@@ -28,7 +28,7 @@ public class ARPgetFullPolicy {
 
 
         while(actionsNotFulfilled){
-            String fileName2 = folderName+"/policySchoutenARP_log.txt";
+            String fileName2 = folderName+"/policySchoutenARP_logFake.txt";
             instance.writeInfo(fileName2);
 
             ModelARP_warmstart getNewPolicy = new ModelARP_warmstart(instance, fileName2, ARP2comp.actions);
@@ -37,6 +37,23 @@ public class ARPgetFullPolicy {
 
             fillActions(newActions);
             printActionGrid();
+
+            String fileNameFinal = folderName+"/policySchoutenARP_log_realActions.txt";
+            try (FileWriter writer = new FileWriter(fileNameFinal, true)) {
+                writer.write("i1 i2 i0 a\n");
+                for (int i0 : instance.I0) {
+                    for (int i1 : instance.I1) {
+                        for (int i2 : instance.I2) {
+                            if(actions[i0][i1][i2]!=4){writer.write(i1+" "+i2+" "+(i0+1)+" "+actions[i0][i1][i2]+"\n");}
+                        }
+                    }
+                }
+                writer.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            instance.writeInfo(fileNameFinal);
+
         }
 
         String fileNameFinal = folderName+"/allPoliciesSchoutenARP.txt";
@@ -45,7 +62,7 @@ public class ARPgetFullPolicy {
             for (int i0 : instance.I0) {
                 for (int i1 : instance.I1) {
                     for (int i2 : instance.I2) {
-                        if(actions[i0][i1][i2]!=4){writer.write(i1+" "+i2+" "+i0+" "+actions[i0][i1][i2]+"\n");}
+                        if(actions[i0][i1][i2]!=4){writer.write(i1+" "+i2+" "+(i0+1)+" "+actions[i0][i1][i2]+"\n");}
                     }
                 }
             }
