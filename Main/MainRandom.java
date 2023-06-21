@@ -11,8 +11,8 @@ import java.util.regex.Pattern;
 
 public class MainRandom {
     public static void main(String[] args) throws IloException, IOException {
-//        splitARPSchouten();
-        splitMBRPSchouten();
+        splitARPSchouten();
+//        splitMBRPSchouten();
 //        splitDEFZhu();
     }
 
@@ -103,13 +103,14 @@ public class MainRandom {
     }
 
     private static void splitARPSchouten() throws IOException {
+        String folder = "policiesARP2_1";
+        String inputFile = "allPoliciesSchoutenARP.txt";
+        String inputFileName = folder+"/"+inputFile;
 
         for (int i = 0; i < 12; i++) {
-            String inputFileName = "/Users/donnavanderrijst/Downloads/Programming/Thesis/policiesaARP2/policySchoutenARP.txt";
             Scanner scanner = new Scanner(new File(inputFileName));
 
-
-            File f = new File("policiesaARP2/policyARP_i0=" + i + ".dat");
+            File f = new File(folder+"/fullPolicyARP_i0=" + i + ".dat");
             FileWriter w = new FileWriter(f, true);
             w.write("i1 i2 i0 a\n");
 
@@ -127,10 +128,8 @@ public class MainRandom {
             w.close();
         }
 
-        String inputFileName = "/Users/donnavanderrijst/Downloads/Programming/Thesis/policiesaARP2/policySchoutenARP.txt";
         Scanner scanner = new Scanner(new File(inputFileName));
-
-        File f = new File("policiesaARP2/info.txt");
+        File f = new File(folder+"/info.txt");
         FileWriter w = new FileWriter(f, true);
 
         while(scanner.hasNext()) {

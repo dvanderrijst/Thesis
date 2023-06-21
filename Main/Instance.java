@@ -1,5 +1,10 @@
 package Main;
 
+import java.io.FileWriter;
+import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
 import java.util.Random;
 
 /**
@@ -14,13 +19,17 @@ public class Instance {
     public final double[] CR_average = new double[]{50.0, 50.0};
     public final double[] PR_average = new double[]{10.0, 10.0};
     public final double delta = 0.2;
-    public final int d       = 5;
+//    public final int d       = 5;
+    public final int d       = 0;
     public final int m = 1; //5 years
     public final int N = 12; //12 months in one year
     public final int ThorizonZhu = 15;
     public final int T       = m*N ;
-    public final double[] alpha = new double[]{6.0, 12.0 }; //alpha is 1 year
+//    public final double[] alpha = new double[]{6.0, 12.0 };     //alpha is 1 year
+//    public final double[] beta = new double[]{2.0, 2.0};
+    public final double[] alpha = new double[]{12.0, 12.0 };     //alpha is 1 year
     public final double[] beta = new double[]{2.0, 2.0};
+
 
     //ZHU instance
 //    public final double CR_average_i = new double[]{14.4, 11.4, 9.4, 8.0, 11.1, 14.2, 7.4};
@@ -162,6 +171,28 @@ lengthOmega = 100;
 
     public double[] getBeta() {
         return beta;
+    }
+
+    public void writeInfo(String fileName) {
+        //document what is done
+        try (FileWriter writer = new FileWriter(fileName, true)) {
+            writer.write("\nm="+m);
+            writer.write("\nN="+N);
+            writer.write("\nT=mN="+T);
+            writer.write("\nn="+n);
+            writer.write("\nq="+q);
+            writer.write("\nlengthOmega="+lengthOmega);
+            writer.write("\nd="+d);
+            writer.write("\nCR_average_i="+ Arrays.toString(CR_average));
+            writer.write("\nPR_average_i="+ Arrays.toString(PR_average));
+            writer.write("\nalpha="+ Arrays.toString(alpha));
+            writer.write("\nbeta="+ Arrays.toString(beta));
+            writer.write("\ndelta="+delta);
+            writer.write("\n"+LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd\tHH:mm:ss")));
+            writer.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
 
