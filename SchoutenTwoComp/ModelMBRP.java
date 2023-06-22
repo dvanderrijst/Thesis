@@ -4,6 +4,7 @@ import Main.Instance;
 import ilog.concert.*;
 import ilog.cplex.IloCplex;
 
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -78,7 +79,7 @@ public class ModelMBRP {
     }
 
     public void writePolicy() throws IOException, IloException {
-        FileWriter writer = new FileWriter(fileName, true);
+        FileWriter writer = new FileWriter(new File(fileName), true);
         double yearlyCosts = cplex.getObjValue() * N;
         writer.write("The class "+getClass().getSimpleName()+" is used.\n");
         writer.write("\nYearly costs are " + yearlyCosts);

@@ -18,17 +18,13 @@ public class ARPgetFullPolicy {
         this.folderName = folderName;
         actionsNotFulfilled = true;
 
-        String fileName = folderName+"/policySchoutenARP.txt";
-        instance.writeInfo(fileName);
-
-        ModelARP ARP2comp = new ModelARP(instance, fileName);
+        ModelARP ARP2comp = new ModelARP(instance, "removeMe.txt");
         ARP2comp.doStart();
         actions = ARP2comp.actions;
         printActionGrid();
 
-
         while(actionsNotFulfilled){
-            String fileName2 = folderName+"/policySchoutenARP_logFake.txt";
+            String fileName2 = folderName+"/policies_manipulated.txt";
             instance.writeInfo(fileName2);
 
             ModelARP_warmstart getNewPolicy = new ModelARP_warmstart(instance, fileName2, ARP2comp.actions);
@@ -38,7 +34,7 @@ public class ARPgetFullPolicy {
             fillActions(newActions);
             printActionGrid();
 
-            String fileNameFinal = folderName+"/policySchoutenARP_log_realActions.txt";
+            String fileNameFinal = folderName+"/policies_true.txt";
             try (FileWriter writer = new FileWriter(fileNameFinal, true)) {
                 writer.write("i1 i2 i0 a\n");
                 for (int i0 : instance.I0) {
@@ -56,7 +52,7 @@ public class ARPgetFullPolicy {
 
         }
 
-        String fileNameFinal = folderName+"/allPoliciesSchoutenARP.txt";
+        String fileNameFinal = folderName+"/policies_trueFinal.txt";
         try (FileWriter writer = new FileWriter(fileNameFinal, true)) {
             writer.write("i1 i2 i0 a\n");
             for (int i0 : instance.I0) {

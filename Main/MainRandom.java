@@ -103,14 +103,14 @@ public class MainRandom {
     }
 
     private static void splitARPSchouten() throws IOException {
-        String folder = "policiesARP2_1";
-        String inputFile = "allPoliciesSchoutenARP.txt";
+        String folder = "SchoutenTwoComp/policies/ARP/AllPolicies";
+        String inputFile = "policies_trueFinal.txt";
         String inputFileName = folder+"/"+inputFile;
 
-        for (int i = 0; i < 12; i++) {
+        for (int i = 1; i <= 12; i++) {
             Scanner scanner = new Scanner(new File(inputFileName));
 
-            File f = new File(folder+"/fullPolicyARP_i0=" + i + ".dat");
+            File f = new File(folder+"/policies_i0=" + i + ".dat");
             FileWriter w = new FileWriter(f, true);
             w.write("i1 i2 i0 a\n");
 
@@ -127,24 +127,6 @@ public class MainRandom {
             }
             w.close();
         }
-
-        Scanner scanner = new Scanner(new File(inputFileName));
-        File f = new File(folder+"/info.txt");
-        FileWriter w = new FileWriter(f, true);
-
-        while(scanner.hasNext()) {
-            String nextLine = scanner.nextLine();
-            String[] split = nextLine.split(" ");
-            if(split.length < 3){
-                break;
-            }
-        }
-
-        while(scanner.hasNext()){
-            String nextLine = scanner.nextLine();
-            w.write(nextLine+"\n");
-        }
-        w.close();
     }
     private static void splitMBRPSchouten() throws IOException {
 

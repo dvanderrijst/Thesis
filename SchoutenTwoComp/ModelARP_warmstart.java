@@ -22,7 +22,7 @@ public class ModelARP_warmstart extends ModelARP {
     }
 
     /**
-     * This method adds the warm start, so we force the model to return us the policies that are in transient state now.
+     * This method adds the warm start, so we force the model to return us the SchoutenTwoComp.policies that are in transient state now.
      * @throws IloException
      */
     private void addWarmStart() throws IloException {

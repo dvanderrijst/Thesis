@@ -11,7 +11,7 @@ PR_average_i=[10.0, 10.0]
 alpha=[6.0, 12.0]
 beta=[2.0, 2.0]
 delta=0.2
-2023-06-21	16:17:39The class ModelARP_warmstart is used.
+2023-06-22	11:48:19The class ModelARP_warmstart is used.
 
 Yearly costs are 141.8546443779592i1	i2	i0	a
 
@@ -778,7 +778,7 @@ PR_average_i=[10.0, 10.0]
 alpha=[6.0, 12.0]
 beta=[2.0, 2.0]
 delta=0.2
-2023-06-21	16:17:43The class ModelARP_warmstart is used.
+2023-06-22	11:48:23The class ModelARP_warmstart is used.
 
 Yearly costs are 146.64560176785966i1	i2	i0	a
 
@@ -1804,7 +1804,7 @@ PR_average_i=[10.0, 10.0]
 alpha=[6.0, 12.0]
 beta=[2.0, 2.0]
 delta=0.2
-2023-06-21	16:17:47The class ModelARP_warmstart is used.
+2023-06-22	11:48:26The class ModelARP_warmstart is used.
 
 Yearly costs are 151.6338885732078i1	i2	i0	a
 
@@ -3051,7 +3051,7 @@ PR_average_i=[10.0, 10.0]
 alpha=[6.0, 12.0]
 beta=[2.0, 2.0]
 delta=0.2
-2023-06-21	16:17:51The class ModelARP_warmstart is used.
+2023-06-22	11:48:29The class ModelARP_warmstart is used.
 
 Yearly costs are 156.25860654965032i1	i2	i0	a
 
@@ -4482,7 +4482,7 @@ PR_average_i=[10.0, 10.0]
 alpha=[6.0, 12.0]
 beta=[2.0, 2.0]
 delta=0.2
-2023-06-21	16:17:54The class ModelARP_warmstart is used.
+2023-06-22	11:48:33The class ModelARP_warmstart is used.
 
 Yearly costs are 159.5010033930012i1	i2	i0	a
 
@@ -6083,7 +6083,7 @@ PR_average_i=[10.0, 10.0]
 alpha=[6.0, 12.0]
 beta=[2.0, 2.0]
 delta=0.2
-2023-06-21	16:17:57The class ModelARP_warmstart is used.
+2023-06-22	11:48:36The class ModelARP_warmstart is used.
 
 Yearly costs are 161.5941063273574i1	i2	i0	a
 
@@ -7848,7 +7848,7 @@ PR_average_i=[10.0, 10.0]
 alpha=[6.0, 12.0]
 beta=[2.0, 2.0]
 delta=0.2
-2023-06-21	16:18:01The class ModelARP_warmstart is used.
+2023-06-22	11:48:39The class ModelARP_warmstart is used.
 
 Yearly costs are 162.88173414428056i1	i2	i0	a
 
@@ -9770,7 +9770,7 @@ PR_average_i=[10.0, 10.0]
 alpha=[6.0, 12.0]
 beta=[2.0, 2.0]
 delta=0.2
-2023-06-21	16:18:05The class ModelARP_warmstart is used.
+2023-06-22	11:48:42The class ModelARP_warmstart is used.
 
 Yearly costs are 163.44673610100443i1	i2	i0	a
 
@@ -11797,7 +11797,7 @@ PR_average_i=[10.0, 10.0]
 alpha=[6.0, 12.0]
 beta=[2.0, 2.0]
 delta=0.2
-2023-06-21	16:18:09The class ModelARP_warmstart is used.
+2023-06-22	11:48:45The class ModelARP_warmstart is used.
 
 Yearly costs are 163.61439135397995i1	i2	i0	a
 
@@ -13841,7 +13841,7 @@ PR_average_i=[10.0, 10.0]
 alpha=[6.0, 12.0]
 beta=[2.0, 2.0]
 delta=0.2
-2023-06-21	16:18:14The class ModelARP_warmstart is used.
+2023-06-22	11:48:48The class ModelARP_warmstart is used.
 
 Yearly costs are 163.63432317251994i1	i2	i0	a
 

@@ -14,7 +14,7 @@ alpha=[6.0, 12.0]
 beta=[2.0, 2.0]
 delta=0.2
 
-Outputs for t = 8 - 12 
+Outputs for t = 9 - 12 
 file1 contains the natural output for ARP policy 
 file2 contains the natural output for ARP policy where all outer actions are put to zero. 
 file3 contains the new output for ARP policy with warm start, the manipulated markov chain. 
