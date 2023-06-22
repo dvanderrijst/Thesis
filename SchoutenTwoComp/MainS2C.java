@@ -9,9 +9,9 @@ public class MainS2C {
     public static void main(String[] args) throws IloException, IOException {
         Instance instance = new Instance();
 
-//        ModelARP arp = new ModelARP(instance, "SchoutenTwoComp/policies/ARP/PurePolicies/policies.txt");
-//        arp.doStart();
-        ARPgetFullPolicy getPolicy = new ARPgetFullPolicy(instance, "SchoutenTwoComp/policies/ARP/AllPolicies");
+//        ModelMBRP mbrp = new ModelMBRP(instance, "SchoutenTwoComp/policies/MBRP/PurePolicies/policies.txt");
+//        mbrp.doStart();
+        MBRPgetFullPolicy getPolicy = new MBRPgetFullPolicy(instance, "SchoutenTwoComp/policies/MBRP/AllPolicies");
 
     }
 }

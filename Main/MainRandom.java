@@ -11,7 +11,7 @@ import java.util.regex.Pattern;
 
 public class MainRandom {
     public static void main(String[] args) throws IloException, IOException {
-        splitARPSchouten();
+        splitSchouten("MBRP");
 //        splitMBRPSchouten();
 //        splitDEFZhu();
     }
@@ -102,9 +102,11 @@ public class MainRandom {
 
     }
 
-    private static void splitARPSchouten() throws IOException {
-        String folder = "SchoutenTwoComp/policies/ARP/AllPolicies";
+    private static void splitSchouten(String ARPorMBRP) throws IOException {
+        String folder = "SchoutenTwoComp/policies/"+ARPorMBRP+"/AllPolicies";
         String inputFile = "policies_trueFinal.txt";
+//        String folder = "SchoutenTwoComp/policies/"+ARPorMBRP+"/PurePolicies";
+//        String inputFile = "policies.txt";
         String inputFileName = folder+"/"+inputFile;
 
         for (int i = 1; i <= 12; i++) {
@@ -128,50 +130,6 @@ public class MainRandom {
             w.close();
         }
     }
-    private static void splitMBRPSchouten() throws IOException {
 
-        for (int i = 0; i < 12; i++) {
-            String inputFileName = "/Users/donnavanderrijst/Downloads/Programming/Thesis/policiesMBRP2/policySchoutenMBRP.txt";
-            Scanner scanner = new Scanner(new File(inputFileName));
-
-
-            File f = new File("policiesMBRP2/policyMBRP_i0=" + i + ".dat");
-            FileWriter w = new FileWriter(f, true);
-            w.write("i1 i2 i0 a\n");
-
-            while(scanner.hasNext()) {
-                String nextLine = scanner.nextLine();
-                String[] split = nextLine.split(" ");
-                if(split.length < 3){
-                    break;
-                }
-
-                if (Integer.parseInt(split[2]) == i) {
-                    w.write(nextLine+"\n");
-                }
-            }
-            w.close();
-        }
-
-        String inputFileName = "/Users/donnavanderrijst/Downloads/Programming/Thesis/policiesMBRP2/policySchoutenMBRP.txt";
-        Scanner scanner = new Scanner(new File(inputFileName));
-
-        File f = new File("policiesMBRP2/info.txt");
-        FileWriter w = new FileWriter(f, true);
-
-        while(scanner.hasNext()) {
-            String nextLine = scanner.nextLine();
-            String[] split = nextLine.split(" ");
-            if(split.length < 3){
-                break;
-            }
-        }
-
-        while(scanner.hasNext()){
-            String nextLine = scanner.nextLine();
-            w.write(nextLine+"\n");
-        }
-        w.close();
-    }
 
 }
