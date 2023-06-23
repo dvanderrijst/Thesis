@@ -52,7 +52,7 @@ public class ModelMBRP {
         cplex.exportModel("modelarp.lp");
         cplex.setOut(null);
         cplex.solve();
-//        printSolution();
+        printSolution();
         writePolicy();
     }
 
@@ -115,7 +115,7 @@ public class ModelMBRP {
     public void printActionGridComp1() throws IloException {
         System.out.println("\n actions grid - rows are age, columns time.");
 
-        for (int i0 : I0) {
+        int i0 = 0; 
             for (int i1 : I1) {
                 for (int i2 : I2) {
                     boolean notPrinted = true;
@@ -139,7 +139,7 @@ public class ModelMBRP {
                 System.out.println();
             }
             System.out.println("\n\nt="+(i0+1)+"\n");
-        }
+//        }
     }
 
     public void printYTZ() throws IloException {
