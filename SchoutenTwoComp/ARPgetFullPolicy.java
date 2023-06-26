@@ -5,7 +5,6 @@ import ilog.concert.IloException;
 
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.TreeMap;
 
 public class ARPgetFullPolicy {
     public final Instance instance;
@@ -21,18 +20,22 @@ public class ARPgetFullPolicy {
         ModelARP ARP2comp = new ModelARP(instance, "removeMe.txt");
         ARP2comp.doStart();
         actions = ARP2comp.actions;
-        printActionGrid();
+        int[][][] newActions = ARP2comp.actions;
+        printActionGrid(actions);
 
         while(actionsNotFulfilled){
             String fileName2 = folderName+"/policies_manipulated.txt";
             instance.writeInfo(fileName2);
+            System.out.println("Before");
+            printActionGrid(newActions);
 
-            ModelARP_warmstart getNewPolicy = new ModelARP_warmstart(instance, fileName2, ARP2comp.actions);
+            ModelARP_warmstart getNewPolicy = new ModelARP_warmstart(instance, fileName2, newActions);
             getNewPolicy.doStart();
-            int[][][] newActions = getNewPolicy.actions;
+            newActions = getNewPolicy.actions;
 
             fillActions(newActions);
-            printActionGrid();
+            System.out.println("After");
+            printActionGrid(newActions);
 
             String fileNameFinal = folderName+"/policies_true.txt";
             try (FileWriter writer = new FileWriter(fileNameFinal, true)) {
@@ -85,7 +88,7 @@ public class ARPgetFullPolicy {
         }
     }
 
-    private void printActionGrid(){
+    private void printActionGrid(int[][][] actions){
         int i0 = 0;
             for (int i1 : instance.I1) {
                 for (int i2 : instance.I2) {

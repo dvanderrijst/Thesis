@@ -22,7 +22,7 @@ public class ModelMBRP {
     public final int[] K;
     public static IloCplex cplex;
     public static List<IloRange> constraints = new ArrayList<>();
-    public final int[] A = new int[]{0, 1, 2, 3};  //there are 4 actions: a={0,1,2,3}
+    public final int[] A = new int[]{0, 1, 2, 3};  //there are 4 actionsWarmstart: a={0,1,2,3}
     public static IloNumVar[][][][] x;
     public static IloNumVar[][] y;
     public static IloNumVar[][][] z;
@@ -41,7 +41,7 @@ public class ModelMBRP {
         I1 = i.I1;
         I2 = i.I2;
         K = i.K;
-        actions = new int[I0.length][I1.length][I2.length];
+//        actionsWarmstart.empty();
     }
 
     public void doStart() throws IloException, IOException {
@@ -52,8 +52,12 @@ public class ModelMBRP {
         cplex.exportModel("modelarp.lp");
         cplex.setOut(null);
         cplex.solve();
-        printSolution();
+//        printSolution();
         writePolicy();
+//        System.out.println(cplex.getValue(x[0][0][5][0])+"\t"+x[0][0][5][0].getName());
+        System.out.println(cplex.getValue(x[0][0][5][1])+"\t"+x[0][0][5][1].getName());
+//        System.out.println(cplex.getValue(x[0][0][5][2])+"\t"+x[0][0][5][2].getName());
+        System.out.println(cplex.getValue(x[0][0][5][3])+"\t"+x[0][0][5][3].getName());
     }
 
     public void printSolution() throws IloException {
@@ -99,8 +103,9 @@ public class ModelMBRP {
                 }
             }
         }
+        System.out.println("here,"+a_i0_i1_i2[0][0][5]);
         actions = a_i0_i1_i2;
-
+        System.out.println("here2,"+actions[0][0][5]);
         for (int i0 : I0) {
             for (int i1 : I1) {
                 for (int i2 : I2) {
@@ -113,9 +118,9 @@ public class ModelMBRP {
 
 
     public void printActionGridComp1() throws IloException {
-        System.out.println("\n actions grid - rows are age, columns time.");
+        System.out.println("\n actionsWarmstart grid - rows are age, columns time.");
 
-        int i0 = 0; 
+        int i0 = 0;
             for (int i1 : I1) {
                 for (int i2 : I2) {
                     boolean notPrinted = true;
@@ -176,7 +181,7 @@ public class ModelMBRP {
     }
 
     public void printX() throws IloException {
-        System.out.println("\n actions grid - rows are age, columns time.");
+        System.out.println("\n actionsWarmstart grid - rows are age, columns time.");
         for (int i0 : I0) {
             System.out.println("\n\n i0=" + i0);
             for (int i1 : I1) {
@@ -254,8 +259,8 @@ public class ModelMBRP {
         for (int i0 : I0) {
             for (int i1 : I1) {
                 for (int i2 : I2) {
-//                    int[] actions = A(i0,i1,i2);
-//                    for (int a : actions) {
+//                    int[] actionsWarmstart = A(i0,i1,i2);
+//                    for (int a : actionsWarmstart) {
                     for (int a : A) {
                         IloNumVar var = cplex.numVar(0.0, 1.0 / (m * N), "x(" + i0 + "," + i1 + "," + i2 + "," + a + ")"); //set the limit of x to 1/mN. This is actually positive infinity but this might save storage?
                         x[i0][i1][i2][a] = var;
