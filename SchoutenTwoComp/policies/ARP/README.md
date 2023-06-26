@@ -13,6 +13,6 @@ delta=0.2
 The class ModelARP_2Comp is used.
 
 With these settings, two sort of results are obtained. 
-1. Pure policies, which are the actions obtained without markov manipulation
-2. All policies, which are the actions obtained using markov manipulaition and therefor also the actions for transient states are found.
+1. Pure policies, which are the actions obtained without Roby.markov manipulation
+2. All policies, which are the actions obtained using Roby.markov manipulaition and therefor also the actions for transient states are found.
 

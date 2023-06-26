@@ -1,5 +1,7 @@
 package Main;
 
+import SchoutenOneComp.ModelBRP;
+
 import java.io.FileWriter;
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -193,6 +195,38 @@ lengthOmega = 100;
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public double piOneDim(int i0, int i1, int j0, int j1, int a){
+        double pi_value = 0.0;
+
+        if( j0 != (i0 + 1)%(m*N) ){
+            // System.out.println("this values for j0 is not corresponding to j0 = i0 + 1 mod(N). We return pi=0.0.");
+            pi_value = 0.0;
+        }
+        else if(a==0){
+            if( (j1 == i1 + 1) & (i1!=0 & i1!= M) ) {
+                pi_value = 1 - probCondX_x_k(i1, 1);
+            }
+            else if( (j1 == 0) & (i1!=0 & i1!= M) ) {
+                pi_value = probCondX_x_k(i1, 1);
+            }
+            else{
+                pi_value = 0.0;
+            }
+        }
+        else if(a==1){
+            if(j1==1) {
+                pi_value = 1- probCondX_x_k(0, 1);
+            }
+            else if(j1==0) {
+                pi_value = probCondX_x_k(0, 1);
+            }
+            else{
+                pi_value = 0.0;
+            }
+        }
+        return pi_value;
     }
 }
 

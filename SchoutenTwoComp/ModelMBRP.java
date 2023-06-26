@@ -49,7 +49,7 @@ public class ModelMBRP {
         setObjective();
         setConstraints();
         cplex.setParam(IloCplex.Param.DetTimeLimit, 60000);
-        cplex.exportModel("modelarp.lp");
+        cplex.exportModel("Output/modelarp.lp");
         cplex.setOut(null);
         cplex.solve();
         printSolution();

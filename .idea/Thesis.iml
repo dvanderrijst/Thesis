@@ -6,10 +6,12 @@
       <sourceFolder url="file://$MODULE_DIR$" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/Roby_Markov" />
       <excludeFolder url="file://$MODULE_DIR$/Roby_Schouten" />
+      <excludeFolder url="file://$MODULE_DIR$/Roby" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="x86-64_osx" level="project" />
     <orderEntry type="library" name="cplex" level="project" />
+    <orderEntry type="library" name="commons" level="project" />
   </component>
 </module>

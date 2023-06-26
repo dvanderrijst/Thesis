@@ -5,7 +5,6 @@ import ilog.concert.IloException;
 
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.TreeMap;
 
 public class ARPgetFullPolicy {
     public final Instance instance;
@@ -18,7 +17,7 @@ public class ARPgetFullPolicy {
         this.folderName = folderName;
         actionsNotFulfilled = true;
 
-        ModelARP ARP2comp = new ModelARP(instance, "removeMe.txt");
+        ModelARP ARP2comp = new ModelARP(instance, "Output/removeMe.txt");
         ARP2comp.doStart();
         actions = ARP2comp.actions;
         printActionGrid();

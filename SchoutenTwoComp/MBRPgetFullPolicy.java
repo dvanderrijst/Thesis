@@ -17,7 +17,7 @@ public class MBRPgetFullPolicy {
         this.folderName = folderName;
         actionsNotFulfilled = true;
 
-        ModelMBRP MBRP2comp = new ModelMBRP(instance, "removeMe.txt");
+        ModelMBRP MBRP2comp = new ModelMBRP(instance, "Output/removeMe.txt");
         MBRP2comp.doStart();
         actions = MBRP2comp.actions;
         printActionGrid();

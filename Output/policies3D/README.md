@@ -17,7 +17,7 @@ delta=0.2
 Outputs for t = 9 - 12 
 file1 contains the natural output for ARP policy 
 file2 contains the natural output for ARP policy where all outer actions are put to zero. 
-file3 contains the new output for ARP policy with warm start, the manipulated markov chain. 
+file3 contains the new output for ARP policy with warm start, the manipulated Roby.markov chain. 
 file4 contains the final out for ARP policy, where file1 and file3 are combined. 
 
 
