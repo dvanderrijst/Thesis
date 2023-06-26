@@ -83,7 +83,7 @@ public class ModelMBRP {
     }
 
     public void writePolicy() throws IOException, IloException {
-        FileWriter writer = new FileWriter(new File(fileName), true);
+        FileWriter writer = new FileWriter(new File(fileName), false);
         double yearlyCosts = cplex.getObjValue() * N;
         writer.write("The class "+getClass().getSimpleName()+" is used.\n");
         writer.write("\nYearly costs are " + yearlyCosts);

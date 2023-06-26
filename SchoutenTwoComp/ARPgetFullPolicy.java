@@ -22,6 +22,7 @@ public class ARPgetFullPolicy {
         actions = ARP2comp.actions;
         int[][][] newActions = ARP2comp.actions;
         printActionGrid(actions);
+        ARP2comp.cplex.end();
 
         while(actionsNotFulfilled){
             String fileName2 = folderName+"/policies_manipulated.txt";
@@ -32,13 +33,14 @@ public class ARPgetFullPolicy {
             ModelARP_warmstart getNewPolicy = new ModelARP_warmstart(instance, fileName2, newActions);
             getNewPolicy.doStart();
             newActions = getNewPolicy.actions;
+            getNewPolicy.cplex.end();
 
             fillActions(newActions);
             System.out.println("After");
             printActionGrid(newActions);
 
             String fileNameFinal = folderName+"/policies_true.txt";
-            try (FileWriter writer = new FileWriter(fileNameFinal, true)) {
+            try (FileWriter writer = new FileWriter(fileNameFinal, false)) {
                 writer.write("i1 i2 i0 a\n");
                 for (int i0 : instance.I0) {
                     for (int i1 : instance.I1) {
