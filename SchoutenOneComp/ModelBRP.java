@@ -6,6 +6,10 @@ import ilog.concert.IloNumExpr;
 import ilog.concert.IloNumVar;
 import ilog.cplex.IloCplex;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+
 public class ModelBRP {
     public final Instance i;
     public final int M;
@@ -17,17 +21,14 @@ public class ModelBRP {
     public final int[] A = new int[]{0,1};
     public static IloNumVar[][][] x;
     public static IloNumVar[] y;
-    public final TransitionMatrixAction0 transitionMatrix;
 
-
-    public ModelBRP(Instance i) throws IloException {
+    public ModelBRP(Instance i, String fileName) throws IloException, IOException {
         this.i = i;
         this.M = i.M;
         this.m = i.m;
         this.N = i.N;
         this.I0 = i.I0;
         this.I1 = i.I1;
-        transitionMatrix = new TransitionMatrixAction0(i);
         cplex = new IloCplex();
 
         setVariables();
@@ -37,12 +38,13 @@ public class ModelBRP {
 //        addedConstraint_setXtozero();
 
         printSolution();
+        writePolicy(fileName);
     }
 
     private void addedConstraint_setXtozero() throws IloException {
         for(int i0 : I0){
             for(int i1 : I1){
-                if(i1 != 0 & i1!=M-1){
+                if(i1 != 0 & i1!=M){
                     cplex.addEq(x[i0][i1][1],0);
                 }
             }
@@ -54,7 +56,7 @@ public class ModelBRP {
 //        cplex.setOut(null);
         cplex.solve();
         double averageCosts = cplex.getObjValue();
-        System.out.println("Yearly costs are " + averageCosts*N);
+        System.out.println("Costs over period N are " + averageCosts*N);
 
         for(int i0 : I0){
             System.out.printf("%10.0f", cplex.getValue(y[i0]));
@@ -63,36 +65,37 @@ public class ModelBRP {
         printX();
     }
 
+    public void writePolicy(String fileName) throws IOException, IloException {
+        FileWriter writer = new FileWriter(new File(fileName), true);
+        double yearlyCosts = cplex.getObjValue() * N;
+        writer.write("\n\nThe class "+getClass().getSimpleName()+" is used.\n");
+        writer.write("Yearly costs are " + yearlyCosts);
+        writer.write("\n\ni0 i1 a");
+
+        int[][] a_i0_i1 = new int[I0.length][I1.length];
+        for (int i0 : I0) {
+            for (int i1 : I1) {
+                a_i0_i1[i0][i1] = 4;
+                for (int a : A(i0, i1)) {
+                    if (cplex.getValue(x[i0][i1][a]) > 0.00000000000) {
+                        a_i0_i1[i0][i1] = a;
+                    }
+                }
+            }
+        }
+
+        for (int i0 : I0) {
+            for (int i1 : I1) {
+                if(a_i0_i1[i0][i1]!=4){writer.write("\n" + (i0+1) + " " + i1 + " " + a_i0_i1[i0][i1]);}
+            }
+        }
+        writer.close();
+    }
+
     public void printX() throws IloException {
-//        System.out.println("\n for a=0: ");
-//        for(int i1 : I1) {
-//            for (int i0 : I0) {
-//                double xval = 0.0;
-//                int[] actions = A(i0,i1);
-//                boolean found = IntStream.of(actions).anyMatch(n -> n == 0);
-//                if(found){
-//                    xval=cplex.getValue(x[i0][i1][0]);
-//                }
-//                System.out.printf("%10.5f", xval);
-//            }
-//            System.out.println();
-//        }
-//        System.out.println("\n for a=1: ");
-//        for(int i1 : I1) {
-//            for (int i0 : I0) {
-//                double xval = 0.0;
-//                int[] actions = A(i0,i1);
-//                boolean found = IntStream.of(actions).anyMatch(n -> n == 1);
-//                if(found){
-//                    xval=cplex.getValue(x[i0][i1][1]);
-//                }
-//                System.out.printf("%10.5f", xval);
-//            }
-//            System.out.println();
-//        }
         System.out.println("\n actions grid - rows are age, columns time.");
-        for(int i1 : I1) {
-            for (int i0 : I0) {
+        for (int i0 : I0) {
+            for(int i1 : I1) {
                 int[] actions = A(i0,i1);
                 boolean notPrinted = true;
                 for(int a : actions){
@@ -158,7 +161,7 @@ public class ModelBRP {
 
     public int[] A(int i0, int i1){
         int[] actions;
-        if(i1 == 0 || i1 == M-1 ){
+        if(i1 == 0 || i1 == M ){
             actions = new int[]{1};
         }
         else{
@@ -200,7 +203,7 @@ public class ModelBRP {
         //10c & 10d
         for(int i0 : I0){
             for(int i1 : I1){
-                if(i1!=0 & i1!=M-1){
+                if(i1!=0 & i1!=M){
                     cplex.addLe(cplex.sum( x[i0][i1][0],y[i0]), 1.0,"10c,"+i0+","+i1);
 
                     cplex.addLe(cplex.diff(x[i0][i1][1],y[i0]), 0.0,"10d,"+i0+","+i1);

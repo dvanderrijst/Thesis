@@ -18,19 +18,23 @@ public class Instance {
     //ZHU and SCHOUTEN
     public final double[][] cPR_i_t;
     public final double[][] cCR_i_t;
-    public final double[] CR_average = new double[]{50.0, 50.0};
-    public final double[] PR_average = new double[]{10.0, 10.0};
+//    public final double[] CR_average = new double[]{50.0, 50.0};
+//    public final double[] PR_average = new double[]{10.0, 10.0};
+    public final double[] CR_average = new double[]{50.0};
+    public final double[] PR_average = new double[]{10.0};
     public final double delta = 0.2;
     public final int d       = 5;
 //    public final int d       = 0;
     public final int m = 1; //5 years
-    public final int N = 12; //12 months in one year
+    public final int N = 4; //12 months in one year
     public final int ThorizonZhu = 15;
     public final int T       = m*N ;
-    public final double[] alpha = new double[]{6.0, 12.0 };     //alpha is 1 year
-    public final double[] beta = new double[]{2.0, 2.0};
+//    public final double[] alpha = new double[]{6.0, 12.0 };     //alpha is 1 year
+//    public final double[] beta = new double[]{2.0, 2.0};
 //    public final double[] alpha = new double[]{12.0, 12.0 };     //alpha is 1 year
 //    public final double[] beta = new double[]{2.0, 2.0};
+    public final double[] alpha = new double[]{6.0};     //alpha is 1 year
+    public final double[] beta = new double[]{2.0};
 
 
     //ZHU instance
@@ -43,7 +47,7 @@ public class Instance {
     public final int q       = 6 ;
     public final int lengthOmega;
     public static double[][] probs; //probabilities for component k and time t : probs[k][t]
-    public final int n       = 2 ;
+    public final int n       = 1 ;
     public final double sigma_SAA ;
     public final double epsilon_SAA ;
     public final double tau_SAA;

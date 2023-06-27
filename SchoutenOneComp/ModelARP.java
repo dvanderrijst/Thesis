@@ -3,9 +3,11 @@ package SchoutenOneComp;
 import Main.Instance;
 import ilog.concert.IloException;
 
+import java.io.IOException;
+
 public class ModelARP extends ModelBRP {
-    public ModelARP(Instance i) throws IloException {
-        super(i);
+    public ModelARP(Instance i, String fileName) throws IloException, IOException {
+        super(i, fileName);
     }
 
     @Override
@@ -23,19 +25,6 @@ public class ModelARP extends ModelBRP {
     public void setConstraints() throws IloException {
         constraint10b();
         constraint10e();
-//        addedConstraint_setXtozero();
     }
 
-
-
-
-    private void addedConstraint_setXtozero() throws IloException {
-        for(int i0 : I0){
-            for(int i1 : I1){
-                if(i1 != 0 & i1!=M-1){
-                    cplex.addEq(x[i0][i1][1],0);
-                }
-            }
-        }
-    }
 }

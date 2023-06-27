@@ -4,12 +4,14 @@ import Main.Instance;
 import ilog.concert.IloException;
 import ilog.concert.IloNumVar;
 
+import java.io.IOException;
+
 public class ModelMBRP extends ModelBRP{
     private static IloNumVar[][] z;
     private static IloNumVar[] t;
 
-    public ModelMBRP(Instance i) throws IloException {
-        super(i);
+    public ModelMBRP(Instance i, String fileName) throws IloException, IOException {
+        super(i, fileName);
     }
 
     @Override
