@@ -29,7 +29,6 @@ public class Policy {
             }
             System.out.println(); // Move to the next line after printing each row
         }
-        System.out.println(policy[0][0]);
     }
 
     /**
@@ -40,6 +39,14 @@ public class Policy {
     public Policy(int[][] policy, Instance instance){
         this.instance = instance;
         this.policy = policy;
+
+        // Printing the elements of the 2D array
+        for (int i = 0; i < policy.length; i++) {
+            for (int j = 0; j < policy[i].length; j++) {
+                System.out.print(policy[i][j] + " ");
+            }
+            System.out.println(); // Move to the next line after printing each row
+        }
     }
 
     private int[][] readPolicy(File file) {
@@ -131,4 +138,68 @@ public class Policy {
     public int get(int i0, int i1) {
         return policy[i0][i1];
     }
+
+    public Policy getAdjustedPolicy(int i0, int i1, int a){
+        int[][] newPolicy = deepCopy(policy);
+        newPolicy[i0][i1] = a;
+
+
+        //We first make sure that all values before our action are 0.
+        boolean notStop = true;
+        int count = 1;
+        while(notStop) {
+            if (newPolicy[(i0 - count + instance.N) % instance.N][i1 - count] != 0 && (i1-count)!=0 ) {
+                newPolicy[(i0 - count + instance.N) % instance.N][i1 - count] = 0;
+                count++;
+                if(count >= instance.N){
+                    System.out.println("not sure if this will work....");
+                    System.exit(1);
+                }
+            } else {
+                notStop = false;
+            }
+        }
+
+        //If we have action 1, we also need to make sure that the actions after (i0,i1) are 1 too.
+        if(a==1){
+            notStop = true;
+            count = 1;
+            while(notStop) {
+                if (newPolicy[(i0 + count + instance.N) % instance.N][i1 + count] == 0 ) {
+                    newPolicy[(i0 + count + instance.N) % instance.N][i1 + count] = 1;
+                    count++;
+                    if(count >= instance.N){
+                        System.out.println("not sure if this will work....");
+                        System.exit(1);
+                    }
+                } else {
+                    notStop = false;
+                }
+            }
+        }
+
+        return new Policy(newPolicy, instance);
+    }
+
+    /**
+     * This method creates a new 2D array copy with the same dimensions as the original array.
+     * It then iterates over each row of the original array and creates a new row in the copy array.
+     * The elements of each row are copied using System.arraycopy() to ensure a deep copy of the individual elements.
+     * @param original int[][]
+     * @return deepcopy of the original
+     */
+    public static int[][] deepCopy(int[][] original) {
+        if (original == null) {
+            return null;
+        }
+
+        int[][] copy = new int[original.length][];
+        for (int i = 0; i < original.length; i++) {
+            copy[i] = new int[original[i].length];
+            System.arraycopy(original[i], 0, copy[i], 0, original[i].length);
+        }
+
+        return copy;
+    }
+
 }

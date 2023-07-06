@@ -26,14 +26,14 @@ public class Instance {
     public final int d       = 5;
 //    public final int d       = 0;
     public final int m = 1; //5 years
-    public final int N = 4; //12 months in one year
+    public final int N = 12; //12 months in one year
     public final int ThorizonZhu = 15;
     public final int T       = m*N ;
 //    public final double[] alpha = new double[]{6.0, 12.0 };     //alpha is 1 year
 //    public final double[] beta = new double[]{2.0, 2.0};
 //    public final double[] alpha = new double[]{12.0, 12.0 };     //alpha is 1 year
 //    public final double[] beta = new double[]{2.0, 2.0};
-    public final double[] alpha = new double[]{6.0};     //alpha is 1 year
+    public final double[] alpha = new double[]{12.0};     //alpha is 1 year
     public final double[] beta = new double[]{2.0};
 
 
@@ -61,7 +61,7 @@ public class Instance {
     public final int[] I1;
     public final int[] I2;
     public final int[] K ;
-    public final int M = m*N;                //we set the maximum age to 3 years
+    public final int M = 34;                //we set the maximum age to 3 years
     private final Weibull weibull = new Weibull(this);
 
     public Instance() {
@@ -160,7 +160,7 @@ lengthOmega = 100;
     }
 
     public int getM() {
-        return m;
+        return M;
     }
 
     public int getN() {
@@ -205,7 +205,7 @@ lengthOmega = 100;
         double pi_value = 0.0;
 
         if( j0 != (i0 + 1)%(m*N) ){
-            // System.out.println("this values for j0 is not corresponding to j0 = i0 + 1 mod(N). We return pi=0.0.");
+//            System.out.println("this values for j0 is not corresponding to j0 = i0 + 1 mod(N). We return pi=0.0.");
             pi_value = 0.0;
         }
         else if(a==0){

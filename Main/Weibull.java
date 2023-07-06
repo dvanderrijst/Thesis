@@ -17,17 +17,17 @@ public class Weibull {
     public double probX_x_k(int x, int k) {
 
         if (Instance.probs == null) {
-            Instance.probs = new double[3][Math.max(instance.getT(), instance.getM()) + 2]; //k={1,2} so we use 3 we can use k=1 and k=2.
+            int sizeProbs = Math.max(instance.getT(), instance.getM() + 1);
+            Instance.probs = new double[3][sizeProbs]; //k={1,2} so we use 3 we can use k=1 and k=2.
             for (int kk : instance.getK()) {
                 double sum = 0.0;
 
-                for (int i = 0; i < Math.max(instance.getT(), instance.getM()); i++) {
+                for (int i = 0; i < sizeProbs - 1 ; i++) {
                     Instance.probs[kk][i] = pXweibull(i, kk);
                     sum = sum + Instance.probs[kk][i];
                     System.out.println("t=" + i + "\t p2_i=" + Instance.probs[kk][i]);
-
                 }
-                Instance.probs[kk][Math.max(instance.getT(), instance.getM())] = 1.0 - sum;
+                Instance.probs[kk][sizeProbs - 1] = 1.0 - sum;
             }
         }
         return Instance.probs[k][x];

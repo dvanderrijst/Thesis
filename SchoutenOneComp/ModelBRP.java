@@ -229,8 +229,9 @@ public class ModelBRP {
                     for (int j1 : I1) {
                         int[] actionsJ = A(j0, j1);
                         for (int a : actionsJ) {
+//                            System.out.println("i0="+i0+", i1="+i1+", j0="+j0+", j1="+j1);
+//                            System.out.println(i.piOneDim(j0, j1, i0, i1, a)+"*"+x[j0][j1][a]);
                             sum2 = cplex.sum(sum2, cplex.prod(i.piOneDim(j0, j1, i0, i1, a), x[j0][j1][a]));
-//                            System.out.println(pi(j0, j1, i0, i1, a)+"*"+x[j0][j1][a]);
                         }
                     }
                 }

@@ -7,28 +7,31 @@ import ilog.concert.IloNumVar;
 import ilog.cplex.IloCplex;
 
 public class ValueDeterminationModel {
-    private final int componentID;
-    private final TransitionMatrix matrix;
     private final Instance instance;
     private final Policy R;
 
     private static IloNumVar[] values;
     private static IloNumVar g;
     private static IloCplex cplex;
-    public ValueDeterminationModel(int componentID, TransitionMatrix matrix, Instance instance, Policy policy) throws IloException {
-        this.componentID = componentID;
-        this.matrix = matrix;
+    public ValueDeterminationModel(Instance instance, Policy policy) throws IloException {
         this.instance = instance;
         R = policy;
         cplex = new IloCplex();
-        cplex.setName("cplexModel"+this.componentID);
+        cplex.setName("cplexModel");
         values = new IloNumVar[instance.I0.length * instance.I1.length];
 
         setVariables();
         setRelations();
+        cplex.setOut(null);
+        cplex.setWarning(null);
         cplex.minimize(g);
         cplex.exportModel("values.lp");
         cplex.solve();
+
+//        for (IloNumVar value : values ) {
+//            System.out.println(cplex.getValue(value));
+//        }
+//        System.out.println("g="+cplex.getValue(g));
     }
 
     private void setVariables() throws IloException{
@@ -62,7 +65,7 @@ public class ValueDeterminationModel {
                 IloNumExpr rhs3 = cplex.constant(0);
                 for (int j0 : instance.I0) {
                     for (int j1 : instance.I1) {
-                        rhs3 = cplex.sum(rhs3, cplex.prod(matrix.getPiValue(i0, i1, j0, j1), values[j0 + j1 * instance.I0.length]));
+                        rhs3 = cplex.sum(rhs3, cplex.prod(instance.piOneDim(i0, i1, j0, j1, R.get(i0,i1)), values[j0 + j1 * instance.I0.length]));
                     }
                 }
                 cplex.addEq(lhs, cplex.sum(rhs1, cplex.sum(rhs2, rhs3)), "constraint2a_" + i0 + "_" + i1);
@@ -80,6 +83,11 @@ public class ValueDeterminationModel {
 
     public double getValueG() throws IloException{
         return cplex.getValue(g);
+    }
+
+    public void clean() throws IloException {
+        cplex.clearModel();
+        cplex.close();
     }
 
 }
