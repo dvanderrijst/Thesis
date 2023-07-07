@@ -6,6 +6,12 @@ import ilog.concert.IloNumExpr;
 import ilog.concert.IloNumVar;
 import ilog.cplex.IloCplex;
 
+/**
+ * This model solves the values for v_i(R) and g(R) given policy R. We use the transition probabilities found
+ * in the Instance class.
+ *
+ * @author 619034dr Donna van der Rijst
+ */
 public class ValueDeterminationModel {
     private final Instance instance;
     private final Policy R;
@@ -13,6 +19,13 @@ public class ValueDeterminationModel {
     private static IloNumVar[] values;
     private static IloNumVar g;
     private static IloCplex cplex;
+
+    /**
+     * Constructor for the
+     * @param instance Instance containing all important parameters and transition matrix
+     * @param policy Policy R containing actions for all states.
+     * @throws IloException as we work with CPLEX.
+     */
     public ValueDeterminationModel(Instance instance, Policy policy) throws IloException {
         this.instance = instance;
         R = policy;
@@ -27,13 +40,12 @@ public class ValueDeterminationModel {
         cplex.minimize(g);
         cplex.exportModel("values.lp");
         cplex.solve();
-
-//        for (IloNumVar value : values ) {
-//            System.out.println(cplex.getValue(value));
-//        }
-//        System.out.println("g="+cplex.getValue(g));
     }
 
+    /**
+     * Sets the variables in our model.
+     * @throws IloException as we work with a cplex model.
+     */
     private void setVariables() throws IloException{
         for(int i0: instance.I0){
             for(int i1 : instance.I1){
@@ -43,7 +55,10 @@ public class ValueDeterminationModel {
         g = cplex.numVar(Double.NEGATIVE_INFINITY,Double.POSITIVE_INFINITY, "g");
     }
 
-
+    /**
+     * Sets the constraints in the model. All equality relations.
+     * @throws IloException as we work with a cplex model.
+     */
     private void setRelations() throws IloException{
 
         for(int i0: instance.I0) {

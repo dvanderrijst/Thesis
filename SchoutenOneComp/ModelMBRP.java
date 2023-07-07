@@ -5,15 +5,30 @@ import ilog.concert.IloException;
 import ilog.concert.IloNumVar;
 
 import java.io.IOException;
-
+/**
+ * This class models the p-MBRP for a single component. It mainly uses the methods from the p-BRP model.
+ *
+ * @author 619034dr Donna van der Rijst
+ */
 public class ModelMBRP extends ModelBRP{
     private static IloNumVar[][] z;
     private static IloNumVar[] t;
 
+    /**
+     * Constructor for the ModelMBRP class
+     * @param i Instance containing all important parameters
+     * @param fileName to write output and found policy in.
+     * @throws IloException as we work with CPLEX.
+     * @throws IOException as we work with an input file. This might raise errors.
+     */
     public ModelMBRP(Instance i, String fileName) throws IloException, IOException {
         super(i, fileName);
     }
 
+    /**
+     * The p-MBRP model also introduces some extra variables which are added to the model here.
+     * @throws IloException as we are working with a CPLEX model.
+     */
     @Override
     public void setVariables() throws IloException {
         setVarX();
@@ -22,19 +37,30 @@ public class ModelMBRP extends ModelBRP{
         setVarT();
     }
 
+    /**
+     * This method overrides the setConstraints from ModelBRP as the p-MBRP model add some constraints.
+     * These extra constraints can be found in paper of Schouten. Note that we have also added
+     * the constraints that where missing. These are called constraint Cremers as she detected the
+     * missing constraints first.
+     * @throws IloException as we are working with a CPLEX model.
+     */
     @Override
     public void setConstraints() throws IloException{
         constraint10b(); //12b
-//        constraint10cd(); //this is actually not in the paper but x needs to be connected to y or z so lets see what happens if we take these.
         constraint10e(); //12c
 
         constraint12de();
         constraint12fg();
-        constraint12hi(); //without this, it becomes ARP.
+        constraint12hi();
 
         constraintCremers();
     }
 
+    /**
+     * The missing constraints from the paper Schouten. These are called constraint Cremers as Roby Cremers detected the
+     * missing constraints first.
+     * @throws IloException as we are working with a CPLEX model.
+     */
     private void constraintCremers() throws IloException {
         for(int i0 : I0){
             for(int i1 : I1){
@@ -46,6 +72,10 @@ public class ModelMBRP extends ModelBRP{
         }
     }
 
+    /**
+     * Overrides the printSoltution as we want to put the cplex .lp file under a different name.
+     * @throws IloException as we work with a CPLEX model
+     */
     @Override
     public void printSolution() throws IloException {
         cplex.exportModel("model1CompMBRP.lp");
@@ -54,23 +84,7 @@ public class ModelMBRP extends ModelBRP{
         double averageCosts = cplex.getObjValue();
         System.out.println("Yearly costs are " + averageCosts*N);
 
-        for(int i0 : I0){
-            System.out.printf("%8.0f", cplex.getValue(y[i0]));
-        }
-
         printX();
-
-        System.out.println("\n z values:");
-        for(int i1 : I1) {
-            for (int i0 : I0) {
-                System.out.printf("%8.0f", Math.abs(cplex.getValue(z[i0][i1])));
-            }
-            System.out.println();
-        }
-
-        System.out.println("\n t values:");
-        for (int i0 : I0) {
-            System.out.printf("%8.0f", cplex.getValue(t[i0]));}
     }
 
     private void constraint12hi() throws IloException {

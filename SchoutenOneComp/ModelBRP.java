@@ -9,7 +9,12 @@ import ilog.cplex.IloCplex;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-
+/**
+ * This class models the p-BRP model for one component. It returns the resulting policy in a file under the name fileName.
+ * This class is extended by p-ARP and p-MBRP as these models are modifications on this model.
+ *
+ * @author 619034dr Donna van der Rijst
+ */
 public class ModelBRP {
     public final Instance i;
     public final int M;
@@ -22,6 +27,13 @@ public class ModelBRP {
     public static IloNumVar[][][] x;
     public static IloNumVar[] y;
 
+    /**
+     * Constructor for the ModelBRP class
+     * @param i Instance containing all important parameters
+     * @param fileName to write output and found policy in.
+     * @throws IloException as we work with CPLEX.
+     * @throws IOException as we work with an input file. This might raise errors.
+     */
     public ModelBRP(Instance i, String fileName) throws IloException, IOException {
         this.i = i;
         this.M = i.M;
@@ -35,36 +47,30 @@ public class ModelBRP {
         setObjective();
         setConstraints();
 
-//        addedConstraint_setXtozero();
-
         printSolution();
         writePolicy(fileName);
     }
 
-    private void addedConstraint_setXtozero() throws IloException {
-        for(int i0 : I0){
-            for(int i1 : I1){
-                if(i1 != 0 & i1!=M){
-                    cplex.addEq(x[i0][i1][1],0);
-                }
-            }
-        }
-    }
-
+    /**
+     * This method solves the model, prints the costs and X, and puts the CPLEX model in a .lp file.
+     * @throws IloException as we are working with a CPLEX model.
+     */
     public void printSolution() throws IloException {
         cplex.exportModel("model1CompBRP.lp");
-//        cplex.setOut(null);
         cplex.solve();
         double averageCosts = cplex.getObjValue();
         System.out.println("Costs over period N are " + averageCosts*N);
 
-        for(int i0 : I0){
-            System.out.printf("%10.0f", cplex.getValue(y[i0]));
-        }
-
         printX();
     }
 
+    /**
+     * This method write the policy in .txt file called fileName. The policy is found by looking at where the
+     * values of x(i0,i1,a) for a certain 'a' are larger than zero. If so, this action 'a' is chosen and is the optimal R_(i0,i1).
+     * @param fileName policy is writting in this file.
+     * @throws IOException file might not be found, or other issues around this file might arise.
+     * @throws IloException as we are working with a CPLEX model.
+     */
     public void writePolicy(String fileName) throws IOException, IloException {
         FileWriter writer = new FileWriter(new File(fileName), true);
         double yearlyCosts = cplex.getObjValue() * N;
@@ -76,7 +82,7 @@ public class ModelBRP {
         for (int i0 : I0) {
             for (int i1 : I1) {
                 a_i0_i1[i0][i1] = 4;
-                for (int a : A(i0, i1)) {
+                for (int a : getPossibleActions(i0, i1)) {
                     if (cplex.getValue(x[i0][i1][a]) > 0.00000000000) {
                         a_i0_i1[i0][i1] = a;
                     }
@@ -92,11 +98,15 @@ public class ModelBRP {
         writer.close();
     }
 
+    /**
+     * This method prints the values vor x(i0,i1,a). This method might be useful for retrieving insights.
+     * @throws IloException as we are working with a CPLEX model.
+     */
     public void printX() throws IloException {
         System.out.println("\n actions grid - rows are age, columns time.");
         for (int i0 : I0) {
             for(int i1 : I1) {
-                int[] actions = A(i0,i1);
+                int[] actions = getPossibleActions(i0,i1);
                 boolean notPrinted = true;
                 for(int a : actions){
                     if(cplex.getValue(x[i0][i1][a])>0.00000000){
@@ -112,21 +122,28 @@ public class ModelBRP {
         }
     }
 
+    /**
+     * Set the constraints in our model. It is done like this, so it is easily overwritten by the classes ModelARP and ModelMBRP.
+     * @throws IloException as we are working with a CPLEX model.
+     */
     public void setConstraints() throws IloException {
         constraint10b();
         constraint10cd();
         constraint10e();
     }
 
-
+    /**
+     * Set the objective in our model.
+     * @throws IloException as we are working with a CPLEX model.
+     */
     private void setObjective() throws IloException {
         IloNumExpr sum = cplex.constant(0.0);
 
         for (int i0 : I0) {
             for (int i1 : I1) {
-                int[] actions = A(i0,i1);
+                int[] actions = getPossibleActions(i0,i1);
                 for(int a : actions){
-                    IloNumExpr prod = cplex.prod(x[i0][i1][a],c(i0,i1,a));
+                    IloNumExpr prod = cplex.prod(x[i0][i1][a], getCost(i0,i1,a));
                     sum = cplex.sum(sum,prod);
                 }
             }
@@ -134,6 +151,10 @@ public class ModelBRP {
         cplex.addMinimize(sum);
     }
 
+    /**
+     * Set the variables in our model. It is done like this, so it is easily overwritten by the classes ModelARP and ModelMBRP.
+     *  @throws IloException as we are working with a CPLEX model.
+     */
     public void setVariables() throws IloException {
         setVarX();
         setVarY();
@@ -159,7 +180,13 @@ public class ModelBRP {
         }
     }
 
-    public int[] A(int i0, int i1){
+    /**
+     * Not all actions are possible for certain i1 values. This method returns the possible actions.
+     * @param i0 period in state i
+     * @param i1 age of component in state i
+     * @return possible actions, in int[] array.
+     */
+    public int[] getPossibleActions(int i0, int i1){
         int[] actions;
         if(i1 == 0 || i1 == M ){
             actions = new int[]{1};
@@ -169,7 +196,16 @@ public class ModelBRP {
         }
         return actions;
     }
-    private double c(int i0, int i1, int a){
+
+    /**
+     * We are working with period dependent costs, and with CM and PM costs. This method return the
+     * correct costs when inserting state i=(i0,i1) and action a.
+     * @param i0 period in state i
+     * @param i1 age of component in state i
+     * @param a action done in state i
+     * @return cost that will be incurred.
+     */
+    private double getCost(int i0, int i1, int a){
         double c = 0.0;
         i0 = i0%N;
         if(a==0){
@@ -187,11 +223,10 @@ public class ModelBRP {
     }
 
     public void constraint10e() throws IloException{
-        //10e
         for(int i0 : I0){
             IloNumExpr sum = cplex.constant(0.0);
             for(int i1 : I1){
-                int[] action = A(i0,i1);
+                int[] action = getPossibleActions(i0,i1);
                 for(int a : action){
                     sum = cplex.sum(sum,x[i0][i1][a]);
                 }
@@ -200,7 +235,6 @@ public class ModelBRP {
         }
     }
     public void constraint10cd() throws IloException {
-        //10c & 10d
         for(int i0 : I0){
             for(int i1 : I1){
                 if(i1!=0 & i1!=M){
@@ -212,25 +246,20 @@ public class ModelBRP {
         }
     }
     public void constraint10b() throws IloException {
-        //10b
         for (int i0 : I0) {
             for (int i1 : I1) {
 
                 IloNumExpr sum1 = cplex.constant(0.0);
-                int[] actions = A(i0, i1);
+                int[] actions = getPossibleActions(i0, i1);
                 for (int a : actions) {
                     sum1 = cplex.sum(sum1, x[i0][i1][a]);
                 }
 
-
-
                 IloNumExpr sum2 = cplex.constant(0.0);
                 for (int j0 : I0) {
                     for (int j1 : I1) {
-                        int[] actionsJ = A(j0, j1);
+                        int[] actionsJ = getPossibleActions(j0, j1);
                         for (int a : actionsJ) {
-//                            System.out.println("i0="+i0+", i1="+i1+", j0="+j0+", j1="+j1);
-//                            System.out.println(i.piOneDim(j0, j1, i0, i1, a)+"*"+x[j0][j1][a]);
                             sum2 = cplex.sum(sum2, cplex.prod(i.piOneDim(j0, j1, i0, i1, a), x[j0][j1][a]));
                         }
                     }

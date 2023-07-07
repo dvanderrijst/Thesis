@@ -2,28 +2,29 @@ package SchoutenOneComp;
 
 import Main.Instance;
 
-import java.text.DecimalFormat;
-
-
 /**
  * This class is created to create the transition matrices with power v.
  * As it is easier to multiply 2D matrices with eachother, we will give our pi values a 1D structure so we can create a 2D transition matrix. See the method
  * where we create the pi how the array looks like. Throughout this whole class, we do no PM.
+ *
+ * @author 619034dr Donna van der Rijst
  */
 public class TransitionMatrix {
     public final double[][] pi_i0_i1_j0_j1_policy;
     public final Instance i;
 
+    /**
+     * Constructor for the TransitionMatrix class.
+     * @param instance Instance containing all important parameters
+     */
     public TransitionMatrix(Instance instance) {
         this.i = instance;
         this.pi_i0_i1_j0_j1_policy = setupPi();
-
-//        printMatrix(pi_i0_i1_j0_j1_policy);
     }
 
     /**
      * piPower is the probability matrix for multiple steps, given that we do not do any maintenance. So action state is always zero.
-     * @return
+     * @return the probability for going to from state (i0,i1) to (j0,j1) in x stes.
      */
     public double getPiPowerValue(int i0, int i1, int j0, int j1, int x) {
         if(i0==j0 && i1==j1){
@@ -46,15 +47,10 @@ public class TransitionMatrix {
 
             B = temp; // Update B with the result of matrix multiplication
         }
-//        System.out.println("\n\n\n\nprinting for pow = "+x+" and we return for i0="+i0+", i1="+i1+", j0="+j0+", j1="+j1+" the value of "+B[i0 + i1 * i.I0.length][j0 + j1 * i.I0.length]);
-//        printMatrix(B);
 
         return B[i0 + i1 * i.I0.length][j0 + j1 * i.I0.length];
     }
 
-    public double getPiValue(int i0, int i1, int j0, int j1){
-        return pi_i0_i1_j0_j1_policy[i0 + i1 * i.I0.length][j0 + j1 * i.I0.length];
-    }
 
     /**
      * In order to find a 1D array containing all pi values, we give it the following structure. We have p(i0, i1, a) as pi value.
@@ -85,33 +81,5 @@ public class TransitionMatrix {
             }
         }
         return pi_i0_i1_j0_j1_policy;
-    }
-
-
-    private void printMatrix(double[][] pi_i0_i1_j0_j1_action0) {
-
-        double[][] matrix = pi_i0_i1_j0_j1_action0;
-
-        DecimalFormat df = new DecimalFormat("0.000");
-
-        int countRows = 0;
-        for (double[] row : matrix) {
-            if(countRows % i.I0.length == 0){
-                System.out.println("---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
-            }
-            countRows++;
-            double sum = 0.0;
-            int countColumns = 0;
-            for (double value : row) {
-                if(countColumns % i.I0.length == 0){
-                    System.out.print("|\t");
-                }
-                countColumns++;
-                sum = sum + value;
-                String formattedValue = df.format(value);
-                System.out.print(formattedValue + "\t");
-            }
-            System.out.println("\t\t"+sum);
-        }
     }
 }

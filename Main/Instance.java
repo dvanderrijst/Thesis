@@ -1,7 +1,5 @@
 package Main;
 
-import SchoutenOneComp.ModelBRP;
-
 import java.io.FileWriter;
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -13,6 +11,8 @@ import java.util.Random;
  * This class contains all the data that are inputs for the models.
  * It also contains all methods related to the Weibull distributions.
  * It is chosen to put it all in one instance, to make sure some general components are equal.
+ *
+ * @author 619034dr Donna van der Rijst
  */
 public class Instance {
     //ZHU and SCHOUTEN
@@ -64,6 +64,9 @@ public class Instance {
     public final int M = 34;                //we set the maximum age to 3 years
     private final Weibull weibull = new Weibull(this);
 
+    /**
+     * Constructor for the Instance class. No input as all parameters are adjusted in this file.
+     */
     public Instance() {
         //ZHU AND SCHOUTEN
         cCR_i_t = setVariateCosts(CR_average);
