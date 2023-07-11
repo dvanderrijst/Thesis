@@ -61,7 +61,7 @@ public class Instance {
     public final int[] I1;
     public final int[] I2;
     public final int[] K ;
-    public final int M = 34;                //we set the maximum age to 3 years
+    public final int M = 12;                //we set the maximum age to 3 years
     private final Weibull weibull = new Weibull(this);
 
     /**

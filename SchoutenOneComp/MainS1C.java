@@ -9,31 +9,21 @@ public class MainS1C {
     public static void main(String[] args) throws IloException, IOException {
         Instance instance = new Instance();
 
-        ModelARP arp = new ModelARP(instance, "arpTest.txt");
+//        ARP_Kallenberg kallenberg = new ARP_Kallenberg(instance, 4, 10, 0.90);
+//        System.out.println(kallenberg.getAction());
 
-        Policy policy = new Policy(new File("arpTest.txt"), instance);
-        delta delta = new delta(policy, instance);
-
-       
-
-        System.out.println("x=17 " +delta.getdelta(0, 1, 17 )+"\n");
-        System.out.println("x=18 " +delta.getdelta(0, 1, 18 )+"\n");
-        System.out.println("x=19 " +delta.getdelta(0, 1, 19 )+"\n");
-        System.out.println("x=20 " +delta.getdelta(0, 1, 20 )+"\n");
-        System.out.println("x=21 " +delta.getdelta(0, 1, 21 )+"\n");
-        System.out.println("x=22 " +delta.getdelta(0, 1, 22 )+"\n");
-        System.out.println("x=23 " +delta.getdelta(0, 1, 23 )+"\n");
-
-        System.out.println("\n\n\n\n\n\ni0=5");
+        ARP_KallenbergDual kallenbergDual = new ARP_KallenbergDual(instance, 4, 2, 0.90);
+        kallenbergDual.startUp();
+        System.out.println(kallenbergDual.getAction());
 
 
-        System.out.println("x=17 " +delta.getdelta(5, 1, 17 )+"\n");
-        System.out.println("x=18 " +delta.getdelta(5, 1, 18 )+"\n");
-        System.out.println("x=19 " +delta.getdelta(5, 1, 19 )+"\n");
-        System.out.println("x=20 " +delta.getdelta(5, 1, 20 )+"\n");
-        System.out.println("x=21 " +delta.getdelta(5, 1, 21 )+"\n");
-        System.out.println("x=22 " +delta.getdelta(5, 1, 22 )+"\n");
-        System.out.println("x=23 " +delta.getdelta(5, 1, 23 )+"\n");
+
+//        ModelARP arp = new ModelARP(instance, "arpTest.txt");
+
+//        Policy policy = new Policy(new File("arpTest.txt"), instance);
+//        delta delta = new delta(policy, instance);
+
+
 
     }
 }
