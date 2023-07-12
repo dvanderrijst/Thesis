@@ -83,20 +83,10 @@ public class Weibull {
      * @return failure time of component type i, startAge already taken into account by substraction.
      */
     public int inverseWeibull(int i, int startAge) {
-        double Fx_forStartAge = 1.0 - Math.exp(-1.0 * Math.pow(startAge / instance.getAlpha()[i], instance.getBeta()[i]));
-//        System.out.println("startAge=" + startAge + "\t alpha[i]=" + instance.getAlpha()[i] + "\tbeta[i]=" + instance.getBeta()[i] + " Fx=" + Fx_forStartAge);
-//
-        double random = Fx_forStartAge + (1.0 - Fx_forStartAge) * Instance.random.nextDouble();
-
-//       This is exactly how they do it in the paper. HOWEVER, we now take the rounded value, and not the ceil. What does this mean for our benadering naar Schouten
-//        int x = Math.max(1,(int) Math.round(instance.getAlpha()[i] * Math.pow(-Math.log(1 - random), 1.0 / instance.getBeta()[i])) - startAge);
-
-        //This is how we do it, as also described in the appendix
+        //random number between (0,1)
+        double random = Instance.random.nextDouble();
         int x = (int) Math.ceil(instance.getAlpha()[i] * Math.pow(-Math.log(1 - random), 1.0 / instance.getBeta()[i])) - startAge;
-        System.out.println(x);
 
-
-//        System.out.println(x);
-        return x;
+        return Math.max(1,x);
     }
 }

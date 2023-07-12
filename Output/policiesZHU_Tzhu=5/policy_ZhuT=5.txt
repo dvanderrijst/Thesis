@@ -1,0 +1,16 @@
+
+m=1
+N=12
+T=mN=12
+ThorizonZhu=5
+n=2
+q=6
+lengthOmega=911
+d=5
+CR_average_i=[50.0, 50.0]
+PR_average_i=[10.0, 10.0]
+startAges=[0, 0]
+kesi=[0, 0]
+alpha=[6.0, 12.0]
+beta=[2.0, 2.0]
+delta=0.2

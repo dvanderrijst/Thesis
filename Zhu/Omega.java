@@ -44,7 +44,10 @@ public class Omega {
             for (int i = 0; i < instance.n; i++) {
                 for (int r = 0; r < instance.q; r++) {
                     if(kesi[i]==1 && r==0){
-                        Twir[omega][i][r] = 0 ;}
+                        Twir[omega][i][r] = 0 ;
+                        System.out.println("Why is this happening? x_i may not be zero.");
+                        System.exit(1);
+                    }
                     else if(r==0){
                         Twir[omega][i][r] = instance.inverseWeibull(i, startAges[i]);}
                     else{

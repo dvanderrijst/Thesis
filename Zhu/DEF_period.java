@@ -10,11 +10,13 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Scanner;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class DEF_period extends DEF {
     public final IloNumVar[][][][] Y_rwit_CR;
     public final IloNumVar[][][][] Y_rwit_PR;
-
     public DEF_period(Instance instance, Omega Omega, String fileName) throws IloException {
         super(instance, Omega, fileName);
         Y_rwit_CR = new IloNumVar[q][lengthOmega][n][T+1];
@@ -126,4 +128,7 @@ public class DEF_period extends DEF {
 
         cplex.addMinimize(obj, "obj");
     }
+
+
+
 }
