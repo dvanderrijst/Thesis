@@ -115,7 +115,7 @@ public class ModelMBRP {
     public void printActionGridComp1() throws IloException {
         System.out.println("\n actions grid - rows are age, columns time.");
 
-        int i0 = 0; 
+        int i0 = 5;
             for (int i1 : I1) {
                 for (int i2 : I2) {
                     boolean notPrinted = true;

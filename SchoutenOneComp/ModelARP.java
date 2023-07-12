@@ -31,7 +31,7 @@ public class ModelARP extends ModelBRP {
 //        cplex.setOut(null);
         cplex.solve();
         double averageCosts = cplex.getObjValue();
-        System.out.println("Yearly costs are " + averageCosts*N);
+        System.out.println("Yearly costs are " + averageCosts * N);
 
         printX();
     }

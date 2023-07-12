@@ -90,6 +90,17 @@ public class ModelBRP {
             }
         }
 
+//        System.out.println("rows i0, columns i1, actions: ");
+//        for (int i0 : I0) {
+//            for (int i1 : I1) {
+//                if(a_i0_i1[i0][i1]!=4){System.out.print(a_i0_i1[i0][i1]+"\t");}
+//                else{
+//                    System.out.print("-\t");
+//                }
+//            }
+//            System.out.println();
+//        }
+
         for (int i0 : I0) {
             for (int i1 : I1) {
                 if(a_i0_i1[i0][i1]!=4){writer.write("\n" + (i0+1) + " " + i1 + " " + a_i0_i1[i0][i1]);}
